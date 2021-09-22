@@ -17,14 +17,14 @@ export function activate(context: ExtensionContext) {
     languages.registerCodeLensProvider("*", codelensProvider);
     languages.registerCodeLensProvider("*", codelensResponseInfo);
 
-    commands.registerCommand("vscode-post-client.enableCodeLens", () => {
-        workspace.getConfiguration("vscode-post-client").  update("enableCodeLens", true, true);
-        workspace.getConfiguration("vscode-response-info").update("enableCodeLens", true, true);
+    commands.registerCommand("vscode-post-client.enablePostClient", () => {
+        workspace.getConfiguration("vscode-post-client").  update("enablePostClient", true, true);
+        workspace.getConfiguration("vscode-response-info").update("enablePostClient", true, true);
     });
 
-    commands.registerCommand("vscode-post-client.disableCodeLens", () => {
-        workspace.getConfiguration("vscode-post-client").  update("enableCodeLens", false, true);
-        workspace.getConfiguration("vscode-response-info").update("enableCodeLens", false, true);
+    commands.registerCommand("vscode-post-client.disablePostClient", () => {
+        workspace.getConfiguration("vscode-post-client").  update("enablePostClient", false, true);
+        workspace.getConfiguration("vscode-response-info").update("enablePostClient", false, true);
     });
 
     commands.registerCommand("vscode-post-client.codelensPost", async (args: any) => {

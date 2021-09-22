@@ -21,7 +21,7 @@ export class CodelensProviderResponseInfo implements vscode.CodeLensProvider {
 
     public provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
 
-        if (vscode.workspace.getConfiguration("vscode-post-client").get("enableCodeLens", true)) {
+        if (vscode.workspace.getConfiguration("vscode-post-client").get("enablePostClient", true)) {
             const fileName  = path.normalize(document.fileName);
             if (fileName.endsWith("response.json")) {
                 const responseMap = globalResponseMap;
@@ -42,13 +42,13 @@ export class CodelensProviderResponseInfo implements vscode.CodeLensProvider {
     }
 
     public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
-        if (vscode.workspace.getConfiguration("vscode-post-client").get("enableCodeLens", true)) {
+        if (vscode.workspace.getConfiguration("vscode-post-client").get("enablePostClient", true)) {
             const infoStr = (codeLens as any)["infoStr"] as string;
             codeLens.command = {
                 title:      infoStr,
-                tooltip:    "POST file content to an API",
+                tooltip:    "Show HTTP response headers",
                 command:    "vscode-post-client.responseInfo",
-                arguments:  ["Argument 1", false]
+                // arguments:  ["Argument 1", false]
             };
             return codeLens;
         }

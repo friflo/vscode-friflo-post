@@ -23,19 +23,19 @@
     "contributes": {
         "commands": [
             {
-                "title": "Enable CodeLens",
-                "command": "vscode-post-client.enableCodeLens",
-                "category": "CodeLens Sample"
+                "title": "Enable PostClient",
+                "command": "vscode-post-client.enablePostClient",
+                "category": "PostClient"
             },
             {
-                "title": "Disable Codelens",
-                "command": "vscode-post-client.disableCodeLens",
-                "category": "CodeLens Sample"
+                "title": "Disable PostClient",
+                "command": "vscode-post-client.disablePostClient",
+                "category": "PostClient"
             }
         ],
         "configuration": {
             "properties": {
-                "vscode-post-client.enableCodeLens": {
+                "vscode-post-client.enablePostClient": {
                     "type": "boolean",
                     "default": true
                 }
