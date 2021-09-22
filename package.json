@@ -23,6 +23,11 @@
     "contributes": {
         "commands": [
             {
+                "command": "vscode-friflo-post.codelensPost",
+                "title": "POST Request",
+                "category": "friflo POST"
+            },
+            {
                 "title": "Enable friflo POST",
                 "command": "vscode-friflo-post.enablePostClient",
                 "category": "friflo POST"
@@ -40,6 +45,15 @@
                     "default": true
                 }
             }
+        },
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "vscode-friflo-post.codelensPost",
+                    "when": "editorTextFocus && editorLangId == json",
+                    "group": "vscode-friflo-post@1"
+                }
+            ]
         },
         "keybindings": [
             {
