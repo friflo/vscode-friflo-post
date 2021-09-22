@@ -53,7 +53,7 @@ export class CodelensProvider implements vscode.CodeLensProvider
                 tooltip = `POST file content to: ${endpoint}`;
             }
             codeLens.command = {
-                title:      "POST",
+                title:      endpoint ? `POST ${endpoint}` : "POST",
                 tooltip:    tooltip,
                 command:    "vscode-post-client.codelensPost",
                 // arguments: ["Argument 1", false]
