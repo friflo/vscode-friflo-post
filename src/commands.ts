@@ -2,7 +2,7 @@ import {  languages,workspace, Uri, ViewColumn, window } from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -33,8 +33,16 @@ export async function codelensPost (args: any) {
     const srcPath       = editor.document.fileName;
     const srcBaseName   = path.basename(srcPath);
 
-    const res = await axios.post('http://localhost:8010/', request, { transformResponse: (r) => r });
-    const response = res.data;
+    let httpContent: any;
+    try {
+        const res = await axios.post('http://localhost:8010/', request, { transformResponse: (r) => r });
+        httpContent = res.data;
+    }
+    catch (err) {
+        const axiosErr = err as AxiosError;
+        httpContent = axiosErr.response?.data;
+    }
+    const response = httpContent;
     const workspaceFolder = getWorkspaceFolder();
     if (workspaceFolder == null) {
         const message = "Post Client: Working folder not found, open a folder an try again" ;
