@@ -22,6 +22,12 @@ function getWorkspaceFolder() : string | null {
     return null;
 }
 
+class ResponseData {
+    readonly    status:     number;
+    readonly    statusText: string;
+    readonly    content:    string;
+}
+
 export async function codelensPost (args: any) {
     // window.showInformationMessage(`CodeLens action clicked with args=${args}`);
 
@@ -33,16 +39,35 @@ export async function codelensPost (args: any) {
     const srcPath       = editor.document.fileName;
     const srcBaseName   = path.basename(srcPath);
 
-    let httpContent: any;
+
+    let response: ResponseData | null = null;
     try {
         const res = await axios.post('http://localhost:8010/', request, { transformResponse: (r) => r });
-        httpContent = res.data;
+        response = {
+            status:     res.status,
+            statusText: res.statusText,
+            content:    res.data
+        };
     }
     catch (err) {
-        const axiosErr = err as AxiosError;
-        httpContent = axiosErr.response?.data;
+        const axiosErr = err as AxiosError<string>;
+        if (axiosErr.response) {
+            response = {
+                status:     axiosErr.response.status,
+                statusText: axiosErr.response.statusText,
+                content:    axiosErr.response.data
+            };
+        } else {
+            response = {
+                status:  0,
+                statusText: "",
+                content: axiosErr.message
+            };
+        }       
     }
-    const response = httpContent;
+    if (!response)
+        return;
+
     const workspaceFolder = getWorkspaceFolder();
     if (workspaceFolder == null) {
         const message = "Post Client: Working folder not found, open a folder an try again" ;
@@ -53,7 +78,7 @@ export async function codelensPost (args: any) {
     const filePath  = folder + srcBaseName;
 
     ensureDirectoryExists(folder);
-    await fs.writeFile(filePath, response, 'utf8');
+    await fs.writeFile(filePath, response.content, 'utf8');
 
     const newFile = Uri.parse("file:" + filePath);
     workspace.openTextDocument(newFile).then(document => {
