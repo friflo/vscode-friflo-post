@@ -26,8 +26,6 @@ function getWorkspaceFolder() : string | null {
 
 
 export async function codelensPost (args: any) {
-    // window.showInformationMessage(`CodeLens action clicked with args=${args}`);
-
     const editor = window.activeTextEditor;
     if (!editor) {
         return;
@@ -47,11 +45,8 @@ export async function codelensPost (args: any) {
         config = JSON.parse(configFile);
     }
     catch (err) {
-        config = {
-            endpoint: 'http://localhost:8080/'
-        };
-        const configFile = JSON.stringify(config, null, 4);
-        await fs.writeFile(configPath, configFile, 'utf8');
+        await createConfigFile(configPath);
+        return;
     }
 
     let response: ResponseData | null = null;
@@ -108,4 +103,20 @@ export async function codelensPost (args: any) {
         window.showTextDocument(document, {
             viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
     });
+}
+
+async function createConfigFile(configPath: string) {
+    const config: PostClientConfig = {
+        endpoint: 'http://localhost:8080/'
+    };
+    const configFile = JSON.stringify(config, null, 4);
+    await fs.writeFile(configPath, configFile, 'utf8');
+
+    const configUri = Uri.parse("file:" + configPath);
+    workspace.openTextDocument(configUri).then(document => {
+        languages.setTextDocumentLanguage(document, "json");
+        window.showTextDocument(document, {
+            viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+    });
+    window.showInformationMessage(`created Post Client config: post-client`);
 }
