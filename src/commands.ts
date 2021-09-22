@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { PostClientConfig, ResponseData, globalResponseMap } from './types';
+import { PostClientConfig, ResponseData, globalResponseMap, configFileName } from './types';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -35,7 +35,7 @@ export async function codelensPost (args: any) {
     const srcBaseName   = path.basename(srcPath);
     const srcFolder     = path.dirname (srcPath);
 
-    const configPath = srcFolder + "/post-client";
+    const configPath = srcFolder + "/" + configFileName;
 
 
     let config: PostClientConfig;
@@ -112,7 +112,7 @@ export async function codelensPost (args: any) {
 
 async function createConfigFile(configPath: string) {
     window.showInformationMessage(
-        "Found no config file: 'post-client'. Create?",
+        `"config file: '${configFileName}' not found. Create?`,
         ...["Yes", "No"]
     )
     .then(async (answer) => {
@@ -134,7 +134,7 @@ async function createConfigFile(configPath: string) {
             window.showTextDocument(document, {
                 viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
         });
-        window.showInformationMessage(`created config: 'post-client'`);
+        window.showInformationMessage(`created config: '${configFileName}'`);
     });
 
 

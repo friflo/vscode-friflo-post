@@ -17,3 +17,5 @@ export class PostClientConfig {
     readonly    endpoint:   string;
     readonly    headers:    RequestHeaders;
 }
+
+export const configFileName  =".post-client";
