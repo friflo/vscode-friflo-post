@@ -1,6 +1,6 @@
 {
-    "name": "vscode-post-client",
-    "displayName": "Post Client",
+    "name": "vscode-friflo-post",
+    "displayName": "friflo POST",
     "description": "HTTP Client for Visual Studio Code to POST JSON to an API",
     "version": "0.0.1",
     "publisher": "friflo",
@@ -8,7 +8,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/friflo/vscode-post-client"
+        "url": "https://github.com/friflo/vscode-friflo-post"
     },
     "engines": {
         "vscode": "^1.26.0"
@@ -23,19 +23,19 @@
     "contributes": {
         "commands": [
             {
-                "title": "Enable PostClient",
-                "command": "vscode-post-client.enablePostClient",
-                "category": "PostClient"
+                "title": "Enable friflo POST",
+                "command": "vscode-friflo-post.enablePostClient",
+                "category": "friflo POST"
             },
             {
-                "title": "Disable PostClient",
-                "command": "vscode-post-client.disablePostClient",
-                "category": "PostClient"
+                "title": "Disable friflo POST",
+                "command": "vscode-friflo-post.disablePostClient",
+                "category": "friflo POST"
             }
         ],
         "configuration": {
             "properties": {
-                "vscode-post-client.enablePostClient": {
+                "vscode-friflo-post.enablePostClient": {
                     "type": "boolean",
                     "default": true
                 }

@@ -17,21 +17,21 @@ export function activate(context: ExtensionContext) {
     languages.registerCodeLensProvider("*", codelensProvider);
     languages.registerCodeLensProvider("*", codelensResponseInfo);
 
-    commands.registerCommand("vscode-post-client.enablePostClient", () => {
-        workspace.getConfiguration("vscode-post-client").  update("enablePostClient", true, true);
+    commands.registerCommand("vscode-friflo-post.enablePostClient", () => {
+        workspace.getConfiguration("vscode-friflo-post").  update("enablePostClient", true, true);
         workspace.getConfiguration("vscode-response-info").update("enablePostClient", true, true);
     });
 
-    commands.registerCommand("vscode-post-client.disablePostClient", () => {
-        workspace.getConfiguration("vscode-post-client").  update("enablePostClient", false, true);
+    commands.registerCommand("vscode-friflo-post.disablePostClient", () => {
+        workspace.getConfiguration("vscode-friflo-post").  update("enablePostClient", false, true);
         workspace.getConfiguration("vscode-response-info").update("enablePostClient", false, true);
     });
 
-    commands.registerCommand("vscode-post-client.codelensPost", async (args: any) => {
+    commands.registerCommand("vscode-friflo-post.codelensPost", async (args: any) => {
         await codelensPost(args);
     });
 
-    commands.registerCommand("vscode-post-client.responseInfo", async (args: any) => {
+    commands.registerCommand("vscode-friflo-post.responseInfo", async (args: any) => {
         await responseInfo(args);
     });
 }

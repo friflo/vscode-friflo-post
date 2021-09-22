@@ -20,7 +20,7 @@ export class CodelensProvider implements vscode.CodeLensProvider
 
     public async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {
 
-        if (vscode.workspace.getConfiguration("vscode-post-client").get("enablePostClient", true)) {
+        if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
             const fileName  = path.normalize(document.fileName);
             if (fileName.endsWith("request.json")) {
                 const codeLenses = createCodelens(document);
@@ -46,7 +46,7 @@ export class CodelensProvider implements vscode.CodeLensProvider
     }
 
     public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
-        if (vscode.workspace.getConfiguration("vscode-post-client").get("enablePostClient", true)) {
+        if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
             const   endpoint    = (codeLens as any)["endpoint"] as string | null;
             let     tooltip     = `POST file content an REST API`;
             if (endpoint) {
@@ -55,7 +55,7 @@ export class CodelensProvider implements vscode.CodeLensProvider
             codeLens.command = {
                 title:      endpoint ? `POST ${endpoint}` : "POST",
                 tooltip:    tooltip,
-                command:    "vscode-post-client.codelensPost",
+                command:    "vscode-friflo-post.codelensPost",
                 // arguments: ["Argument 1", false]
             };
             return codeLens;

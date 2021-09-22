@@ -1,1 +1,1 @@
-# vscode-post-client
+# vscode-friflo-post
