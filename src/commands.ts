@@ -85,11 +85,12 @@ export async function codelensPost (args: any) {
         await createConfigFile(configPath);
         return;
     }
-
+    
     let response: ResponseData | null = null;
     const requestData: RequestData = {
-        url:        config.endpoint,
-        headers:    config.headers,
+        url:            config.endpoint,
+        requestSeq: ++requestCount,
+        headers:        config.headers,
     };
     const startTime = new Date().getMilliseconds();
     try {
@@ -162,7 +163,7 @@ export async function codelensPost (args: any) {
 
     const isPrivate = isPrivateIP(response.request.url);
     const type      = isPrivate ?  "💻" : "🌐";
-    const status    = `${type} ${getInfo(response)} (${++requestCount})`;
+    const status    = `${type} ${srcBaseName} - ${getInfo(response)}`;
     window.setStatusBarMessage(status, 10 * 1000);
 }
 

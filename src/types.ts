@@ -2,6 +2,7 @@ import * as url from "url";
 
 export class RequestData {
     readonly    url:            string;
+    readonly    requestSeq:     number;
     readonly    headers:        any;
 }
 
@@ -30,7 +31,7 @@ export function getInfo (data: ResponseData ) : string {
     const contentLength = data.headers["content-length"];
     const contentType   = data.headers["content-type"];
 
-    const info = `${data.status} ${data.statusText} • length ${contentLength} • ${contentType} • ${data.executionTime} ms`;
+    const info = `${data.status} ${data.statusText} • length ${contentLength} • ${contentType} • ${data.executionTime} ms (${data.request.requestSeq})`;
     return info;
 }
 
