@@ -141,7 +141,7 @@ async function createConfigFile(configPath: string) {
             headers: {
                 "Content-Type": "application/json"
             },
-            responseFolder: ""
+            responseFolder: "response"
         };
         const configFile = JSON.stringify(config, null, 4);
         await fs.writeFile(configPath, configFile, 'utf8');
