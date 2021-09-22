@@ -14,8 +14,9 @@ export class RequestHeaders {
 }
 
 export class PostClientConfig {
-    readonly    endpoint:   string;
-    readonly    headers:    RequestHeaders;
+    readonly    endpoint:       string;
+    readonly    headers:        RequestHeaders;
+    readonly    responseFolder?: string;
 }
 
 export const configFileName  =".post-client";
