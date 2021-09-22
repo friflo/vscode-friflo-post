@@ -57,8 +57,8 @@ export class CodelensProvider implements vscode.CodeLensProvider {
     public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
         if (vscode.workspace.getConfiguration("vscode-post-client").get("enableCodeLens", true)) {
             codeLens.command = {
-                title: "Post",
-                tooltip: "Tooltip provided by sample extension",
+                title: "POST",
+                tooltip: "POST file content to an API",
                 command: "vscode-post-client.codelensPost",
                 arguments: ["Argument 1", false]
             };
