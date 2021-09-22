@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
 import { CodelensProvider } from './CodelensProvider';
-import { CodelensProviderResponseInfo } from './CodelensProviderResonseInfo';
+import { CodelensProviderResponseInfo } from './CodelensProviderResponseInfo';
 import { codelensPost, responseInfo } from './commands';
 
 // this method is called when your extension is activated
