@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as http from 'http';
 import * as https from 'https';
 
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, CancelTokenSource } from 'axios';
 import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP } from './types';
 
 
@@ -32,8 +32,8 @@ export async function responseInfo (args: any) {
 }
 
 const axiosInstance = axios.create({
-    // 5 sec timeout
-    timeout: 5 * 1000,
+    // 10 sec timeout
+    timeout: 10 * 1000,
   
     // keepAlive pools and reuses TCP connections, so it's faster
     httpAgent:  new http.Agent ({ keepAlive: true }),
@@ -88,10 +88,15 @@ export async function codelensPost (args: any) {
         return;
     }
     
-    window.setStatusBarMessage("");
-    const isPrivate = isPrivateIP(config.endpoint);
-    const iconType  = isPrivate ?  "💻" : "🌐";
-    const shortUrl  = `${iconType} ${srcBaseName}`;
+    const isPrivate         = isPrivateIP(config.endpoint);
+    const iconType          = isPrivate ?  "💻" : "🌐";
+    const progressStatus    = `POST ${iconType} ${srcBaseName}`;
+    await window.setStatusBarMessage("0 sec");
+
+    let seconds = 0;
+    const interval = setInterval(() => {
+        window.setStatusBarMessage(`${++seconds} sec`);
+    }, 1000);
 
     const requestData: RequestData = {
         url:            config.endpoint,
@@ -99,15 +104,21 @@ export async function codelensPost (args: any) {
         headers:        config.headers,
     };
 
+    const cancelTokenSource = axios.CancelToken.source();
+
     const response = await window.withProgress({
         location:       vscode.ProgressLocation.Window,
         cancellable:    true,
-        title:          `POST ${shortUrl}`
+        title:          progressStatus
     }, async (progress, token) => {
+        token.onCancellationRequested(() => {
+            cancelTokenSource.cancel();
+        });
         progress.report({  increment: 0 });
-        const  response = await executeRequest(requestData, requestBody);
+        const  response = await executeRequest(requestData, requestBody, cancelTokenSource);
         return response;
-    });    
+    });
+    clearInterval(interval);
 
     if (!response)
         return;
@@ -142,13 +153,14 @@ export async function codelensPost (args: any) {
     window.setStatusBarMessage(status, 10 * 1000);
 }
 
-async function executeRequest(requestData: RequestData, requestBody: string) : Promise<ResponseData | null> {
+async function executeRequest(requestData: RequestData, requestBody: string, cancelTokenSource: CancelTokenSource) : Promise<ResponseData | null> {
     let response: ResponseData | null;
     const startTime = new Date().getTime();
     try {
         const requestConfig: AxiosRequestConfig = {
             transformResponse:  (r) => r,
             headers:            requestData.headers,
+            cancelToken:        cancelTokenSource.token
         };
         const res = await axiosInstance.post<string>(requestData.url, requestBody, requestConfig);
         const executionTime = new Date().getTime() - startTime;
@@ -174,12 +186,14 @@ async function executeRequest(requestData: RequestData, requestBody: string) : P
                 headers:        axiosErr.response.headers,
                 executionTime:  executionTime,
             };
-        } else {
+        } else {            
+            const canceled = axios.isCancel(err);
+            const message = canceled ? "request canceled" : axiosErr.message;
             response = {
                 request:        requestData,
                 status:         0,
-                statusText:     axiosErr.message,
-                content:        axiosErr.message,
+                statusText:     message,
+                content:        message,
                 headers:        null,
                 executionTime:  executionTime,
             };
