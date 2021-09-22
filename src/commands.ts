@@ -32,8 +32,8 @@ export async function responseInfo (args: any) {
 }
 
 const axiosInstance = axios.create({
-    // 10 sec timeout
-    timeout: 10 * 1000,
+    // 60 sec timeout
+    timeout: 60 * 1000,
   
     // keepAlive pools and reuses TCP connections, so it's faster
     httpAgent:  new http.Agent ({ keepAlive: true }),
@@ -75,7 +75,7 @@ export async function codelensPost (args: any) {
             config = JSON.parse(configFile);
         }
         catch (err) {
-            window.showInformationMessage(`error in: ${configFileName}. ${err}'`);
+            await window.showInformationMessage(`error in: ${configFileName}. ${err}'`);
             const configUri = Uri.parse("file:" + configPath);
             const document = await workspace.openTextDocument(configUri);
             await languages.setTextDocumentLanguage(document, "json");
@@ -91,11 +91,11 @@ export async function codelensPost (args: any) {
     const isPrivate         = isPrivateIP(config.endpoint);
     const iconType          = isPrivate ?  "💻" : "🌐";
     const progressStatus    = `POST ${iconType} ${srcBaseName}`;
-    await window.setStatusBarMessage("0 sec");
+    await window.setStatusBarMessage("0 sec", 1100);
 
     let seconds = 0;
     const interval = setInterval(() => {
-        window.setStatusBarMessage(`${++seconds} sec`);
+        window.setStatusBarMessage(`${++seconds} sec`, 1100);
     }, 1000);
 
     const requestData: RequestData = {
@@ -126,7 +126,7 @@ export async function codelensPost (args: any) {
     const workspaceFolder = getWorkspaceFolder();
     if (workspaceFolder == null) {
         const message = "Post Client: Working folder not found, open a folder an try again" ;
-        window.showErrorMessage(message);
+        await window.showErrorMessage(message);
         return;
     }
 
