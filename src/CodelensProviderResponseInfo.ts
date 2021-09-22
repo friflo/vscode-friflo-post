@@ -31,7 +31,7 @@ export class CodelensProviderResponseInfo implements vscode.CodeLensProvider {
                 // const index = this.codeLenses.findIndex(item => item.command?.command == "vscode-post-client.responseInfo");
                 const contentLength = info.headers["content-length"];
                 const contentType   = info.headers["content-type"];
-                const infoStr = `${info.status} ${info.statusText} • length ${contentLength} • ${contentType}`;
+                const infoStr = `${info.status} ${info.statusText} • length ${contentLength} • ${contentType} • ${info.executionTime} ms`;
                 const entry = this.codeLenses[0];
                 (entry as any)["infoStr"] = infoStr;                    
                 return this.codeLenses;

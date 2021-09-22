@@ -66,35 +66,40 @@ export async function codelensPost (args: any) {
     }
 
     let response: ResponseData | null = null;
+    const startTime = new Date().getMilliseconds();
     try {
         const requestConfig: AxiosRequestConfig = {
             transformResponse:  (r) => r,
             headers:            config.headers
         };
-
         const res = await axios.post<string>(config.endpoint, request, requestConfig);
+        const executionTime = new Date().getMilliseconds() -startTime;
         response = {
-            status:     res.status,
-            statusText: res.statusText,
-            content:    res.data,
-            headers:    res.headers
+            status:         res.status,
+            statusText:     res.statusText,
+            content:        res.data,
+            headers:        res.headers,
+            executionTime:  executionTime,
         };
     }
     catch (err) {
+        const executionTime = new Date().getMilliseconds() - startTime;
         const axiosErr = err as AxiosError<string>;
         if (axiosErr.response) {
             response = {
                 status:     axiosErr.response.status,
                 statusText: axiosErr.response.statusText,
                 content:    axiosErr.response.data,
-                headers:    axiosErr.response.headers
+                headers:    axiosErr.response.headers,
+                executionTime:  executionTime,
             };
         } else {
             response = {
                 status:     0,
-                statusText: axiosErr.message,
-                content:    axiosErr.message,
-                headers:    null
+                statusText:     axiosErr.message,
+                content:        axiosErr.message,
+                headers:        null,
+                executionTime:  executionTime,
             };
         }       
     }

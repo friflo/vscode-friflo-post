@@ -1,10 +1,11 @@
 
 
 export class ResponseData {
-    readonly    status:     number;
-    readonly    statusText: string;
-    readonly    content:    string;
-    readonly    headers:    any;
+    readonly    status:         number;
+    readonly    statusText:     string;
+    readonly    content:        string;
+    readonly    headers:        any;
+    readonly    executionTime:  number;
 }
 
 export const globalResponseMap: { [key: string]: ResponseData } = {};
