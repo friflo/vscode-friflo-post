@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { globalResponseMap } from './types';
+import { getInfo, globalResponseMap } from './types';
 import * as path from 'path';
 import { addCodelens as createCodelens } from './utils';
 
@@ -29,9 +29,7 @@ export class CodelensProviderResponseInfo implements vscode.CodeLensProvider {
             if (info) {
                 this.codeLenses = createCodelens(document);
                 // const index = this.codeLenses.findIndex(item => item.command?.command == "vscode-friflo-post.responseInfo");
-                const contentLength = info.headers["content-length"];
-                const contentType   = info.headers["content-type"];
-                const infoStr = `${info.status} ${info.statusText} • length ${contentLength} • ${contentType} • ${info.executionTime} ms`;
+                const infoStr = getInfo(info);
                 const entry = this.codeLenses[0];
                 (entry as any)["infoStr"] = infoStr;                    
                 return this.codeLenses;

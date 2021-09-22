@@ -8,6 +8,13 @@ export class ResponseData {
     readonly    executionTime:  number;
 }
 
+export function getInfo (data: ResponseData ) : string {
+    const contentLength = data.headers["content-length"];
+    const contentType   = data.headers["content-type"];
+    const info = `${data.status} ${data.statusText} • length ${contentLength} • ${contentType} • ${data.executionTime} ms`;
+    return info;
+}
+
 export const globalResponseMap: { [key: string]: ResponseData } = {};
 
 export class RequestHeaders {

@@ -5,7 +5,7 @@ import * as http from 'http';
 import * as https from 'https';
 
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { PostClientConfig, ResponseData, globalResponseMap, configFileName } from './types';
+import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo } from './types';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -141,12 +141,12 @@ export async function codelensPost (args: any) {
     console.log(`saved: ${filePath}`);
 
     const newFile = Uri.parse("file:" + filePath);
+    
     const document = await workspace.openTextDocument(newFile);
-    // document.save().then(() => {
-    // const edit = new WorkspaceEdit();
-
     await languages.setTextDocumentLanguage(document, "json");
     await window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
+
+    window.setStatusBarMessage(getInfo(response), 5 * 1000);
 }
 
 async function createConfigFile(configPath: string) {
