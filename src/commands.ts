@@ -51,6 +51,11 @@ export function getConfigPath(fileName: string) : string {
     return configPath;
 }
 
+export function isConfigFile(fileName: string) : boolean {
+    const baseName = path.basename (fileName);
+    return baseName == configFileName;
+}
+
 export async function codelensPost (args: any) {
     const editor = window.activeTextEditor;
     if (!editor) {

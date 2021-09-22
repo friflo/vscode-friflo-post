@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 import { addCodelens as createCodelens } from './utils';
-import { configFileName, PostClientConfig } from './types';
+import { PostClientConfig } from './types';
 import { promises as fs } from 'fs';
-import { getConfigPath } from './commands';
+import { getConfigPath, isConfigFile } from './commands';
 
 /**
  * CodelensProvider
@@ -22,7 +21,8 @@ export class CodelensProvider implements vscode.CodeLensProvider
     public async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {
 
         if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
-            if (document.fileName.endsWith(".json")) {
+            const isConfig = isConfigFile(document.fileName);
+            if (!isConfig && document.fileName.endsWith(".json")) {
                 const configPath    = getConfigPath(document.fileName);
                 let   endpoint: string | null = null;
                 try {
