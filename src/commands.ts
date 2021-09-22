@@ -45,6 +45,11 @@ const axiosInstance = axios.create({
     maxContentLength: 50 * 1000 * 1000
   });
 
+export function getConfigPath(fileName: string) : string {
+    const srcFolder     = path.dirname (fileName) + "/";
+    const configPath    = srcFolder + "/" + configFileName;
+    return configPath;
+}
 
 export async function codelensPost (args: any) {
     const editor = window.activeTextEditor;
@@ -52,13 +57,9 @@ export async function codelensPost (args: any) {
         return;
     }
     const request       = editor.document.getText();
-    const srcPath       = editor.document.fileName;
-    const srcBaseName   = path.basename(srcPath);
-    const srcFolder     = path.dirname (srcPath) + "/";
 
-    const configPath = srcFolder + "/" + configFileName;
-
-
+    const fileName      = editor.document.fileName;
+    const configPath    = getConfigPath(fileName);
     let config: PostClientConfig;
 
     try {
@@ -135,7 +136,8 @@ export async function codelensPost (args: any) {
         window.showErrorMessage(message);
         return;
     }
-    let dstFolder     = srcFolder;
+    const   srcBaseName   = path.basename(fileName);
+    let     dstFolder     = path.dirname (fileName) + "/";
     if (config.responseFolder)
         dstFolder += config.responseFolder;
     const dstBaseName   = srcBaseName.replace("request.json","response.json");
