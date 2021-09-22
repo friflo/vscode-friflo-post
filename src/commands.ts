@@ -5,7 +5,7 @@ import * as http from 'http';
 import * as https from 'https';
 
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo } from './types';
+import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP } from './types';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -81,6 +81,10 @@ export async function codelensPost (args: any) {
     }
 
     let response: ResponseData | null = null;
+    const requestData: RequestData = {
+        url:        config.endpoint,
+        headers:    config.headers,
+    };
     const startTime = new Date().getMilliseconds();
     try {
         const requestConfig: AxiosRequestConfig = {
@@ -90,6 +94,7 @@ export async function codelensPost (args: any) {
         const res = await axiosInstance.post<string>(config.endpoint, request, requestConfig);
         const executionTime = new Date().getMilliseconds() - startTime;
         response = {
+            request:        requestData,
             status:         res.status,
             statusText:     res.statusText,
             content:        res.data,
@@ -103,6 +108,7 @@ export async function codelensPost (args: any) {
         const axiosErr = err as AxiosError<string>;
         if (axiosErr.response) {
             response = {
+                request:    requestData,
                 status:     axiosErr.response.status,
                 statusText: axiosErr.response.statusText,
                 content:    axiosErr.response.data,
@@ -111,7 +117,8 @@ export async function codelensPost (args: any) {
             };
         } else {
             response = {
-                status:     0,
+                request:        requestData,
+                status:         0,
                 statusText:     axiosErr.message,
                 content:        axiosErr.message,
                 headers:        null,
@@ -146,7 +153,10 @@ export async function codelensPost (args: any) {
     await languages.setTextDocumentLanguage(document, "json");
     await window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
-    window.setStatusBarMessage(`${getInfo(response)} (${++requestCount})`, 5 * 1000);
+    const isPrivate = isPrivateIP(response.request.url);
+    const type      = isPrivate ?  "💻" : "🌐";
+    const status    = `${type} ${getInfo(response)} (${++requestCount})`;
+    window.setStatusBarMessage(status, 5 * 1000);
 }
 
 let requestCount = 0;
