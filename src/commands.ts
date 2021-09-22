@@ -1,6 +1,8 @@
 import {  languages,workspace, Uri, ViewColumn, window } from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import * as http from 'http';
+import * as https from 'https';
 
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { PostClientConfig, ResponseData, globalResponseMap, configFileName } from './types';
@@ -27,6 +29,21 @@ function getWorkspaceFolder() : string | null {
 export async function responseInfo (args: any) {
     console.log("responseInfo");
 }
+
+const axiosInstance = axios.create({
+    // 3 sec timeout
+    timeout: 3 * 1000,
+  
+    // keepAlive pools and reuses TCP connections, so it's faster
+    httpAgent:  new http.Agent ({ keepAlive: true }),
+    httpsAgent: new https.Agent({ keepAlive: true }),
+    
+    //follow up to 3 HTTP 3xx redirects
+    maxRedirects: 3,
+    
+    // cap the maximum content length we'll accept to 50MBs, just in case
+    maxContentLength: 50 * 1000 * 1000
+  });
 
 
 export async function codelensPost (args: any) {
@@ -70,10 +87,10 @@ export async function codelensPost (args: any) {
     try {
         const requestConfig: AxiosRequestConfig = {
             transformResponse:  (r) => r,
-            headers:            config.headers
+            headers:            config.headers,
         };
-        const res = await axios.post<string>(config.endpoint, request, requestConfig);
-        const executionTime = new Date().getMilliseconds() -startTime;
+        const res = await axiosInstance.post<string>(config.endpoint, request, requestConfig);
+        const executionTime = new Date().getMilliseconds() - startTime;
         response = {
             status:         res.status,
             statusText:     res.statusText,
@@ -81,6 +98,7 @@ export async function codelensPost (args: any) {
             headers:        res.headers,
             executionTime:  executionTime,
         };
+        console.log(res.headers, `${executionTime} ms`);
     }
     catch (err) {
         const executionTime = new Date().getMilliseconds() - startTime;
@@ -116,14 +134,13 @@ export async function codelensPost (args: any) {
     if (config.responseFolder)
         dstFolder += config.responseFolder;
     const dstBaseName   = srcBaseName.replace("request.json","response.json");
-
     const filePath  = path.normalize(dstFolder + "/" + dstBaseName);
-
 
     globalResponseMap[filePath] = response;
 
     ensureDirectoryExists(dstFolder);
     await fs.writeFile(filePath, response.content, 'utf8');
+    console.log(`saved: ${filePath}`);
 
     const newFile = Uri.parse("file:" + filePath);
     workspace.openTextDocument(newFile).then(document => {
@@ -148,7 +165,8 @@ async function createConfigFile(configPath: string) {
         const config: PostClientConfig = {
             endpoint:     "http://localhost:8080/",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Connection":   "Keep-Alive"
             },
             responseFolder: "response"
         };

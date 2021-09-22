@@ -12,6 +12,7 @@ export const globalResponseMap: { [key: string]: ResponseData } = {};
 
 export class RequestHeaders {
     readonly    "Content-Type": string;
+    readonly    "Connection":   string;
 }
 
 export class PostClientConfig {
