@@ -111,20 +111,31 @@ export async function codelensPost (args: any) {
 }
 
 async function createConfigFile(configPath: string) {
-    const config: PostClientConfig = {
-        endpoint:     "http://localhost:8080/",
-        headers: {
-            "Content-Type": "application/json"
-        }        
-    };
-    const configFile = JSON.stringify(config, null, 4);
-    await fs.writeFile(configPath, configFile, 'utf8');
-
-    const configUri = Uri.parse("file:" + configPath);
-    workspace.openTextDocument(configUri).then(document => {
-        languages.setTextDocumentLanguage(document, "json");
-        window.showTextDocument(document, {
-            viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+    window.showInformationMessage(
+        "Found no config file: 'post-client'. Create?",
+        ...["Yes", "No"]
+    )
+    .then(async (answer) => {
+        if (answer !== "Yes") {
+            return;
+        }
+        const config: PostClientConfig = {
+            endpoint:     "http://localhost:8080/",
+            headers: {
+                "Content-Type": "application/json"
+            }        
+        };
+        const configFile = JSON.stringify(config, null, 4);
+        await fs.writeFile(configPath, configFile, 'utf8');
+    
+        const configUri = Uri.parse("file:" + configPath);
+        workspace.openTextDocument(configUri).then(document => {
+            languages.setTextDocumentLanguage(document, "json");
+            window.showTextDocument(document, {
+                viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+        });
+        window.showInformationMessage(`created config: 'post-client'`);
     });
-    window.showInformationMessage(`created Post Client config: post-client`);
+
+
 }
