@@ -92,14 +92,14 @@ export async function codelensPost (args: any) {
         requestSeq: ++requestCount,
         headers:        config.headers,
     };
-    const startTime = new Date().getMilliseconds();
+    const startTime = new Date().getTime();
     try {
         const requestConfig: AxiosRequestConfig = {
             transformResponse:  (r) => r,
             headers:            config.headers,
         };
         const res = await axiosInstance.post<string>(config.endpoint, request, requestConfig);
-        const executionTime = new Date().getMilliseconds() - startTime;
+        const executionTime = new Date().getTime() - startTime;
         response = {
             request:        requestData,
             status:         res.status,
@@ -111,15 +111,15 @@ export async function codelensPost (args: any) {
         console.log(res.headers, `${executionTime} ms`);
     }
     catch (err) {
-        const executionTime = new Date().getMilliseconds() - startTime;
+        const executionTime = new Date().getTime() - startTime;
         const axiosErr = err as AxiosError<string>;
         if (axiosErr.response) {
             response = {
-                request:    requestData,
-                status:     axiosErr.response.status,
-                statusText: axiosErr.response.statusText,
-                content:    axiosErr.response.data,
-                headers:    axiosErr.response.headers,
+                request:        requestData,
+                status:         axiosErr.response.status,
+                statusText:     axiosErr.response.statusText,
+                content:        axiosErr.response.data,
+                headers:        axiosErr.response.headers,
                 executionTime:  executionTime,
             };
         } else {

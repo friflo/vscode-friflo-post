@@ -28,10 +28,16 @@ export function isPrivateIP(urlString: string) : boolean {
  }
 
 export function getInfo (data: ResponseData ) : string {
-    const contentLength = data.headers["content-length"];
-    const contentType   = data.headers["content-type"];
-
-    const info = `${data.status} ${data.statusText} • length ${contentLength} • ${contentType} • ${data.executionTime} ms (${data.request.requestSeq})`;
+    const contentLength = data.headers && data.headers["content-length"];
+    // const contentType   = data.headers["content-type"];
+    const length = contentLength ? ` • len ${contentLength}` : "";
+    let status: string;
+    if (data.status == 0) {
+        status = data.content;
+    } else {
+        status = `${data.status}${data.statusText == 'OK' ? " OK" : ""}`;
+    }
+    const info = `${status}${length} • ${data.executionTime} ms (${data.request.requestSeq})`;
     return info;
 }
 
