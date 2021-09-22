@@ -1,0 +1,62 @@
+{
+    "name": "vscode-post-client",
+    "displayName": "Post Client",
+    "description": "HTTP Client for Visual Studio Code to POST JSON to an API",
+    "version": "0.0.1",
+    "publisher": "friflo",
+    "private": true,
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/friflo/vscode-post-client"
+    },
+    "engines": {
+        "vscode": "^1.26.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "commands": [
+            {
+                "title": "Enable CodeLens",
+                "command": "vscode-post-client.enableCodeLens",
+                "category": "CodeLens Sample"
+            },
+            {
+                "title": "Disable Codelens",
+                "command": "vscode-post-client.disableCodeLens",
+                "category": "CodeLens Sample"
+            }
+        ],
+        "configuration": {
+            "properties": {
+                "vscode-post-client.enableCodeLens": {
+                    "type": "boolean",
+                    "default": true
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "lint": "eslint . --ext .ts,.tsx",
+        "watch": "tsc -watch -p ./"
+    },
+    "dependencies": {
+        "axios": "^0.21.4"
+    },
+    "devDependencies": {
+        "@types/node": "^12.12.0",
+        "@types/vscode": "^1.26.0",
+        "@typescript-eslint/eslint-plugin": "^4.16.0",
+        "@typescript-eslint/parser": "^4.16.0",
+        "eslint": "^7.21.0",
+        "typescript": "^4.3.5"
+    }
+}
