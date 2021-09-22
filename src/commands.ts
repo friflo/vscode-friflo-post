@@ -91,12 +91,15 @@ export async function codelensPost (args: any) {
         window.showErrorMessage(message);
         return;
     }
-    const folder    = workspaceFolder + "/response/";
-    const filePath  = path.normalize(folder + srcBaseName);
+    const dstFolder     = srcFolder;
+    const dstBaseName   = srcBaseName.replace("request.json","response.json");
+
+    const filePath  = path.normalize(dstFolder + "/" + dstBaseName);
+
 
     globalResponseMap[filePath] = response;
 
-    ensureDirectoryExists(folder);
+    ensureDirectoryExists(dstFolder);
     await fs.writeFile(filePath, response.content, 'utf8');
 
     const newFile = Uri.parse("file:" + filePath);

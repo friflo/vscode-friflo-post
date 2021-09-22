@@ -24,7 +24,10 @@ export class CodelensProvider implements vscode.CodeLensProvider {
     public provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
 
         if (vscode.workspace.getConfiguration("vscode-post-client").get("enableCodeLens", true)) {
-            const fileName = path.normalize(document.fileName);
+            const fileName  = path.normalize(document.fileName);
+            if (!fileName.endsWith("request.json")) {
+                return [];
+            }
             const responseMap = globalResponseMap;
             const responseData = responseMap[fileName];
             if (responseData == null) {
