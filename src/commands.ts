@@ -1,4 +1,5 @@
 import {  languages,workspace, Uri, ViewColumn, window } from 'vscode';
+import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as http from 'http';
@@ -31,8 +32,8 @@ export async function responseInfo (args: any) {
 }
 
 const axiosInstance = axios.create({
-    // 3 sec timeout
-    timeout: 3 * 1000,
+    // 5 sec timeout
+    timeout: 5 * 1000,
   
     // keepAlive pools and reuses TCP connections, so it's faster
     httpAgent:  new http.Agent ({ keepAlive: true }),
@@ -61,10 +62,11 @@ export async function codelensPost (args: any) {
     if (!editor) {
         return;
     }
-    const request       = editor.document.getText();
+    const requestBody       = editor.document.getText();
 
     const fileName      = editor.document.fileName;
     const configPath    = getConfigPath(fileName);
+    const srcBaseName   = path.basename(fileName);
     let config: PostClientConfig;
 
     try {
@@ -86,19 +88,74 @@ export async function codelensPost (args: any) {
         return;
     }
     
-    let response: ResponseData | null = null;
+    window.setStatusBarMessage("");
+    const isPrivate = isPrivateIP(config.endpoint);
+    const type      = isPrivate ?  "💻" : "🌐";
+    const shortUrl  = `${type} ${srcBaseName}`;
+
+    /* const waitForFinish = new Promise(() => { const i= 1; });
+
+    window.withProgress({
+        location:       vscode.ProgressLocation.Window,
+        cancellable:    true,
+        title:          `POST ${shortUrl}`
+    }, async (progress, token) => {
+        progress.report({  increment: 0 });
+        await waitForFinish;
+        progress.report({  increment: 0 });
+        // await waitFor(1000 * 1000);
+        // progress.report 
+    }); */
+
+
     const requestData: RequestData = {
         url:            config.endpoint,
         requestSeq: ++requestCount,
         headers:        config.headers,
     };
+    const  response = await executeRequest(requestData, requestBody);
+
+    if (!response)
+        return;
+
+    const workspaceFolder = getWorkspaceFolder();
+    if (workspaceFolder == null) {
+        const message = "Post Client: Working folder not found, open a folder an try again" ;
+        window.showErrorMessage(message);
+        return;
+    }
+
+    let     dstFolder     = path.dirname (fileName) + "/";
+    if (config.responseFolder)
+        dstFolder += config.responseFolder;
+    const dstBaseName   = srcBaseName.replace("request.json","response.json");
+    const filePath  = path.normalize(dstFolder + "/" + dstBaseName);
+
+    globalResponseMap[filePath] = response;
+
+    ensureDirectoryExists(dstFolder);
+    await fs.writeFile(filePath, response.content, 'utf8');
+    console.log(`saved: ${filePath}`);
+
+    const newFile = Uri.parse("file:" + filePath);
+    
+    const document = await workspace.openTextDocument(newFile);
+    await languages.setTextDocumentLanguage(document, "json");
+    await window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
+
+    const status    = `${shortUrl} - ${getInfo(response)}`;
+    window.setStatusBarMessage(status, 10 * 1000);
+}
+
+async function executeRequest(requestData: RequestData, requestBody: string) : Promise<ResponseData | null> {
+    let response: ResponseData | null;
     const startTime = new Date().getTime();
     try {
         const requestConfig: AxiosRequestConfig = {
             transformResponse:  (r) => r,
-            headers:            config.headers,
+            headers:            requestData.headers,
         };
-        const res = await axiosInstance.post<string>(config.endpoint, request, requestConfig);
+        const res = await axiosInstance.post<string>(requestData.url, requestBody, requestConfig);
         const executionTime = new Date().getTime() - startTime;
         response = {
             request:        requestData,
@@ -133,38 +190,7 @@ export async function codelensPost (args: any) {
             };
         }       
     }
-    if (!response)
-        return;
-
-    const workspaceFolder = getWorkspaceFolder();
-    if (workspaceFolder == null) {
-        const message = "Post Client: Working folder not found, open a folder an try again" ;
-        window.showErrorMessage(message);
-        return;
-    }
-    const   srcBaseName   = path.basename(fileName);
-    let     dstFolder     = path.dirname (fileName) + "/";
-    if (config.responseFolder)
-        dstFolder += config.responseFolder;
-    const dstBaseName   = srcBaseName.replace("request.json","response.json");
-    const filePath  = path.normalize(dstFolder + "/" + dstBaseName);
-
-    globalResponseMap[filePath] = response;
-
-    ensureDirectoryExists(dstFolder);
-    await fs.writeFile(filePath, response.content, 'utf8');
-    console.log(`saved: ${filePath}`);
-
-    const newFile = Uri.parse("file:" + filePath);
-    
-    const document = await workspace.openTextDocument(newFile);
-    await languages.setTextDocumentLanguage(document, "json");
-    await window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
-
-    const isPrivate = isPrivateIP(response.request.url);
-    const type      = isPrivate ?  "💻" : "🌐";
-    const status    = `${type} ${srcBaseName} - ${getInfo(response)}`;
-    window.setStatusBarMessage(status, 10 * 1000);
+    return response;
 }
 
 let requestCount = 0;
