@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 
 import axios, { AxiosError } from 'axios';
-import { PostClientConfig, ResponseData } from './types';
+import { PostClientConfig, ResponseData, globalResponseMap } from './types';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -54,14 +54,14 @@ export async function codelensPost (args: any) {
         await fs.writeFile(configPath, configFile, 'utf8');
     }
 
-
     let response: ResponseData | null = null;
     try {
         const res = await axios.post(config.endpoint, request, { transformResponse: (r) => r });
         response = {
             status:     res.status,
             statusText: res.statusText,
-            content:    res.data
+            content:    res.data,
+            headers:    res.headers
         };
     }
     catch (err) {
@@ -70,13 +70,15 @@ export async function codelensPost (args: any) {
             response = {
                 status:     axiosErr.response.status,
                 statusText: axiosErr.response.statusText,
-                content:    axiosErr.response.data
+                content:    axiosErr.response.data,
+                headers:    axiosErr.response.headers
             };
         } else {
             response = {
-                status:  0,
-                statusText: "",
-                content: axiosErr.message
+                status:     0,
+                statusText: axiosErr.message,
+                content:    axiosErr.message,
+                headers:    null
             };
         }       
     }
@@ -90,7 +92,9 @@ export async function codelensPost (args: any) {
         return;
     }
     const folder    = workspaceFolder + "/response/";
-    const filePath  = folder + srcBaseName;
+    const filePath  = path.normalize(folder + srcBaseName);
+
+    globalResponseMap[filePath] = response;
 
     ensureDirectoryExists(folder);
     await fs.writeFile(filePath, response.content, 'utf8');
