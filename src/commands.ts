@@ -37,7 +37,7 @@ export async function codelensPost (args: any) {
     const srcBaseName   = path.basename(srcPath);
     const srcFolder     = path.dirname (srcPath);
 
-    const configPath = srcFolder + "/post-client.json";
+    const configPath = srcFolder + "/post-client";
 
 
     let config: PostClientConfig;
