@@ -23,20 +23,20 @@ export class CodelensProviderResponseInfo implements vscode.CodeLensProvider {
 
         if (vscode.workspace.getConfiguration("vscode-post-client").get("enablePostClient", true)) {
             const fileName  = path.normalize(document.fileName);
-            if (fileName.endsWith("response.json")) {
-                const responseMap = globalResponseMap;
-                const info = responseMap[fileName];
-                if (info) {
-                    this.codeLenses = createCodelens(document);
-                    // const index = this.codeLenses.findIndex(item => item.command?.command == "vscode-post-client.responseInfo");
-                    const contentLength = info.headers["content-length"];
-                    const contentType   = info.headers["content-type"];
-                    const infoStr = `${info.status} ${info.statusText} • length ${contentLength} • ${contentType}`;
-                    const entry = this.codeLenses[0];
-                    (entry as any)["infoStr"] = infoStr;                    
-                    return this.codeLenses;
-                }    
-            }
+            //if (fileName.endsWith("response.json")) {
+            const responseMap = globalResponseMap;
+            const info = responseMap[fileName];
+            if (info) {
+                this.codeLenses = createCodelens(document);
+                // const index = this.codeLenses.findIndex(item => item.command?.command == "vscode-post-client.responseInfo");
+                const contentLength = info.headers["content-length"];
+                const contentType   = info.headers["content-type"];
+                const infoStr = `${info.status} ${info.statusText} • length ${contentLength} • ${contentType}`;
+                const entry = this.codeLenses[0];
+                (entry as any)["infoStr"] = infoStr;                    
+                return this.codeLenses;
+            }    
+            //}
         }
         return [];
     }
