@@ -1,15 +1,12 @@
 import * as vscode from 'vscode';
-import { globalResponseMap } from './types';
 import * as path from 'path';
 import { addCodelens as createCodelens } from './utils';
 
 /**
  * CodelensProvider
  */
-export class CodelensProvider implements vscode.CodeLensProvider {
-
-    private codeLenses: vscode.CodeLens[] = [];
- 
+export class CodelensProvider implements vscode.CodeLensProvider
+{
     private _onDidChangeCodeLenses: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
     public readonly onDidChangeCodeLenses: vscode.Event<void> = this._onDidChangeCodeLenses.event;
 
@@ -24,7 +21,8 @@ export class CodelensProvider implements vscode.CodeLensProvider {
         if (vscode.workspace.getConfiguration("vscode-post-client").get("enableCodeLens", true)) {
             const fileName  = path.normalize(document.fileName);
             if (fileName.endsWith("request.json")) {
-                return this.codeLenses = createCodelens(document);
+                const codeLenses = createCodelens(document);
+                return codeLenses;
             }            
         }
         return [];

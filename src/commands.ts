@@ -72,7 +72,7 @@ export async function codelensPost (args: any) {
             headers:            config.headers
         };
 
-        const res = await axios.post(config.endpoint, request, requestConfig);
+        const res = await axios.post<string>(config.endpoint, request, requestConfig);
         response = {
             status:     res.status,
             statusText: res.statusText,

@@ -25,14 +25,15 @@ export class CodelensProviderResponseInfo implements vscode.CodeLensProvider {
             const fileName  = path.normalize(document.fileName);
             if (fileName.endsWith("response.json")) {
                 const responseMap = globalResponseMap;
-                const responseData = responseMap[fileName];
-                if (responseData) {
+                const info = responseMap[fileName];
+                if (info) {
                     this.codeLenses = createCodelens(document);
-                    /* const index = this.codeLenses.findIndex(item => item.command?.command == "vscode-post-client.responseInfo");
-                    if (index > -1) {
-                        this.codeLenses.splice(index, 1);
-                    }
-                    return this.codeLenses;*/
+                    // const index = this.codeLenses.findIndex(item => item.command?.command == "vscode-post-client.responseInfo");
+                    const contentLength = info.headers["content-length"];
+                    const contentType   = info.headers["content-type"];
+                    const infoStr = `${info.status} ${info.statusText} • length ${contentLength} • ${contentType}`;
+                    const entry = this.codeLenses[0];
+                    (entry as any)["infoStr"] = infoStr;                    
                     return this.codeLenses;
                 }    
             }
@@ -42,11 +43,12 @@ export class CodelensProviderResponseInfo implements vscode.CodeLensProvider {
 
     public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
         if (vscode.workspace.getConfiguration("vscode-post-client").get("enableCodeLens", true)) {
+            const infoStr = (codeLens as any)["infoStr"] as string;
             codeLens.command = {
-                title: "Response Info",
-                tooltip: "POST file content to an API",
-                command: "vscode-post-client.responseInfo",
-                arguments: ["Argument 1", false]
+                title:      infoStr,
+                tooltip:    "POST file content to an API",
+                command:    "vscode-post-client.responseInfo",
+                arguments:  ["Argument 1", false]
             };
             return codeLens;
         }
