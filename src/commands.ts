@@ -90,30 +90,24 @@ export async function codelensPost (args: any) {
     
     window.setStatusBarMessage("");
     const isPrivate = isPrivateIP(config.endpoint);
-    const type      = isPrivate ?  "💻" : "🌐";
-    const shortUrl  = `${type} ${srcBaseName}`;
+    const iconType  = isPrivate ?  "💻" : "🌐";
+    const shortUrl  = `${iconType} ${srcBaseName}`;
 
-    /* const waitForFinish = new Promise(() => { const i= 1; });
+    const requestData: RequestData = {
+        url:            config.endpoint,
+        requestSeq:   ++requestCount,
+        headers:        config.headers,
+    };
 
-    window.withProgress({
+    const response = await window.withProgress({
         location:       vscode.ProgressLocation.Window,
         cancellable:    true,
         title:          `POST ${shortUrl}`
     }, async (progress, token) => {
         progress.report({  increment: 0 });
-        await waitForFinish;
-        progress.report({  increment: 0 });
-        // await waitFor(1000 * 1000);
-        // progress.report 
-    }); */
-
-
-    const requestData: RequestData = {
-        url:            config.endpoint,
-        requestSeq: ++requestCount,
-        headers:        config.headers,
-    };
-    const  response = await executeRequest(requestData, requestBody);
+        const  response = await executeRequest(requestData, requestBody);
+        return response;
+    });    
 
     if (!response)
         return;
@@ -143,7 +137,8 @@ export async function codelensPost (args: any) {
     await languages.setTextDocumentLanguage(document, "json");
     await window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
-    const status    = `${shortUrl} - ${getInfo(response)}`;
+    const iconResult    = response.status == 0 ? "🙁" : iconType;
+    const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
     window.setStatusBarMessage(status, 10 * 1000);
 }
 
