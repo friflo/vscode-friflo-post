@@ -40,7 +40,14 @@
                     "default": true
                 }
             }
-        }
+        },
+        "keybindings": [
+            {
+                "command": "vscode-friflo-post.codelensPost",
+                "key": "ctrl+alt+p",
+                "mac": "shift+cmd+p"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
