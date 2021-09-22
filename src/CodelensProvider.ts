@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { globalResponseMap } from './types';
 import * as path from 'path';
+import { addCodelens as createCodelens } from './utils';
 
 /**
  * CodelensProvider
@@ -8,15 +9,12 @@ import * as path from 'path';
 export class CodelensProvider implements vscode.CodeLensProvider {
 
     private codeLenses: vscode.CodeLens[] = [];
-    private firstChar: RegExp;
-
+ 
     private _onDidChangeCodeLenses: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
     public readonly onDidChangeCodeLenses: vscode.Event<void> = this._onDidChangeCodeLenses.event;
 
     constructor() {
-        this.firstChar= /[^\s\\]/;
-
-        vscode.workspace.onDidChangeConfiguration((_) => {
+         vscode.workspace.onDidChangeConfiguration((_) => {
             this._onDidChangeCodeLenses.fire();
         });
     }
@@ -31,25 +29,15 @@ export class CodelensProvider implements vscode.CodeLensProvider {
             const responseMap = globalResponseMap;
             const responseData = responseMap[fileName];
             if (responseData == null) {
-                this.codeLenses = [];
-                const text = document.getText();
-                const firstChar = new RegExp(this.firstChar);			
-                const matches = firstChar.exec(text);
-                if (matches) {
-                    const line      = document.lineAt(document.positionAt(matches.index).line);
-                    const position  = new vscode.Position(line.lineNumber, 0);
-                    const range     = document.getWordRangeAtPosition(position,firstChar);
-                    if (range) {
-                        this.codeLenses.push(new vscode.CodeLens(range));
-                    }
-                }
+                this.codeLenses = createCodelens(document);
+                return this.codeLenses;
             } else {
                 const index = this.codeLenses.findIndex(item => item.command?.command == "vscode-post-client.codelensPost");
                 if (index > -1) {
                     this.codeLenses.splice(index, 1);
                 }
+                return this.codeLenses;
             }
-            return this.codeLenses;
         }
         return [];
     }
