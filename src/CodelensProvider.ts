@@ -22,22 +22,26 @@ export class CodelensProvider implements vscode.CodeLensProvider
     public async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {
 
         if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
-            const configPath    = getConfigPath(document.fileName);
-            let   endpoint: string | null = null;
-            try {
-                const configFile    = await fs.readFile(configPath,'utf8');
-                const config        = JSON.parse(configFile) as PostClientConfig;
-                endpoint            = config.endpoint;
-                const codeLenses    = createCodelens(document);
-                const entry = codeLenses[0];
-                (entry as any)["endpoint"] = endpoint;
-                return codeLenses;
-            }
-            catch (err) {
+            if (document.fileName.endsWith(".json")) {
+                const configPath    = getConfigPath(document.fileName);
+                let   endpoint: string | null = null;
+                try {
+                    const configFile    = await fs.readFile(configPath,'utf8');
+                    const config        = JSON.parse(configFile) as PostClientConfig;
+                    endpoint            = config.endpoint;
+                    const codeLenses    = createCodelens(document);
+                    const entry = codeLenses[0];
+                    (entry as any)["endpoint"] = endpoint;
+                    return codeLenses;
+                }
+                catch (err) { 
+                    // nothing to do
+                }
                 if (document.fileName.endsWith("request.json")) {
                     return createCodelens(document);
                 }
-            }        
+                return [];
+            }
         }
         return [];
     }
