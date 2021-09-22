@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 
 import axios, { AxiosError } from 'axios';
+import { PostClientConfig, ResponseData } from './types';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -22,11 +23,7 @@ function getWorkspaceFolder() : string | null {
     return null;
 }
 
-class ResponseData {
-    readonly    status:     number;
-    readonly    statusText: string;
-    readonly    content:    string;
-}
+
 
 export async function codelensPost (args: any) {
     // window.showInformationMessage(`CodeLens action clicked with args=${args}`);
@@ -38,11 +35,29 @@ export async function codelensPost (args: any) {
     const request       = editor.document.getText();
     const srcPath       = editor.document.fileName;
     const srcBaseName   = path.basename(srcPath);
+    const srcFolder     = path.dirname (srcPath);
+
+    const configPath = srcFolder + "/post-client.json";
+
+
+    let config: PostClientConfig;
+
+    try {
+        const configFile = await fs.readFile(configPath,'utf8');
+        config = JSON.parse(configFile);
+    }
+    catch (err) {
+        config = {
+            endpoint: 'http://localhost:8080/'
+        };
+        const configFile = JSON.stringify(config, null, 4);
+        await fs.writeFile(configPath, configFile, 'utf8');
+    }
 
 
     let response: ResponseData | null = null;
     try {
-        const res = await axios.post('http://localhost:8010/', request, { transformResponse: (r) => r });
+        const res = await axios.post(config.endpoint, request, { transformResponse: (r) => r });
         response = {
             status:     res.status,
             statusText: res.statusText,
