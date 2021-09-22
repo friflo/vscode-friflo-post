@@ -2,7 +2,7 @@ import {  languages,workspace, Uri, ViewColumn, window } from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { PostClientConfig, ResponseData, globalResponseMap } from './types';
 
 
@@ -51,7 +51,12 @@ export async function codelensPost (args: any) {
 
     let response: ResponseData | null = null;
     try {
-        const res = await axios.post(config.endpoint, request, { transformResponse: (r) => r });
+        const requestConfig: AxiosRequestConfig = {
+            transformResponse:  (r) => r,
+            headers:            config.headers
+        };
+
+        const res = await axios.post(config.endpoint, request, requestConfig);
         response = {
             status:     res.status,
             statusText: res.statusText,
@@ -107,7 +112,10 @@ export async function codelensPost (args: any) {
 
 async function createConfigFile(configPath: string) {
     const config: PostClientConfig = {
-        endpoint: 'http://localhost:8080/'
+        endpoint:     "http://localhost:8080/",
+        headers: {
+            "Content-Type": "application/json"
+        }        
     };
     const configFile = JSON.stringify(config, null, 4);
     await fs.writeFile(configPath, configFile, 'utf8');

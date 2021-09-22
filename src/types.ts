@@ -9,6 +9,11 @@ export class ResponseData {
 
 export const globalResponseMap: { [key: string]: ResponseData } = {};
 
+export class RequestHeaders {
+    readonly    "Content-Type": string;
+}
+
 export class PostClientConfig {
     readonly    endpoint:   string;
+    readonly    headers:    RequestHeaders;
 }
