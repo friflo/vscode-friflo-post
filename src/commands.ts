@@ -146,8 +146,10 @@ export async function codelensPost (args: any) {
     await languages.setTextDocumentLanguage(document, "json");
     await window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
-    window.setStatusBarMessage(getInfo(response), 5 * 1000);
+    window.setStatusBarMessage(`${getInfo(response)} (${requestCount++})`, 5 * 1000);
 }
+
+let requestCount = 0;
 
 async function createConfigFile(configPath: string) {
     const answer = await window.showInformationMessage(
