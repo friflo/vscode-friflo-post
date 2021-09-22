@@ -24,6 +24,10 @@ function getWorkspaceFolder() : string | null {
 }
 
 
+export async function responseInfo (args: any) {
+    console.log("responseInfo");
+}
+
 
 export async function codelensPost (args: any) {
     const editor = window.activeTextEditor;

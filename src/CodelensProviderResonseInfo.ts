@@ -4,9 +4,9 @@ import * as path from 'path';
 import { addCodelens as createCodelens } from './utils';
 
 /**
- * CodelensProvider
+ * CodelensProviderResponseInfo
  */
-export class CodelensProvider implements vscode.CodeLensProvider {
+export class CodelensProviderResponseInfo implements vscode.CodeLensProvider {
 
     private codeLenses: vscode.CodeLens[] = [];
  
@@ -23,9 +23,19 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 
         if (vscode.workspace.getConfiguration("vscode-post-client").get("enableCodeLens", true)) {
             const fileName  = path.normalize(document.fileName);
-            if (fileName.endsWith("request.json")) {
-                return this.codeLenses = createCodelens(document);
-            }            
+            if (fileName.endsWith("response.json")) {
+                const responseMap = globalResponseMap;
+                const responseData = responseMap[fileName];
+                if (responseData) {
+                    this.codeLenses = createCodelens(document);
+                    /* const index = this.codeLenses.findIndex(item => item.command?.command == "vscode-post-client.responseInfo");
+                    if (index > -1) {
+                        this.codeLenses.splice(index, 1);
+                    }
+                    return this.codeLenses;*/
+                    return this.codeLenses;
+                }    
+            }
         }
         return [];
     }
@@ -33,9 +43,9 @@ export class CodelensProvider implements vscode.CodeLensProvider {
     public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
         if (vscode.workspace.getConfiguration("vscode-post-client").get("enableCodeLens", true)) {
             codeLens.command = {
-                title: "POST",
+                title: "Response Info",
                 tooltip: "POST file content to an API",
-                command: "vscode-post-client.codelensPost",
+                command: "vscode-post-client.responseInfo",
                 arguments: ["Argument 1", false]
             };
             return codeLens;
