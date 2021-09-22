@@ -2,7 +2,7 @@ import {  languages,workspace, Uri, ViewColumn, window } from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError } from 'axios';
 
 
 async function ensureDirectoryExists(dir: string) {
