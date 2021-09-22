@@ -156,7 +156,7 @@ async function createConfigFile(configPath: string) {
             window.showTextDocument(document, {
                 viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
         });
-        window.showInformationMessage(`created config: '${configFileName}'`);
+        // window.showInformationMessage(`created config: '${configFileName}'`);
     });
 
 
