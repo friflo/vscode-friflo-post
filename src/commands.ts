@@ -156,7 +156,7 @@ export async function codelensPost (args: any) {
     const isPrivate = isPrivateIP(response.request.url);
     const type      = isPrivate ?  "💻" : "🌐";
     const status    = `${type} ${getInfo(response)} (${++requestCount})`;
-    window.setStatusBarMessage(status, 5 * 1000);
+    window.setStatusBarMessage(status, 10 * 1000);
 }
 
 let requestCount = 0;
