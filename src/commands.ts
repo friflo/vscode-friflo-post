@@ -172,8 +172,9 @@ async function createConfigFile(configPath: string) {
     const configUri = Uri.parse("file:" + configPath);
 
     const document = await workspace.openTextDocument(configUri);
-    languages.setTextDocumentLanguage(document, "json");
-    window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+    await languages.setTextDocumentLanguage(document, "json");
+    await window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+
 
     // window.showInformationMessage(`created config: '${configFileName}'`);
 }
