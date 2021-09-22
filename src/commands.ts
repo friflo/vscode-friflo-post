@@ -69,11 +69,10 @@ export async function codelensPost (args: any) {
         catch (err) {
             window.showInformationMessage(`error in: ${configFileName}. ${err}'`);
             const configUri = Uri.parse("file:" + configPath);
-            workspace.openTextDocument(configUri).then(document => {
-                languages.setTextDocumentLanguage(document, "json");
-                window.showTextDocument(document, {
-                    viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
-            });
+            const document = await workspace.openTextDocument(configUri);
+            languages.setTextDocumentLanguage(document, "json");
+            window.showTextDocument(document, {
+                viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
             return;
         }
     }
@@ -143,44 +142,38 @@ export async function codelensPost (args: any) {
     console.log(`saved: ${filePath}`);
 
     const newFile = Uri.parse("file:" + filePath);
-    workspace.openTextDocument(newFile).then(document => {
-        // document.save().then(() => {
-        // const edit = new WorkspaceEdit();
+    const document = await workspace.openTextDocument(newFile);
+    // document.save().then(() => {
+    // const edit = new WorkspaceEdit();
 
-        languages.setTextDocumentLanguage(document, "json");
-        window.showTextDocument(document, {
-            viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
-    });
+    languages.setTextDocumentLanguage(document, "json");
+    window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 }
 
 async function createConfigFile(configPath: string) {
-    window.showInformationMessage(
+    const answer = await window.showInformationMessage(
         `"config file: '${configFileName}' not found. Create?`,
         ...["Yes", "No"]
-    )
-    .then(async (answer) => {
-        if (answer !== "Yes") {
-            return;
-        }
-        const config: PostClientConfig = {
-            endpoint:     "http://localhost:8080/",
-            headers: {
-                "Content-Type": "application/json",
-                "Connection":   "Keep-Alive"
-            },
-            responseFolder: "response"
-        };
-        const configFile = JSON.stringify(config, null, 4);
-        await fs.writeFile(configPath, configFile, 'utf8');
-    
-        const configUri = Uri.parse("file:" + configPath);
-        workspace.openTextDocument(configUri).then(document => {
-            languages.setTextDocumentLanguage(document, "json");
-            window.showTextDocument(document, {
-                viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
-        });
-        // window.showInformationMessage(`created config: '${configFileName}'`);
-    });
+    );
+    if (answer !== "Yes") {
+        return;
+    }
+    const config: PostClientConfig = {
+        endpoint:     "http://localhost:8080/",
+        headers: {
+            "Content-Type": "application/json",
+            "Connection":   "Keep-Alive"
+        },
+        responseFolder: "response"
+    };
+    const configFile = JSON.stringify(config, null, 4);
+    await fs.writeFile(configPath, configFile, 'utf8');
 
+    const configUri = Uri.parse("file:" + configPath);
 
+    const document = await workspace.openTextDocument(configUri);
+    languages.setTextDocumentLanguage(document, "json");
+    window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+
+    // window.showInformationMessage(`created config: '${configFileName}'`);
 }
