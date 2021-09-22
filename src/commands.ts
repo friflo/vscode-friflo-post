@@ -70,9 +70,8 @@ export async function codelensPost (args: any) {
             window.showInformationMessage(`error in: ${configFileName}. ${err}'`);
             const configUri = Uri.parse("file:" + configPath);
             const document = await workspace.openTextDocument(configUri);
-            languages.setTextDocumentLanguage(document, "json");
-            window.showTextDocument(document, {
-                viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+            await languages.setTextDocumentLanguage(document, "json");
+            await window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
             return;
         }
     }
@@ -146,8 +145,8 @@ export async function codelensPost (args: any) {
     // document.save().then(() => {
     // const edit = new WorkspaceEdit();
 
-    languages.setTextDocumentLanguage(document, "json");
-    window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
+    await languages.setTextDocumentLanguage(document, "json");
+    await window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 }
 
 async function createConfigFile(configPath: string) {
@@ -174,6 +173,7 @@ async function createConfigFile(configPath: string) {
     const document = await workspace.openTextDocument(configUri);
     await languages.setTextDocumentLanguage(document, "json");
     await window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+
 
 
     // window.showInformationMessage(`created config: '${configFileName}'`);
