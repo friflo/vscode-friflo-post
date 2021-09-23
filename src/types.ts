@@ -52,20 +52,20 @@ export function getInfo (data: ResponseData ) : string {
 
 export const globalResponseMap: { [key: string]: ResponseData } = {};
 
-export class RequestHeaders {
-    readonly    "Content-Type": string;
-    readonly    "Connection":   string;
-}
-
-export class ResponseConfig {
-    readonly    folder:         string = ""
-    readonly    ext:            string;
-}
-
 export class Endpoint {
     readonly    fileMatch:      string[];
     readonly    url:            string;
+    readonly    "Content-Type"?:string;
+}
 
+export class RequestHeaders {
+    readonly    "Connection"?:  string;
+    readonly    "Content-Type"?:string;
+}
+
+export class ResponseConfig {
+    readonly    folder:         string;
+    readonly    ext:            string;
 }
 
 export class PostClientConfig {
@@ -74,28 +74,31 @@ export class PostClientConfig {
     readonly    response:       ResponseConfig;
 }
 
+export const standardContentTypes : { [ext: string] : string} = {
+    ".json": "application/json"
+};
+
 export const defaultConfigString = `{
-    "endpoints": [
-        { "fileMatch": ["*.json"], "url": "http://localhost:8080/" }
-    ],
-    "headers": {
-        "Content-Type": "application/json",
-        "Connection":   "Keep-Alive"
-    },
-    "response": {
-        "folder":       "response",
-        "ext":          ".resp"
-    }
+  "endpoints": [
+    { "fileMatch": ["*.json"], "url": "http://localhost:8080/" }
+  ],
+  "headers": {
+    "Connection":   "Keep-Alive"
+  },
+  "response": {
+    "folder":       "response",
+    "ext":          ".resp"
+  }
 }`;
 
 export const defaultConfig : PostClientConfig = JSON.parse(defaultConfigString);
 
-export function getEndpoint(config: PostClientConfig, filePath: string) : string | null {
+export function getEndpoint(config: PostClientConfig, filePath: string) : Endpoint | null {
     
     for (const endpoint of config.endpoints) {
         for (const fileMatch of endpoint.fileMatch) {
             if (minimatch(filePath, fileMatch, { matchBase: true })) {
-                return endpoint.url;
+                return endpoint;
             }
         }
     }

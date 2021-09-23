@@ -32,15 +32,15 @@ export async function addRequestCommand(document: vscode.TextDocument, requestTy
         try {
             const configFile    = await fs.readFile(configPath,'utf8');
             const config        = parseConfig(configFile);
-            const url           = getEndpoint(config, document.fileName);
-            if (url == null) {
+            const endpoint      = getEndpoint(config, document.fileName);
+            if (endpoint == null) {
                 if (!document.fileName.endsWith(".json"))
                     return [];
             }
             const codeLenses    = createCodelens(document);
             const entry = codeLenses[0];
             if (requestType == "POST") {
-                (entry as any)["endpoint"]      = url;
+                (entry as any)["endpoint"]  = endpoint?.url;
             }
             (entry as any)["requestType"]   = requestType;
             return codeLenses;

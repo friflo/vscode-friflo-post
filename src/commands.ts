@@ -6,7 +6,7 @@ import * as http from 'http';
 import * as https from 'https';
 
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
-import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent, defaultConfig, getEndpoint, defaultConfigString } from './types';
+import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent, defaultConfig, getEndpoint, defaultConfigString, RequestHeaders, Endpoint, standardContentTypes } from './types';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -110,7 +110,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         return;
     }
 
-    const endpoint          = getEndpoint(config, fileContent.path);
+    const endpoint = getEndpoint(config, fileContent.path);
     if (endpoint == null) {
         window.showInformationMessage(`found no matching endpoint in: ${configFileName} config.'`);
         await openShowTextFile(configPath, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
@@ -118,7 +118,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     }
     
     const srcBaseName       = path.basename(fileContent.path);
-    const isPrivate         = isPrivateIP(endpoint);
+    const isPrivate         = isPrivateIP(endpoint.url);
     const iconType          = isPrivate ?  "💻" : "🌐";
     const progressStatus    = `${requestType} ${iconType} ${srcBaseName}`;
     await window.setStatusBarMessage("0 sec", 1100);
@@ -128,11 +128,12 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         window.setStatusBarMessage(`${++seconds} sec`, 1100);
     }, 1000);
 
+    const headers = getHeaders(config, endpoint, fileContent.path);
     const requestData: RequestData = {
-        url:            endpoint,
+        url:            endpoint.url,
         type:           requestType,
         requestSeq:   ++requestCount,
-        headers:        config.headers,
+        headers:        headers,
     };
 
     const cancelTokenSource = axios.CancelToken.source();
@@ -181,6 +182,19 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const iconResult    = response.status == 0 ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
     window.setStatusBarMessage(status, 10 * 1000);
+}
+
+function getHeaders (config: PostClientConfig, endpoint: Endpoint, file: string) : RequestHeaders {
+    let contentType = endpoint['Content-Type'];
+    if (!contentType) {
+        const ext = path.extname(file);
+        contentType = standardContentTypes[ext];
+    }
+    const customHeaders:    RequestHeaders = {
+        "Content-Type": contentType
+    };
+    const headers: RequestHeaders = { ...config.headers, ...customHeaders  }; // spread the world :)
+    return headers;
 }
 
 function prefixExt (fileName: string, extPrefix: string) : string {
