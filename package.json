@@ -53,6 +53,12 @@
                     "when": "editorTextFocus && editorLangId == json",
                     "group": "vscode-friflo-post@1"
                 }
+            ],
+            "explorer/context": [
+                {
+                    "command": "vscode-friflo-post.codelensPost",
+                    "when":"true"
+                }
             ]
         },
         "keybindings": [

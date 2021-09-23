@@ -15,6 +15,11 @@ export class ResponseData {
     readonly    executionTime:  number;
 }
 
+export class FileContent {
+    readonly    path:       string;
+    readonly    content:    string;
+}
+
 export function isPrivateIP(urlString: string) : boolean {
     const urlValue = url.parse(urlString);
     if (!urlValue.hostname)

@@ -6,7 +6,7 @@ import * as http from 'http';
 import * as https from 'https';
 
 import axios, { AxiosError, AxiosRequestConfig, CancelTokenSource } from 'axios';
-import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP } from './types';
+import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent } from './types';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -57,16 +57,36 @@ export function isConfigFile(fileName: string) : boolean {
     return baseName == configFileName;
 }
 
-export async function codelensPost (args: any) {
+async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
+    const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;
+    if (selectedFilePath) {
+        const selectedFilePath = args[0][0].fsPath;
+        const content       = await fs.readFile(selectedFilePath,'utf8');
+        const selectedUri   = Uri.parse("file:" + selectedFilePath);
+        const document      = await workspace.openTextDocument(selectedUri);
+        await window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+        return {
+            path:       selectedFilePath,
+            content:    content
+        };
+    }
     const editor = window.activeTextEditor;
     if (!editor) {
-        return;
+        return null;
     }
-    const requestBody       = editor.document.getText();
+    return {
+        path:       editor.document.fileName,
+        content:    editor.document.getText()
+    };
+}
 
-    const fileName      = editor.document.fileName;
-    const configPath    = getConfigPath(fileName);
-    const srcBaseName   = path.basename(fileName);
+export async function codelensPost (...args: any[]) {
+    const fileContent   = await GetFileContent(args);
+    if (fileContent == null)
+        return;
+    const requestBody   = fileContent.content;
+    const configPath    = getConfigPath(fileContent.path);
+    const srcBaseName   = path.basename(fileContent.path);
     let config: PostClientConfig;
 
     try {
@@ -130,7 +150,7 @@ export async function codelensPost (args: any) {
         return;
     }
 
-    let     dstFolder     = path.dirname (fileName) + "/";
+    let     dstFolder     = path.dirname (fileContent.path) + "/";
     if (config.responseFolder)
         dstFolder += config.responseFolder;
     const dstBaseName   = srcBaseName.replace("request.json","response.json");
