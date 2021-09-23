@@ -6,10 +6,8 @@ import * as http from 'http';
 import * as https from 'https';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from './RequestData';
-import { configFileName, defaultConfigString, Endpoint, getConfigPath, getEndpoint, parseConfig, PostConfig, RequestHeaders, standardContentTypes } from './PostConfig';
+import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from './PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder } from './utils';
-
-
 
 const axiosInstance = axios.create({
     // 60 sec timeout
@@ -25,8 +23,6 @@ const axiosInstance = axios.create({
     // cap the maximum content length we'll accept to 50MBs, just in case
     maxContentLength: 50 * 1000 * 1000
   });
-
-
 
 async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
     const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;
@@ -144,19 +140,6 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const iconResult    = response.status == 0 ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
     window.setStatusBarMessage(status, 10 * 1000);
-}
-
-function getHeaders (config: PostConfig, endpoint: Endpoint, file: string) : RequestHeaders {
-    let contentType = endpoint['Content-Type'];
-    if (!contentType) {
-        const ext = path.extname(file);
-        contentType = standardContentTypes[ext];
-    }
-    const customHeaders:    RequestHeaders = {
-        "Content-Type": contentType
-    };
-    const headers: RequestHeaders = { ...config.headers, ...customHeaders  }; // spread the world :)
-    return headers;
 }
 
 function prefixExt (fileName: string, extPrefix: string) : string {

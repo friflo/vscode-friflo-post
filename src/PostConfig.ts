@@ -73,3 +73,16 @@ export function parseConfig(configContent: string): PostConfig {
     config = { ...defaultConfig, ... config };
     return config;
 }
+
+export function getHeaders (config: PostConfig, endpoint: Endpoint, file: string) : RequestHeaders {
+    let contentType = endpoint['Content-Type'];
+    if (!contentType) {
+        const ext = path.extname(file);
+        contentType = standardContentTypes[ext];
+    }
+    const customHeaders:    RequestHeaders = {
+        "Content-Type": contentType
+    };
+    const headers: RequestHeaders = { ...config.headers, ...customHeaders  }; // spread the world :)
+    return headers;
+}
