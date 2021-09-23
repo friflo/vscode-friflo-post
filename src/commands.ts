@@ -6,7 +6,8 @@ import * as http from 'http';
 import * as https from 'https';
 
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
-import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent, defaultConfig, getEndpoint, defaultConfigString, RequestHeaders, Endpoint, standardContentTypes } from './types';
+import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from './types';
+import { configFileName, defaultConfig, defaultConfigString, Endpoint, getEndpoint, PostConfig, RequestHeaders, standardContentTypes } from './PostConfig';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -77,14 +78,12 @@ async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
     };
 }
 
-export function parseConfig(configContent: string): PostClientConfig {
-    let config: PostClientConfig;
+export function parseConfig(configContent: string): PostConfig {
+    let config: PostConfig;
     config = JSON.parse(configContent);
     config = { ...defaultConfig, ... config };
     return config;
 }
-
-export type RequestType = "POST" | "PUT";
 
 export async function executeRequest (requestType: RequestType, ...args: any[]) {
     const fileContent   = await GetFileContent(args);
@@ -92,7 +91,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         return;
     const requestBody   = fileContent.content;
     const configPath    = getConfigPath(fileContent.path);
-    let config: PostClientConfig;
+    let config: PostConfig;
 
     try {
         const configFile = await fs.readFile(configPath,'utf8');
@@ -184,7 +183,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     window.setStatusBarMessage(status, 10 * 1000);
 }
 
-function getHeaders (config: PostClientConfig, endpoint: Endpoint, file: string) : RequestHeaders {
+function getHeaders (config: PostConfig, endpoint: Endpoint, file: string) : RequestHeaders {
     let contentType = endpoint['Content-Type'];
     if (!contentType) {
         const ext = path.extname(file);

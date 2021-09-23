@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
-import { getConfigPath, isConfigFile, parseConfig, RequestType } from './commands';
-import { getEndpoint, getInfo, globalResponseMap } from './types';
-import { promises as fs } from 'fs';
 import * as path from 'path';
+import { promises as fs } from 'fs';
+import { getConfigPath, isConfigFile, parseConfig } from './commands';
+import { getInfo, globalResponseMap, RequestType } from './types';
+import { getEndpoint } from './PostConfig';
 
 const firstCharRegEx = /[^\s\\]/;
 

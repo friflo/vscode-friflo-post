@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { RequestType } from './commands';
+import { RequestType } from './types';
 import { addResponseInfoCommand, resolveResponseInfoCommand } from './utils';
 
 /**
