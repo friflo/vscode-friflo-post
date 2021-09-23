@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as http from 'http';
 import * as https from 'https';
 
-import axios, { AxiosError, AxiosRequestConfig, CancelTokenSource } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent, defaultConfig, getEndpoint } from './types';
 
 
@@ -84,7 +84,9 @@ export function parseConfig(configContent: string): PostClientConfig {
     return config;
 }
 
-export async function codelensPost (...args: any[]) {
+export type RequestType = "POST";
+
+export async function codelensPost (requestType: RequestType , ...args: any[]) {
     const fileContent   = await GetFileContent(args);
     if (fileContent == null)
         return;
@@ -124,7 +126,7 @@ export async function codelensPost (...args: any[]) {
     const srcBaseName       = path.basename(fileContent.path);
     const isPrivate         = isPrivateIP(endpoint);
     const iconType          = isPrivate ?  "💻" : "🌐";
-    const progressStatus    = `POST ${iconType} ${srcBaseName}`;
+    const progressStatus    = `${requestType} ${iconType} ${srcBaseName}`;
     await window.setStatusBarMessage("0 sec", 1100);
 
     let seconds = 0;
@@ -134,6 +136,7 @@ export async function codelensPost (...args: any[]) {
 
     const requestData: RequestData = {
         url:            endpoint,
+        type:           requestType,
         requestSeq:   ++requestCount,
         headers:        config.headers,
     };
@@ -208,7 +211,14 @@ async function executeRequest(requestData: RequestData, requestBody: string, can
             headers:            requestData.headers,
             cancelToken:        cancelTokenSource.token
         };
-        const res = await axiosInstance.post<string>(requestData.url, requestBody, requestConfig);
+        let res: AxiosResponse<string>;
+        switch (requestData.type) {
+            case "POST":
+                res = await axiosInstance.post<string>(requestData.url, requestBody, requestConfig);
+                break;
+            default:
+                throw "Unsupported request type: " + requestData.type;
+        }        
         const executionTime = new Date().getTime() - startTime;
         response = {
             request:        requestData,

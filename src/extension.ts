@@ -28,7 +28,7 @@ export function activate(context: ExtensionContext) {
     });
 
     commands.registerCommand("vscode-friflo-post.codelensPost", async (args: any) => {
-        await codelensPost(args);
+        await codelensPost("POST", args);
     });
 
     commands.registerCommand("vscode-friflo-post.responseInfo", async (args: any) => {

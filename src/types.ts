@@ -1,9 +1,11 @@
 import * as url from "url";
 import * as minimatch  from "minimatch";
+import { RequestType } from "./commands";
 
 
 export class RequestData {
     readonly    url:            string;
+    readonly    type:           RequestType;
     readonly    requestSeq:     number;
     readonly    headers:        any;
 }
