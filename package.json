@@ -36,7 +36,11 @@
                 "title": "Disable friflo POST",
                 "command": "vscode-friflo-post.disablePostClient",
                 "category": "friflo POST"
-            }
+            },
+            {
+				"command": "vscode-friflo-post.responseInfo",
+				"title": "Show Response Info"
+			}
         ],
         "configuration": {
             "properties": {
@@ -52,7 +56,12 @@
                     "command": "vscode-friflo-post.codelensPost",
                     "when": "editorTextFocus && editorLangId == json",
                     "group": "vscode-friflo-post@1"
-                }
+                },
+                {
+					"command": "vscode-friflo-post.responseInfo",
+					"when": "editorHasReferenceProvider",
+					"group": "navigation@1.31"
+				}
             ],
             "explorer/context": [
                 {
