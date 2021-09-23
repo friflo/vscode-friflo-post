@@ -38,7 +38,7 @@
                 "category": "friflo POST"
             },
             {
-				"command": "vscode-friflo-post.responseInfo",
+				"command": "vscode-friflo-post.showInfo",
 				"title": "Show Response Info"
 			}
         ],
@@ -58,7 +58,7 @@
                     "group": "vscode-friflo-post@1"
                 },
                 {
-					"command": "vscode-friflo-post.responseInfo",
+					"command": "vscode-friflo-post.showInfo",
 					"when": "editorHasReferenceProvider",
 					"group": "navigation@1.31"
 				}
