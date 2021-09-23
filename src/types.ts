@@ -59,4 +59,4 @@ export class PostClientConfig {
     readonly    responseFolder?: string;
 }
 
-export const configFileName  =".post-client.json";
+export const configFileName  =".post-client";
