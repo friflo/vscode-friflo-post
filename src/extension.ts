@@ -14,14 +14,12 @@ export function activate(context: ExtensionContext) {
     const codelensRequestPost       = new CodelensRequest     ('POST', "codelensPost");
     const codelensRequestPut        = new CodelensRequest     ('PUT',  "codelensPut");
 
-    const codelensResponseInfoPost  = new CodelensResponseInfo('POST', "responseInfoPost");
-    const codelensResponseInfoPut   = new CodelensResponseInfo('PUT',  "responseInfoPut");
+    const codelensResponseInfoPost  = new CodelensResponseInfo('POST', "responseInfo");
 
     languages.registerCodeLensProvider("*", codelensRequestPost);
     languages.registerCodeLensProvider("*", codelensRequestPut);
 
     languages.registerCodeLensProvider("*", codelensResponseInfoPost);
-    languages.registerCodeLensProvider("*", codelensResponseInfoPut);
 
     commands.registerCommand("vscode-friflo-post.enablePostClient", () => {
         workspace.getConfiguration("vscode-friflo-post").update("enablePostClient", true, true);
@@ -39,12 +37,8 @@ export function activate(context: ExtensionContext) {
         await executeRequest("PUT", args);
     });
 
-    commands.registerCommand("vscode-friflo-post.responseInfoPost", async (args: any) => {
-        await executeResponseInfoPost("POST", args);
-    });
-
-    commands.registerCommand("vscode-friflo-post.responseInfoPut", async (args: any) => {
-        await executeResponseInfoPost("PUT", args);
+    commands.registerCommand("vscode-friflo-post.responseInfo", async (args: any) => {
+        await executeResponseInfoPost(args);
     });
 }
 

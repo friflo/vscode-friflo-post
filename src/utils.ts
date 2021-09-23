@@ -34,9 +34,8 @@ export async function addRequestCommand(document: vscode.TextDocument, requestTy
             const config        = parseConfig(configFile);
             const url           = getEndpoint(config, document.fileName);
             if (url == null) {
-                if (document.fileName.endsWith(".json"))
-                    return createCodelens(document);
-                return [];
+                if (!document.fileName.endsWith(".json"))
+                    return [];
             }
             const codeLenses    = createCodelens(document);
             const entry = codeLenses[0];

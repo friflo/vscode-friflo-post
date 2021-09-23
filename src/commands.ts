@@ -27,8 +27,8 @@ function getWorkspaceFolder() : string | null {
 }
 
 
-export async function executeResponseInfoPost (requestType: RequestType, args: any) {
-    console.log("responseInfo: " + requestType);
+export async function executeResponseInfoPost (args: any) {
+    console.log("responseInfo");
 }
 
 const axiosInstance = axios.create({
