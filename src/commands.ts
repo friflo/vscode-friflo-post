@@ -166,7 +166,7 @@ export async function codelensPost (...args: any[]) {
 
     let     dstFolder     = path.dirname (fileContent.path) + "/";
 
-    let filePath      = addExt (fileContent.path, config.response.ext);
+    let filePath      = prefixExt (fileContent.path, config.response.ext);
     if (config.response.folder) {
         dstFolder   += config.response.folder + "/";
         filePath    = dstFolder + path.basename(filePath);
@@ -190,10 +190,13 @@ export async function codelensPost (...args: any[]) {
     window.setStatusBarMessage(status, 10 * 1000);
 }
 
-function addExt (fileName: string, addExt: string) : string {
-    if (addExt)
-        return `${fileName}${addExt}`;
-    return fileName;
+function prefixExt (fileName: string, extPrefix: string) : string {
+    if (!extPrefix) {
+        return fileName;
+    }
+    const ext               = path.extname(fileName);
+    const fileWithoutExt    =  fileName.substring(0, fileName.length - ext.length);
+    return `${fileWithoutExt}${extPrefix}${ext}`;
 }
 
 async function executeRequest(requestData: RequestData, requestBody: string, cancelTokenSource: CancelTokenSource) : Promise<ResponseData | null> {
