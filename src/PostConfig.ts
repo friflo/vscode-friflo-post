@@ -23,6 +23,9 @@ export class PostConfig {
     readonly    response:       ResponseConfig;
 }
 
+/**
+ * Note! language specific files types must only be used here - nowhere else.
+ */
 export const standardContentTypes : { [ext: string] : string} = {
     ".json": "application/json"
 };
