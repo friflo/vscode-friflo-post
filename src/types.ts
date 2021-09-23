@@ -74,7 +74,7 @@ export const defaultConfig : PostClientConfig = {
     },
     response: {
         folder: "response",
-        ext:    ".resp",
+        ext:    "",
     }
 };
 

@@ -192,7 +192,7 @@ export async function codelensPost (...args: any[]) {
 
 function addExt (fileName: string, addExt: string) : string {
     if (addExt)
-        return `${fileName}{addExt}`;
+        return `${fileName}${addExt}`;
     return fileName;
 }
 
