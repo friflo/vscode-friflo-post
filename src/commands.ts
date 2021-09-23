@@ -151,10 +151,12 @@ export async function codelensPost (...args: any[]) {
     }
 
     let     dstFolder     = path.dirname (fileContent.path) + "/";
+
+    let filePath      = prefixExt (fileContent.path, "~resp");
     if (config.responseFolder) {
-        dstFolder += config.responseFolder;
+        dstFolder   += config.responseFolder + "/";
+        filePath    = dstFolder + path.basename(filePath);
     }
-    const filePath      = prefixExt (fileContent.path, "~resp");
     const filePathNorm  = path.normalize(filePath);
 
     globalResponseMap[filePathNorm] = response;
