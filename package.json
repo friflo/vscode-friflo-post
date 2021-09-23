@@ -1,7 +1,7 @@
 {
     "name": "vscode-friflo-post",
     "displayName": "friflo POST",
-    "description": "HTTP Client for Visual Studio Code to POST JSON to an API",
+    "description": "HTTP Client for Visual Studio Code to POST JSON, XML, ... to a REST API",
     "version": "0.0.1",
     "publisher": "friflo",
     "private": true,
