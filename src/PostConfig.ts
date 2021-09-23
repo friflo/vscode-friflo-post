@@ -1,5 +1,6 @@
 import * as minimatch  from "minimatch";
 import * as path from 'path';
+import { standardContentTypes } from "./standardContentTypes";
 
 export class Endpoint {
     readonly    fileMatch:      string[];
@@ -23,12 +24,6 @@ export class PostConfig {
     readonly    response:       ResponseConfig;
 }
 
-/**
- * Note! language specific files types must only be used here - nowhere else.
- */
-export const standardContentTypes : { [ext: string] : string} = {
-    ".json": "application/json"
-};
 
 export const defaultConfigString = `{
   "endpoints": [
