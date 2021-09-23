@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { getInfo, globalResponseMap } from './types';
 import * as path from 'path';
-import { addCodelens as createCodelens } from './utils';
+import { createCodelens } from './utils';
 
 /**
  * CodelensResponseInfo
