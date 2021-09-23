@@ -5,9 +5,9 @@ import { getConfigPath, isConfigFile, parseConfig } from './commands';
 import { getEndpoint } from './types';
 
 /**
- * CodelensProvider
+ * CodelensPost
  */
-export class CodelensProvider implements vscode.CodeLensProvider
+export class CodelensPost implements vscode.CodeLensProvider
 {
     private _onDidChangeCodeLenses: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
     public readonly onDidChangeCodeLenses: vscode.Event<void> = this._onDidChangeCodeLenses.event;

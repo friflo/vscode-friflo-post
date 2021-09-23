@@ -4,9 +4,9 @@ import * as path from 'path';
 import { addCodelens as createCodelens } from './utils';
 
 /**
- * CodelensProviderResponseInfo
+ * CodelensResponseInfo
  */
-export class CodelensProviderResponseInfo implements vscode.CodeLensProvider {
+export class CodelensResponseInfo implements vscode.CodeLensProvider {
 
     private codeLenses: vscode.CodeLens[] = [];
  

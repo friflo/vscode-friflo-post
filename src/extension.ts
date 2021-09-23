@@ -1,8 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
-import { CodelensProvider } from './CodelensProvider';
-import { CodelensProviderResponseInfo } from './CodelensProviderResponseInfo';
+import { CodelensPost } from './CodelensPost';
+import { CodelensResponseInfo } from './CodelensResponseInfo';
 import { codelensPost, responseInfo } from './commands';
 
 // this method is called when your extension is activated
@@ -11,8 +11,8 @@ import { codelensPost, responseInfo } from './commands';
 let disposables: Disposable[] = [];
 
 export function activate(context: ExtensionContext) {
-    const codelensProvider      = new CodelensProvider();
-    const codelensResponseInfo  = new CodelensProviderResponseInfo();
+    const codelensProvider      = new CodelensPost();
+    const codelensResponseInfo  = new CodelensResponseInfo();
 
     languages.registerCodeLensProvider("*", codelensProvider);
     languages.registerCodeLensProvider("*", codelensResponseInfo);
