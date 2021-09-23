@@ -1,3 +1,6 @@
+// Copyright (c) Ullrich Praetz. All rights reserved.
+// See LICENSE file in the project root for full license information.
+
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';

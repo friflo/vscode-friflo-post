@@ -1,3 +1,6 @@
+// Copyright (c) Ullrich Praetz. All rights reserved.
+// See LICENSE file in the project root for full license information.
+
 import { promises as fs } from 'fs';
 import { languages, TextDocumentShowOptions, TextEditor, Uri, window, workspace } from 'vscode';
 

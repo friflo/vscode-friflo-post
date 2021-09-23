@@ -1,5 +1,7 @@
-import * as url from "url";
+// Copyright (c) Ullrich Praetz. All rights reserved.
+// See LICENSE file in the project root for full license information.
 
+import * as url from "url";
 
 export type RequestType = "POST" | "PUT";
 
