@@ -86,7 +86,6 @@ export async function codelensPost (...args: any[]) {
         return;
     const requestBody   = fileContent.content;
     const configPath    = getConfigPath(fileContent.path);
-    const srcBaseName   = path.basename(fileContent.path);
     let config: PostClientConfig;
 
     try {
@@ -108,6 +107,7 @@ export async function codelensPost (...args: any[]) {
         return;
     }
     
+    const srcBaseName       = path.basename(fileContent.path);
     const isPrivate         = isPrivateIP(config.endpoint);
     const iconType          = isPrivate ?  "💻" : "🌐";
     const progressStatus    = `POST ${iconType} ${srcBaseName}`;
@@ -151,12 +151,13 @@ export async function codelensPost (...args: any[]) {
     }
 
     let     dstFolder     = path.dirname (fileContent.path) + "/";
-    if (config.responseFolder)
+    if (config.responseFolder) {
         dstFolder += config.responseFolder;
-    const dstBaseName   = srcBaseName.replace("request.json","response.json");
-    const filePath  = path.normalize(dstFolder + "/" + dstBaseName);
+    }
+    const filePath      = prefixExt (fileContent.path, "~resp");
+    const filePathNorm  = path.normalize(filePath);
 
-    globalResponseMap[filePath] = response;
+    globalResponseMap[filePathNorm] = response;
 
     ensureDirectoryExists(dstFolder);
     await fs.writeFile(filePath, response.content, 'utf8');
@@ -171,6 +172,12 @@ export async function codelensPost (...args: any[]) {
     const iconResult    = response.status == 0 ? "🙁" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
     window.setStatusBarMessage(status, 10 * 1000);
+}
+
+function prefixExt (fileName: string, extPrefix: string) : string {
+    const ext               = path.extname(fileName);
+    const fileWithoutExt    =  fileName.substring(0, fileName.length - ext.length);
+    return `${fileWithoutExt}${extPrefix}${ext}`;
 }
 
 async function executeRequest(requestData: RequestData, requestBody: string, cancelTokenSource: CancelTokenSource) : Promise<ResponseData | null> {
