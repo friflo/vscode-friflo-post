@@ -61,6 +61,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
             config = parseConfig(configFile);
         }
         catch (err) {
+            // dont await
             window.showInformationMessage(`error in: ${configFileName} config. ${err}'`);
             await openShowConfigFile (configPath);
             return;
@@ -73,6 +74,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
 
     const endpoint = getEndpoint(config, fileContent.path);
     if (endpoint == null) {
+        // dont await
         window.showInformationMessage(`found no matching endpoint in: ${configFileName} config.'`);
         await openShowConfigFile(configPath);
         return;
@@ -82,7 +84,8 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const isPrivate         = isPrivateIP(endpoint.url);
     const iconType          = isPrivate ?  "💻" : "🌐";
     const progressStatus    = `${requestType} ${iconType} ${srcBaseName}`;
-    await window.setStatusBarMessage("0 sec", 1100);
+    // dont await
+    window.setStatusBarMessage("0 sec", 1100);
 
     let seconds = 0;
     const interval = setInterval(() => {
@@ -118,8 +121,9 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
 
     const workspaceFolder = getWorkspaceFolder();
     if (workspaceFolder == null) {
-        const message = "Post Client: Working folder not found, open a folder an try again" ;
-        await window.showErrorMessage(message);
+        const message = "Working folder not found, open a folder and try again" ;
+        // dont await
+        window.showErrorMessage(message);
         return;
     }
 
@@ -136,12 +140,13 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
 
     ensureDirectoryExists(dstFolder);
     await fs.writeFile(filePath, response.content, 'utf8');
-    console.log(`saved: ${filePath}`);
+    // console.log(`saved: ${filePath}`);
 
     await openShowTextFile(filePath, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
     const iconResult    = response.status == 0 ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
+    // dont await
     window.setStatusBarMessage(status, 10 * 1000);
 }
 
@@ -183,7 +188,7 @@ async function executeHttpRequest(requestData: RequestData, requestBody: string,
             headers:        res.headers,
             executionTime:  executionTime,
         };
-        console.log(res.headers, `${executionTime} ms`);
+        // console.log(res.headers, `${executionTime} ms`);
     }
     catch (err) {
         const executionTime = new Date().getTime() - startTime;
@@ -226,10 +231,9 @@ async function createConfigFile(configPath: string) : Promise<boolean> {
     await fs.writeFile(configPath, defaultConfigString, 'utf8');
 
     await openShowConfigFile(configPath);
-    // window.showInformationMessage(`created config: '${configFileName}'`);
     return true;
 }
 
 async function openShowConfigFile(configPath: string) : Promise<vscode.TextEditor> {
-    return openShowTextFile( configPath, "json", { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+    return await openShowTextFile( configPath, "json", { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
 }
