@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
 import { CodelensPost } from './CodelensPost';
-import { CodelensResponseInfo } from './CodelensResponseInfo';
+import { CodelensResponseInfoPost } from './CodelensResponseInfoPost';
 import { codelensPost, responseInfo } from './commands';
 
 // this method is called when your extension is activated
@@ -12,7 +12,7 @@ let disposables: Disposable[] = [];
 
 export function activate(context: ExtensionContext) {
     const codelensProvider      = new CodelensPost();
-    const codelensResponseInfo  = new CodelensResponseInfo();
+    const codelensResponseInfo  = new CodelensResponseInfoPost();
 
     languages.registerCodeLensProvider("*", codelensProvider);
     languages.registerCodeLensProvider("*", codelensResponseInfo);
