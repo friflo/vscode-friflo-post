@@ -23,8 +23,8 @@ export function createCodelens(document: vscode.TextDocument) : vscode.CodeLens[
 }
 
 // ------------------------------ request: POST
-export async function addRequestCommand(document: vscode.TextDocument, commandName: string) : Promise<vscode.CodeLens[]>{
-    if (vscode.workspace.getConfiguration(commandName).get("enablePostClient", true)) {
+export async function addRequestCommand(document: vscode.TextDocument) : Promise<vscode.CodeLens[]>{
+    if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
         const isConfig = isConfigFile(document.fileName);
         if (isConfig)
             return [];
@@ -51,7 +51,7 @@ export async function addRequestCommand(document: vscode.TextDocument, commandNa
 }
 
 export function resolveRequestCommand(codeLens: vscode.CodeLens, commandName: string) : vscode.CodeLens | null {
-    if (vscode.workspace.getConfiguration(commandName).get("enablePostClient", true)) {
+    if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
         const   endpoint    = (codeLens as any)["endpoint"] as string | null;
         let     tooltip     = `POST file content an REST API`;
         if (endpoint) {
@@ -60,7 +60,7 @@ export function resolveRequestCommand(codeLens: vscode.CodeLens, commandName: st
         codeLens.command = {
             title:      endpoint ? `POST ${endpoint}` : "POST",
             tooltip:    tooltip,
-            command:    commandName + ".codelensPost",
+            command:    "vscode-friflo-post." + commandName,
             // arguments: ["Argument 1", false]
         };
         return codeLens;
@@ -69,8 +69,8 @@ export function resolveRequestCommand(codeLens: vscode.CodeLens, commandName: st
 }
 
 // ------------------------------ response info
-export async function addResponseInfoCommand(document: vscode.TextDocument, commandName: string) : Promise<vscode.CodeLens[]>{
-    if (vscode.workspace.getConfiguration(commandName).get("enablePostClient", true)) {
+export async function addResponseInfoCommand(document: vscode.TextDocument) : Promise<vscode.CodeLens[]>{
+    if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
         const fileName  = path.normalize(document.fileName);
         //if (fileName.endsWith("response.json")) {
         const responseMap = globalResponseMap;
@@ -88,12 +88,12 @@ export async function addResponseInfoCommand(document: vscode.TextDocument, comm
 }
 
 export function resolveResponseInfoCommand(codeLens: vscode.CodeLens, commandName: string) : vscode.CodeLens | null {
-    if (vscode.workspace.getConfiguration(commandName).get("enablePostClient", true)) {
+    if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
         const infoStr = (codeLens as any)["infoStr"] as string;
         codeLens.command = {
             title:      infoStr,
             tooltip:    "Show HTTP response headers",
-            command:    commandName + ".responseInfo",
+            command:    "vscode-friflo-post." + commandName,
             // arguments:  ["Argument 1", false]
         };
         return codeLens;

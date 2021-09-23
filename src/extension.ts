@@ -11,20 +11,18 @@ import { executeRequest, executeResponseInfoPost } from './commands';
 let disposables: Disposable[] = [];
 
 export function activate(context: ExtensionContext) {
-    const codelensRequestPost       = new CodelensRequest     ('POST', "vscode-friflo-post");
-    const codelensResponseInfoPost  = new CodelensResponseInfo('POST', "vscode-friflo-post");
+    const codelensRequestPost       = new CodelensRequest     ('POST', "codelensPost");
+    const codelensResponseInfoPost  = new CodelensResponseInfo('POST', "responseInfo");
 
     languages.registerCodeLensProvider("*", codelensRequestPost);
     languages.registerCodeLensProvider("*", codelensResponseInfoPost);
 
     commands.registerCommand("vscode-friflo-post.enablePostClient", () => {
-        workspace.getConfiguration("vscode-friflo-post").  update("enablePostClient", true, true);
-        workspace.getConfiguration("vscode-response-info").update("enablePostClient", true, true);
+        workspace.getConfiguration("vscode-friflo-post").update("enablePostClient", true, true);
     });
 
     commands.registerCommand("vscode-friflo-post.disablePostClient", () => {
-        workspace.getConfiguration("vscode-friflo-post").  update("enablePostClient", false, true);
-        workspace.getConfiguration("vscode-response-info").update("enablePostClient", false, true);
+        workspace.getConfiguration("vscode-friflo-post").update("enablePostClient", false, true);
     });
 
     commands.registerCommand("vscode-friflo-post.codelensPost", async (args: any) => {
