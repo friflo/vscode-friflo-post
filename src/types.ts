@@ -35,7 +35,7 @@ export function isPrivateIP(urlString: string) : boolean {
 export function getInfo (data: ResponseData ) : string {
     const contentLength = data.headers && data.headers["content-length"];
     // const contentType   = data.headers["content-type"];
-    const length = contentLength ? ` • len ${contentLength}` : "";
+    const length = contentLength ? ` • length ${contentLength}` : "";
     let status: string;
     if (data.status == 0) {
         status = data.content;
