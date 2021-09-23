@@ -11,11 +11,11 @@ import { executePost, executeResponseInfoPost } from './commands';
 let disposables: Disposable[] = [];
 
 export function activate(context: ExtensionContext) {
-    const codelensProvider      = new CodelensPost();
-    const codelensResponseInfo  = new CodelensResponseInfoPost();
+    const codelensPost              = new CodelensPost();
+    const codelensResponseInfoPost  = new CodelensResponseInfoPost();
 
-    languages.registerCodeLensProvider("*", codelensProvider);
-    languages.registerCodeLensProvider("*", codelensResponseInfo);
+    languages.registerCodeLensProvider("*", codelensPost);
+    languages.registerCodeLensProvider("*", codelensResponseInfoPost);
 
     commands.registerCommand("vscode-friflo-post.enablePostClient", () => {
         workspace.getConfiguration("vscode-friflo-post").  update("enablePostClient", true, true);
@@ -32,7 +32,7 @@ export function activate(context: ExtensionContext) {
     });
 
     commands.registerCommand("vscode-friflo-post.responseInfo", async (args: any) => {
-        await executeResponseInfoPost(args);
+        await executeResponseInfoPost("POST", args);
     });
 }
 

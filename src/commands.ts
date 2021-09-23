@@ -27,8 +27,8 @@ function getWorkspaceFolder() : string | null {
 }
 
 
-export async function executeResponseInfoPost (args: any) {
-    console.log("responseInfo");
+export async function executeResponseInfoPost (requestType: RequestType, args: any) {
+    console.log("responseInfo: " + requestType);
 }
 
 const axiosInstance = axios.create({
@@ -86,7 +86,7 @@ export function parseConfig(configContent: string): PostClientConfig {
 
 export type RequestType = "POST";
 
-export async function executePost (requestType: RequestType , ...args: any[]) {
+export async function executePost (requestType: RequestType, ...args: any[]) {
     const fileContent   = await GetFileContent(args);
     if (fileContent == null)
         return;
