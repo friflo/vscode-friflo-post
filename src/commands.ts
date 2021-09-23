@@ -191,9 +191,9 @@ export async function codelensPost (...args: any[]) {
 }
 
 function addExt (fileName: string, addExt: string) : string {
-    const ext               = path.extname(fileName);
-    const fileWithoutExt    = fileName.substring(0, fileName.length - ext.length);
-    return `${fileWithoutExt}${ext}${addExt}`;
+    if (addExt)
+        return `${fileName}{addExt}`;
+    return fileName;
 }
 
 async function executeRequest(requestData: RequestData, requestBody: string, cancelTokenSource: CancelTokenSource) : Promise<ResponseData | null> {
