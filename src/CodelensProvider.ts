@@ -34,7 +34,7 @@ export class CodelensProvider implements vscode.CodeLensProvider
                     return codeLenses;
                 }
                 catch (err) { 
-                    return createCodelens(document);
+                    // return createCodelens(document);
                 }
             }
         }
