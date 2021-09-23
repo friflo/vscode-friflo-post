@@ -178,7 +178,7 @@ export async function codelensPost (...args: any[]) {
     await languages.setTextDocumentLanguage(document, "json");
     await window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
-    const iconResult    = response.status == 0 ? "🙁" : iconType;
+    const iconResult    = response.status == 0 ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
     window.setStatusBarMessage(status, 10 * 1000);
 }
