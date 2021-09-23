@@ -27,7 +27,7 @@ function getWorkspaceFolder() : string | null {
 }
 
 
-export async function responseInfo (args: any) {
+export async function executeResponseInfoPost (args: any) {
     console.log("responseInfo");
 }
 
@@ -86,7 +86,7 @@ export function parseConfig(configContent: string): PostClientConfig {
 
 export type RequestType = "POST";
 
-export async function codelensPost (requestType: RequestType , ...args: any[]) {
+export async function executePost (requestType: RequestType , ...args: any[]) {
     const fileContent   = await GetFileContent(args);
     if (fileContent == null)
         return;

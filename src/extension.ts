@@ -3,7 +3,7 @@
 import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
 import { CodelensPost } from './CodelensPost';
 import { CodelensResponseInfoPost } from './CodelensResponseInfoPost';
-import { codelensPost, responseInfo } from './commands';
+import { executePost, executeResponseInfoPost } from './commands';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -28,11 +28,11 @@ export function activate(context: ExtensionContext) {
     });
 
     commands.registerCommand("vscode-friflo-post.codelensPost", async (args: any) => {
-        await codelensPost("POST", args);
+        await executePost("POST", args);
     });
 
     commands.registerCommand("vscode-friflo-post.responseInfo", async (args: any) => {
-        await responseInfo(args);
+        await executeResponseInfoPost(args);
     });
 }
 
