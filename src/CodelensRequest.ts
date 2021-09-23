@@ -21,7 +21,7 @@ export class CodelensRequest implements vscode.CodeLensProvider
     }
 
     public async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {        
-        return await addRequestCommand(document);
+        return await addRequestCommand(document, this.requestType);
     }
 
     public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {

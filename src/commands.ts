@@ -84,7 +84,7 @@ export function parseConfig(configContent: string): PostClientConfig {
     return config;
 }
 
-export type RequestType = "POST";
+export type RequestType = "POST" | "PUT";
 
 export async function executeRequest (requestType: RequestType, ...args: any[]) {
     const fileContent   = await GetFileContent(args);
@@ -215,6 +215,9 @@ async function executeHttpRequest(requestData: RequestData, requestBody: string,
         switch (requestData.type) {
             case "POST":
                 res = await axiosInstance.post<string>(requestData.url, requestBody, requestConfig);
+                break;
+            case "PUT":
+                res = await axiosInstance.put<string>(requestData.url, requestBody, requestConfig);
                 break;
             default:
                 throw "Unsupported request type: " + requestData.type;

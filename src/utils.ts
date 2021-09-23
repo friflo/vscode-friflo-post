@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { getConfigPath, isConfigFile, parseConfig } from './commands';
+import { getConfigPath, isConfigFile, parseConfig, RequestType } from './commands';
 import { getEndpoint, getInfo, globalResponseMap } from './types';
 import { promises as fs } from 'fs';
 import * as path from 'path';
@@ -23,7 +23,7 @@ export function createCodelens(document: vscode.TextDocument) : vscode.CodeLens[
 }
 
 // ------------------------------ request: POST
-export async function addRequestCommand(document: vscode.TextDocument) : Promise<vscode.CodeLens[]>{
+export async function addRequestCommand(document: vscode.TextDocument, requestType: RequestType) : Promise<vscode.CodeLens[]>{
     if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
         const isConfig = isConfigFile(document.fileName);
         if (isConfig)
@@ -40,25 +40,29 @@ export async function addRequestCommand(document: vscode.TextDocument) : Promise
             }
             const codeLenses    = createCodelens(document);
             const entry = codeLenses[0];
-            (entry as any)["endpoint"] = url;
+            if (requestType == "POST") {
+                (entry as any)["endpoint"]      = url;
+            }
+            (entry as any)["requestType"]   = requestType;
             return codeLenses;
         }
         catch (err) { 
             // ignore
-        }            
+        }
     }
     return [];
 }
 
 export function resolveRequestCommand(codeLens: vscode.CodeLens, commandName: string) : vscode.CodeLens | null {
     if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
-        const   endpoint    = (codeLens as any)["endpoint"] as string | null;
+        const   requestType = (codeLens as any)["requestType"]  as RequestType;
+        const   endpoint    = (codeLens as any)["endpoint"]     as string | null;
         let     tooltip     = `POST file content an REST API`;
         if (endpoint) {
-            tooltip = `POST file content to: ${endpoint}`;
+            tooltip = `${requestType} file content to: ${endpoint}`;
         }
         codeLens.command = {
-            title:      endpoint ? `POST ${endpoint}` : "POST",
+            title:      endpoint ? `${requestType} ${endpoint}` : requestType,
             tooltip:    tooltip,
             command:    "vscode-friflo-post." + commandName,
             // arguments: ["Argument 1", false]
