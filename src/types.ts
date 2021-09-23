@@ -76,4 +76,4 @@ export const defaultConfig : PostClientConfig = {
     }
 };
 
-export const configFileName  =".post-client";
+export const configFileName  =".post";

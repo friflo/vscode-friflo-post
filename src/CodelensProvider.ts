@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { addCodelens as createCodelens } from './utils';
-import { PostClientConfig } from './types';
 import { promises as fs } from 'fs';
-import { getConfigPath, isConfigFile } from './commands';
+import { getConfigPath, isConfigFile, parseConfig } from './commands';
 
 /**
  * CodelensProvider
@@ -27,7 +26,7 @@ export class CodelensProvider implements vscode.CodeLensProvider
                 let   endpoint: string | null = null;
                 try {
                     const configFile    = await fs.readFile(configPath,'utf8');
-                    const config        = JSON.parse(configFile) as PostClientConfig;
+                    const config        = parseConfig(configFile);
                     endpoint            = config.endpoint;
                     const codeLenses    = createCodelens(document);
                     const entry = codeLenses[0];
@@ -35,12 +34,8 @@ export class CodelensProvider implements vscode.CodeLensProvider
                     return codeLenses;
                 }
                 catch (err) { 
-                    // nothing to do
-                }
-                if (document.fileName.endsWith("request.json")) {
                     return createCodelens(document);
                 }
-                return [];
             }
         }
         return [];

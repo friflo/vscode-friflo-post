@@ -62,9 +62,6 @@ async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
     if (selectedFilePath) {
         const selectedFilePath = args[0][0].fsPath;
         const content       = await fs.readFile(selectedFilePath,'utf8');
-        const selectedUri   = Uri.parse("file:" + selectedFilePath);
-        const document      = await workspace.openTextDocument(selectedUri);
-        await window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
         return {
             path:       selectedFilePath,
             content:    content
@@ -101,7 +98,7 @@ export async function codelensPost (...args: any[]) {
             config = parseConfig(configFile);
         }
         catch (err) {
-            await window.showInformationMessage(`error in: ${configFileName}. ${err}'`);
+            window.showInformationMessage(`error in: ${configFileName} config. ${err}'`);
             const configUri = Uri.parse("file:" + configPath);
             const document = await workspace.openTextDocument(configUri);
             await languages.setTextDocumentLanguage(document, "json");
@@ -240,13 +237,13 @@ async function executeRequest(requestData: RequestData, requestBody: string, can
 
 let requestCount = 0;
 
-async function createConfigFile(configPath: string) {
+async function createConfigFile(configPath: string) : Promise<boolean> {
     const answer = await window.showInformationMessage(
         `"config file: '${configFileName}' not found. Create?`,
         ...["Yes", "No"]
     );
     if (answer !== "Yes") {
-        return;
+        return false;
     }
     const configFile = JSON.stringify(defaultConfig, null, 4);
     await fs.writeFile(configPath, configFile, 'utf8');
@@ -256,8 +253,6 @@ async function createConfigFile(configPath: string) {
     const document = await workspace.openTextDocument(configUri);
     await languages.setTextDocumentLanguage(document, "json");
     await window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
-
-
-
     // window.showInformationMessage(`created config: '${configFileName}'`);
+    return true;
 }
