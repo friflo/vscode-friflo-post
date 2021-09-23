@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 import { getInfo, globalResponseMap, RequestType } from './RequestData';
-import { getConfigPath, getEndpoint, isConfigFile, parseConfig } from './PostConfig';
+import { getConfigPath, getEndpoint, isConfigFile, parseConfig, standardContentTypes } from './PostConfig';
 
 const firstCharRegEx = /[^\s\\]/;
 
@@ -25,16 +25,18 @@ export function createCodelens(document: vscode.TextDocument) : vscode.CodeLens[
 // ------------------------------ request: POST
 export async function addRequestCommand(document: vscode.TextDocument, requestType: RequestType) : Promise<vscode.CodeLens[]>{
     if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
-        const isConfig = isConfigFile(document.fileName);
+        const fileName = document.fileName;
+        const isConfig = isConfigFile(fileName);
         if (isConfig)
             return [];
-        const configPath    = getConfigPath(document.fileName);
+        const configPath    = getConfigPath(fileName);
         try {
             const configFile    = await fs.readFile(configPath,'utf8');
             const config        = parseConfig(configFile);
-            const endpoint      = getEndpoint(config, document.fileName);
+            const endpoint      = getEndpoint(config, fileName);
             if (endpoint == null) {
-                if (!document.fileName.endsWith(".json"))
+                const ext       = path.extname(fileName);
+                if (!standardContentTypes[ext])
                     return [];
             }
             const codeLenses    = createCodelens(document);
@@ -75,7 +77,6 @@ export function resolveRequestCommand(codeLens: vscode.CodeLens, commandName: st
 export async function addResponseInfoCommand(document: vscode.TextDocument) : Promise<vscode.CodeLens[]>{
     if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
         const fileName  = path.normalize(document.fileName);
-        //if (fileName.endsWith("response.json")) {
         const responseMap = globalResponseMap;
         const info = responseMap[fileName];
         if (info) {

@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import {  workspace } from 'vscode';
+import { languages, TextDocumentShowOptions, TextEditor, Uri, window, workspace } from 'vscode';
 
 export async function ensureDirectoryExists(dir: string) {
     try {
@@ -16,4 +16,12 @@ export function getWorkspaceFolder() : string | null {
         return f;
     }
     return null;
+}
+
+export async function openShowTextFile (path: string, languageId: string | null, options?: TextDocumentShowOptions) : Promise<TextEditor> {
+    const configUri = Uri.parse("file:" + path);
+    const document = await workspace.openTextDocument(configUri);
+    if (languageId)
+        await languages.setTextDocumentLanguage(document, languageId);
+    return await window.showTextDocument(document, options);
 }

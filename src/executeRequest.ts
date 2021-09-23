@@ -1,4 +1,4 @@
-import {  languages,workspace, Uri, ViewColumn, window } from 'vscode';
+import { ViewColumn, window } from 'vscode';
 import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
@@ -7,7 +7,7 @@ import * as https from 'https';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from './RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from './PostConfig';
-import { ensureDirectoryExists, getWorkspaceFolder } from './utils';
+import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from './utils';
 
 const axiosInstance = axios.create({
     // 60 sec timeout
@@ -59,7 +59,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         }
         catch (err) {
             window.showInformationMessage(`error in: ${configFileName} config. ${err}'`);
-            await openShowTextFile (configPath, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+            await openShowConfigFile (configPath);
             return;
         }
     }
@@ -71,7 +71,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const endpoint = getEndpoint(config, fileContent.path);
     if (endpoint == null) {
         window.showInformationMessage(`found no matching endpoint in: ${configFileName} config.'`);
-        await openShowTextFile(configPath, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+        await openShowConfigFile(configPath);
         return;
     }
     
@@ -135,7 +135,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     await fs.writeFile(filePath, response.content, 'utf8');
     console.log(`saved: ${filePath}`);
 
-    await openShowTextFile(filePath, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
+    await openShowTextFile(filePath, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
     const iconResult    = response.status == 0 ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
@@ -222,14 +222,11 @@ async function createConfigFile(configPath: string) : Promise<boolean> {
     }
     await fs.writeFile(configPath, defaultConfigString, 'utf8');
 
-    await openShowTextFile(configPath, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+    await openShowConfigFile(configPath);
     // window.showInformationMessage(`created config: '${configFileName}'`);
     return true;
 }
 
-async function openShowTextFile (path: string, options?: vscode.TextDocumentShowOptions) : Promise<vscode.TextEditor> {
-    const configUri = Uri.parse("file:" + path);
-    const document = await workspace.openTextDocument(configUri);
-    await languages.setTextDocumentLanguage(document, "json");
-    return await window.showTextDocument(document, options);
+async function openShowConfigFile(configPath: string) : Promise<vscode.TextEditor> {
+    return openShowTextFile( configPath, "json", { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
 }
