@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as http from 'http';
 import * as https from 'https';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
-import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from './types';
+import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from './RequestData';
 import { configFileName, defaultConfigString, Endpoint, getConfigPath, getEndpoint, parseConfig, PostConfig, RequestHeaders, standardContentTypes } from './PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder } from './utils';
 
