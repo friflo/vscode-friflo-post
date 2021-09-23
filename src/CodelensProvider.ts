@@ -29,8 +29,11 @@ export class CodelensProvider implements vscode.CodeLensProvider
                 const configFile    = await fs.readFile(configPath,'utf8');
                 const config        = parseConfig(configFile);
                 const url           = getEndpoint(config, document.fileName);
-                if (url == null)
-                    return createCodelens(document);
+                if (url == null) {
+                    if (document.fileName.endsWith(".json"))
+                        return createCodelens(document);
+                    return [];
+                }
                 const codeLenses    = createCodelens(document);
                 const entry = codeLenses[0];
                 (entry as any)["endpoint"] = url;
