@@ -53,10 +53,27 @@ export class RequestHeaders {
     readonly    "Connection":   string;
 }
 
+export class ResponseConfig {
+    readonly    folder:         string = ""
+    readonly    ext:            string;
+}
+
 export class PostClientConfig {
     readonly    endpoint:       string;
     readonly    headers:        RequestHeaders;
-    readonly    responseFolder?: string;
+    readonly    response:       ResponseConfig;
 }
+
+export const defaultConfig : PostClientConfig = {
+    endpoint:     "http://localhost:8080/",
+    headers: {
+        "Content-Type": "application/json",
+        "Connection":   "Keep-Alive"
+    },
+    response: {
+        folder: "response",
+        ext:    ".resp",
+    }
+};
 
 export const configFileName  =".post-client";

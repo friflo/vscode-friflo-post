@@ -6,7 +6,7 @@ import * as http from 'http';
 import * as https from 'https';
 
 import axios, { AxiosError, AxiosRequestConfig, CancelTokenSource } from 'axios';
-import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent } from './types';
+import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent, defaultConfig } from './types';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -80,6 +80,13 @@ async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
     };
 }
 
+export function parseConfig(configContent: string): PostClientConfig {
+    let config: PostClientConfig;
+    config = JSON.parse(configContent);
+    config = { ...defaultConfig, ... config };
+    return config;
+}
+
 export async function codelensPost (...args: any[]) {
     const fileContent   = await GetFileContent(args);
     if (fileContent == null)
@@ -91,7 +98,7 @@ export async function codelensPost (...args: any[]) {
     try {
         const configFile = await fs.readFile(configPath,'utf8');
         try {
-            config = JSON.parse(configFile);
+            config = parseConfig(configFile);
         }
         catch (err) {
             await window.showInformationMessage(`error in: ${configFileName}. ${err}'`);
@@ -152,9 +159,9 @@ export async function codelensPost (...args: any[]) {
 
     let     dstFolder     = path.dirname (fileContent.path) + "/";
 
-    let filePath      = addExt (fileContent.path, ".resp");
-    if (config.responseFolder) {
-        dstFolder   += config.responseFolder + "/";
+    let filePath      = addExt (fileContent.path, config.response.ext);
+    if (config.response.folder) {
+        dstFolder   += config.response.folder + "/";
         filePath    = dstFolder + path.basename(filePath);
     }
     const filePathNorm  = path.normalize(filePath);
@@ -241,15 +248,7 @@ async function createConfigFile(configPath: string) {
     if (answer !== "Yes") {
         return;
     }
-    const config: PostClientConfig = {
-        endpoint:     "http://localhost:8080/",
-        headers: {
-            "Content-Type": "application/json",
-            "Connection":   "Keep-Alive"
-        },
-        responseFolder: "response"
-    };
-    const configFile = JSON.stringify(config, null, 4);
+    const configFile = JSON.stringify(defaultConfig, null, 4);
     await fs.writeFile(configPath, configFile, 'utf8');
 
     const configUri = Uri.parse("file:" + configPath);
