@@ -62,29 +62,41 @@ export class ResponseConfig {
     readonly    ext:            string;
 }
 
+export class Endpoint {
+    readonly    fileMatch:      string[];
+    readonly    url:            string;
+
+}
+
 export class PostClientConfig {
-    readonly    endpoints:      { [key: string]: string };
+    readonly    endpoints:      Endpoint[];
     readonly    headers:        RequestHeaders;
     readonly    response:       ResponseConfig;
 }
 
-export const defaultConfig : PostClientConfig = {
-    endpoints:    { "*.json": "http://localhost:8080/" } ,
-    headers: {
+export const defaultConfigString = `{
+    "endpoints": [
+        { "fileMatch": ["*.json"], "url": "http://localhost:8080/" }
+    ],
+    "headers": {
         "Content-Type": "application/json",
-        "Connection":   "Keep-Alive"
+        "Connection": "Keep-Alive"
     },
-    response: {
-        folder: "response",
-        ext:    ".resp",
+    "response": {
+        "folder": "response",
+        "ext": ".resp"
     }
-};
+}`;
+
+export const defaultConfig : PostClientConfig = JSON.parse(defaultConfigString);
 
 export function getEndpoint(config: PostClientConfig, filePath: string) : string | null {
     
-    for (const matcher in config.endpoints) {
-        if (minimatch(filePath, matcher, { matchBase: true })) {
-            return config.endpoints[matcher];
+    for (const endpoint of config.endpoints) {
+        for (const fileMatch of endpoint.fileMatch) {
+            if (minimatch(filePath, fileMatch, { matchBase: true })) {
+                return endpoint.url;
+            }
         }
     }
     return null;

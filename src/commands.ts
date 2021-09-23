@@ -6,7 +6,7 @@ import * as http from 'http';
 import * as https from 'https';
 
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
-import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent, defaultConfig, getEndpoint } from './types';
+import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent, defaultConfig, getEndpoint, defaultConfigString } from './types';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -261,8 +261,7 @@ async function createConfigFile(configPath: string) : Promise<boolean> {
     if (answer !== "Yes") {
         return false;
     }
-    const configFile = JSON.stringify(defaultConfig, null, 4);
-    await fs.writeFile(configPath, configFile, 'utf8');
+    await fs.writeFile(configPath, defaultConfigString, 'utf8');
 
     await openShowTextFile(configPath, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
     // window.showInformationMessage(`created config: '${configFileName}'`);
