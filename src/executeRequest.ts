@@ -4,33 +4,12 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as http from 'http';
 import * as https from 'https';
-
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from './types';
-import { configFileName, defaultConfig, defaultConfigString, Endpoint, getEndpoint, PostConfig, RequestHeaders, standardContentTypes } from './PostConfig';
+import { configFileName, defaultConfigString, Endpoint, getConfigPath, getEndpoint, parseConfig, PostConfig, RequestHeaders, standardContentTypes } from './PostConfig';
+import { ensureDirectoryExists, getWorkspaceFolder } from './utils';
 
 
-async function ensureDirectoryExists(dir: string) {
-    try {
-        fs.mkdir(dir, {recursive: true });
-    } catch (err: any) {
-        if (err.code !== 'EEXIST') throw err;
-    }
-}
-
-function getWorkspaceFolder() : string | null {
-    if(workspace.workspaceFolders !== undefined) {
-        // const wf = workspace.workspaceFolders[0].uri.path ;
-        const f = workspace.workspaceFolders[0].uri.fsPath ; 
-        return f;
-    }
-    return null;
-}
-
-
-export async function executeResponseInfoPost (args: any) {
-    console.log("responseInfo");
-}
 
 const axiosInstance = axios.create({
     // 60 sec timeout
@@ -47,16 +26,7 @@ const axiosInstance = axios.create({
     maxContentLength: 50 * 1000 * 1000
   });
 
-export function getConfigPath(fileName: string) : string {
-    const srcFolder     = path.dirname (fileName) + "/";
-    const configPath    = srcFolder + "/" + configFileName;
-    return configPath;
-}
 
-export function isConfigFile(fileName: string) : boolean {
-    const baseName = path.basename (fileName);
-    return baseName == configFileName;
-}
 
 async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
     const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;
@@ -76,13 +46,6 @@ async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
         path:       editor.document.fileName,
         content:    editor.document.getText()
     };
-}
-
-export function parseConfig(configContent: string): PostConfig {
-    let config: PostConfig;
-    config = JSON.parse(configContent);
-    config = { ...defaultConfig, ... config };
-    return config;
 }
 
 export async function executeRequest (requestType: RequestType, ...args: any[]) {

@@ -3,7 +3,8 @@
 import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
 import { CodelensRequest } from './CodelensRequest';
 import { CodelensResponseInfo } from './CodelensResponseInfo';
-import { executeRequest, executeResponseInfoPost } from './commands';
+import { executeRequest } from './executeRequest';
+import { executeResponseInfoPost } from './executeResponseInfo';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

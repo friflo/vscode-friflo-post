@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { RequestType } from './types';
-import { addRequestCommand, resolveRequestCommand } from './utils';
+import { addRequestCommand, resolveRequestCommand } from './Codelens-utils';
 
 /**
  * CodelensRequest

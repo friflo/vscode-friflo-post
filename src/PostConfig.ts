@@ -1,4 +1,5 @@
 import * as minimatch  from "minimatch";
+import * as path from 'path';
 
 export class Endpoint {
     readonly    fileMatch:      string[];
@@ -54,3 +55,21 @@ export function getEndpoint(config: PostConfig, filePath: string) : Endpoint | n
 }
 
 export const configFileName  =".post";
+
+export function getConfigPath(fileName: string) : string {
+    const srcFolder     = path.dirname (fileName) + "/";
+    const configPath    = srcFolder + "/" + configFileName;
+    return configPath;
+}
+
+export function isConfigFile(fileName: string) : boolean {
+    const baseName = path.basename (fileName);
+    return baseName == configFileName;
+}
+
+export function parseConfig(configContent: string): PostConfig {
+    let config: PostConfig;
+    config = JSON.parse(configContent);
+    config = { ...defaultConfig, ... config };
+    return config;
+}

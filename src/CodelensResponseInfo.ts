@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { RequestType } from './types';
-import { addResponseInfoCommand, resolveResponseInfoCommand } from './utils';
+import { addResponseInfoCommand, resolveResponseInfoCommand } from './Codelens-utils';
 
 /**
  * CodelensResponseInfoPost
