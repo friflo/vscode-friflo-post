@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { addCommand, resolveCommand } from './utils';
+import { addRequestCommand, resolveRequestCommand as resolveRequestCommand } from './utils';
 
 /**
  * CodelensPost
@@ -16,11 +16,11 @@ export class CodelensPost implements vscode.CodeLensProvider
     }
 
     public async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {        
-        return await addCommand(document, "vscode-friflo-post");
+        return await addRequestCommand(document, "vscode-friflo-post");
     }
 
     public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
-        return resolveCommand(codeLens, "vscode-friflo-post");
+        return resolveRequestCommand(codeLens, "vscode-friflo-post");
     }
 }
 
