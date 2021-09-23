@@ -101,10 +101,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         }
         catch (err) {
             window.showInformationMessage(`error in: ${configFileName} config. ${err}'`);
-            const configUri = Uri.parse("file:" + configPath);
-            const document = await workspace.openTextDocument(configUri);
-            await languages.setTextDocumentLanguage(document, "json");
-            await window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+            await openShowTextFile (configPath, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
             return;
         }
     }
@@ -116,10 +113,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const endpoint          = getEndpoint(config, fileContent.path);
     if (endpoint == null) {
         window.showInformationMessage(`found no matching endpoint in: ${configFileName} config.'`);
-        const configUri = Uri.parse("file:" + configPath);
-        const document = await workspace.openTextDocument(configUri);
-        await languages.setTextDocumentLanguage(document, "json");
-        await window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+        await openShowTextFile(configPath, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
         return;
     }
     
@@ -182,11 +176,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     await fs.writeFile(filePath, response.content, 'utf8');
     console.log(`saved: ${filePath}`);
 
-    const newFile = Uri.parse("file:" + filePath);
-    
-    const document = await workspace.openTextDocument(newFile);
-    await languages.setTextDocumentLanguage(document, "json");
-    await window.showTextDocument(document, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
+    await openShowTextFile(filePath, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
     const iconResult    = response.status == 0 ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
@@ -274,11 +264,14 @@ async function createConfigFile(configPath: string) : Promise<boolean> {
     const configFile = JSON.stringify(defaultConfig, null, 4);
     await fs.writeFile(configPath, configFile, 'utf8');
 
-    const configUri = Uri.parse("file:" + configPath);
-
-    const document = await workspace.openTextDocument(configUri);
-    await languages.setTextDocumentLanguage(document, "json");
-    await window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+    await openShowTextFile(configPath, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
     // window.showInformationMessage(`created config: '${configFileName}'`);
     return true;
+}
+
+async function openShowTextFile (path: string, options?: vscode.TextDocumentShowOptions) : Promise<vscode.TextEditor> {
+    const configUri = Uri.parse("file:" + path);
+    const document = await workspace.openTextDocument(configUri);
+    await languages.setTextDocumentLanguage(document, "json");
+    return await window.showTextDocument(document, options);
 }
