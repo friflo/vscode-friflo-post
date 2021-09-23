@@ -80,11 +80,11 @@ export const defaultConfigString = `{
     ],
     "headers": {
         "Content-Type": "application/json",
-        "Connection": "Keep-Alive"
+        "Connection":   "Keep-Alive"
     },
     "response": {
-        "folder": "response",
-        "ext": ".resp"
+        "folder":       "response",
+        "ext":          ".resp"
     }
 }`;
 
