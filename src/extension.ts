@@ -1,9 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
-import { CodelensPost } from './CodelensPost';
-import { CodelensResponseInfoPost } from './CodelensResponseInfoPost';
-import { executePost, executeResponseInfoPost } from './commands';
+import { CodelensRequest } from './CodelensRequest';
+import { CodelensResponseInfo } from './CodelensResponseInfo';
+import { executeRequest, executeResponseInfoPost } from './commands';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -11,10 +11,10 @@ import { executePost, executeResponseInfoPost } from './commands';
 let disposables: Disposable[] = [];
 
 export function activate(context: ExtensionContext) {
-    const codelensPost              = new CodelensPost();
-    const codelensResponseInfoPost  = new CodelensResponseInfoPost();
+    const codelensRequestPost       = new CodelensRequest     ('POST', "vscode-friflo-post");
+    const codelensResponseInfoPost  = new CodelensResponseInfo('POST', "vscode-friflo-post");
 
-    languages.registerCodeLensProvider("*", codelensPost);
+    languages.registerCodeLensProvider("*", codelensRequestPost);
     languages.registerCodeLensProvider("*", codelensResponseInfoPost);
 
     commands.registerCommand("vscode-friflo-post.enablePostClient", () => {
@@ -28,7 +28,7 @@ export function activate(context: ExtensionContext) {
     });
 
     commands.registerCommand("vscode-friflo-post.codelensPost", async (args: any) => {
-        await executePost("POST", args);
+        await executeRequest("POST", args);
     });
 
     commands.registerCommand("vscode-friflo-post.responseInfo", async (args: any) => {

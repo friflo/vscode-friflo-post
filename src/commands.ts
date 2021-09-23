@@ -86,7 +86,7 @@ export function parseConfig(configContent: string): PostClientConfig {
 
 export type RequestType = "POST";
 
-export async function executePost (requestType: RequestType, ...args: any[]) {
+export async function executeRequest (requestType: RequestType, ...args: any[]) {
     const fileContent   = await GetFileContent(args);
     if (fileContent == null)
         return;
@@ -152,7 +152,7 @@ export async function executePost (requestType: RequestType, ...args: any[]) {
             cancelTokenSource.cancel();
         });
         progress.report({  increment: 0 });
-        const  response = await executeRequest(requestData, requestBody, cancelTokenSource);
+        const  response = await executeHttpRequest(requestData, requestBody, cancelTokenSource);
         return response;
     });
     clearInterval(interval);
@@ -202,7 +202,7 @@ function prefixExt (fileName: string, extPrefix: string) : string {
     return `${fileWithoutExt}${extPrefix}${ext}`;
 }
 
-async function executeRequest(requestData: RequestData, requestBody: string, cancelTokenSource: CancelTokenSource) : Promise<ResponseData | null> {
+async function executeHttpRequest(requestData: RequestData, requestBody: string, cancelTokenSource: CancelTokenSource) : Promise<ResponseData | null> {
     let response: ResponseData | null;
     const startTime = new Date().getTime();
     try {
