@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { addCodelens as createCodelens } from './utils';
 import { promises as fs } from 'fs';
 import { getConfigPath, isConfigFile, parseConfig } from './commands';
+import { getEndpoint } from './types';
 
 /**
  * CodelensProvider
@@ -21,22 +22,23 @@ export class CodelensProvider implements vscode.CodeLensProvider
 
         if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
             const isConfig = isConfigFile(document.fileName);
-            if (!isConfig && document.fileName.endsWith(".json")) {
-                const configPath    = getConfigPath(document.fileName);
-                let   endpoint: string | null = null;
-                try {
-                    const configFile    = await fs.readFile(configPath,'utf8');
-                    const config        = parseConfig(configFile);
-                    endpoint            = config.endpoint;
-                    const codeLenses    = createCodelens(document);
-                    const entry = codeLenses[0];
-                    (entry as any)["endpoint"] = endpoint;
-                    return codeLenses;
-                }
-                catch (err) { 
-                    // return createCodelens(document);
-                }
+            if (isConfig)
+                return [];
+            const configPath    = getConfigPath(document.fileName);
+            try {
+                const configFile    = await fs.readFile(configPath,'utf8');
+                const config        = parseConfig(configFile);
+                const url           = getEndpoint(config, document.fileName);
+                if (url == null)
+                    return createCodelens(document);
+                const codeLenses    = createCodelens(document);
+                const entry = codeLenses[0];
+                (entry as any)["endpoint"] = url;
+                return codeLenses;
             }
+            catch (err) { 
+                // return createCodelens(document);
+            }            
         }
         return [];
     }

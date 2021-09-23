@@ -6,7 +6,7 @@ import * as http from 'http';
 import * as https from 'https';
 
 import axios, { AxiosError, AxiosRequestConfig, CancelTokenSource } from 'axios';
-import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent, defaultConfig } from './types';
+import { PostClientConfig, ResponseData, globalResponseMap, configFileName, getInfo, RequestData, isPrivateIP, FileContent, defaultConfig, getEndpoint } from './types';
 
 
 async function ensureDirectoryExists(dir: string) {
@@ -110,9 +110,19 @@ export async function codelensPost (...args: any[]) {
         await createConfigFile(configPath);
         return;
     }
+
+    const endpoint          = getEndpoint(config, fileContent.path);
+    if (endpoint == null) {
+        window.showInformationMessage(`found no matching endpoint in: ${configFileName} config.'`);
+        const configUri = Uri.parse("file:" + configPath);
+        const document = await workspace.openTextDocument(configUri);
+        await languages.setTextDocumentLanguage(document, "json");
+        await window.showTextDocument(document, { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+        return;
+    }
     
     const srcBaseName       = path.basename(fileContent.path);
-    const isPrivate         = isPrivateIP(config.endpoint);
+    const isPrivate         = isPrivateIP(endpoint);
     const iconType          = isPrivate ?  "💻" : "🌐";
     const progressStatus    = `POST ${iconType} ${srcBaseName}`;
     await window.setStatusBarMessage("0 sec", 1100);
@@ -123,7 +133,7 @@ export async function codelensPost (...args: any[]) {
     }, 1000);
 
     const requestData: RequestData = {
-        url:            config.endpoint,
+        url:            endpoint,
         requestSeq:   ++requestCount,
         headers:        config.headers,
     };

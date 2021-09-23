@@ -57,7 +57,7 @@
             "explorer/context": [
                 {
                     "command": "vscode-friflo-post.codelensPost",
-                    "when":"true"
+                    "when": "true"
                 }
             ]
         },
@@ -76,10 +76,12 @@
         "watch": "tsc -watch -p ./"
     },
     "dependencies": {
-        "axios": "^0.21.4"
+        "axios": "^0.21.4",
+        "minimatch": "^3.0.4"
     },
     "devDependencies": {
         "@types/node": "^12.12.0",
+        "@types/minimatch": "^3.0.5",
         "@types/vscode": "^1.26.0",
         "@typescript-eslint/eslint-plugin": "^4.16.0",
         "@typescript-eslint/parser": "^4.16.0",

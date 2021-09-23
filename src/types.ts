@@ -1,4 +1,6 @@
 import * as url from "url";
+import * as minimatch  from "minimatch";
+
 
 export class RequestData {
     readonly    url:            string;
@@ -59,13 +61,13 @@ export class ResponseConfig {
 }
 
 export class PostClientConfig {
-    readonly    endpoint:       string;
+    readonly    endpoints:      { [key: string]: string };
     readonly    headers:        RequestHeaders;
     readonly    response:       ResponseConfig;
 }
 
 export const defaultConfig : PostClientConfig = {
-    endpoint:     "http://localhost:8080/",
+    endpoints:    { "*.json": "http://localhost:8080/" } ,
     headers: {
         "Content-Type": "application/json",
         "Connection":   "Keep-Alive"
@@ -75,5 +77,15 @@ export const defaultConfig : PostClientConfig = {
         ext:    ".resp",
     }
 };
+
+export function getEndpoint(config: PostClientConfig, filePath: string) : string | null {
+    
+    for (const matcher in config.endpoints) {
+        if (minimatch(filePath, matcher, { matchBase: true })) {
+            return config.endpoints[matcher];
+        }
+    }
+    return null;
+}
 
 export const configFileName  =".post";
