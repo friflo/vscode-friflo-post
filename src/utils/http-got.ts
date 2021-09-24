@@ -49,44 +49,41 @@ export function createHttpRequest(requestData: RequestData, requestBody: string)
     return { request: cancelableRequest, requestData: requestData };
 }
 
-export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<ResponseData | null> {
-    let response: ResponseData | null;
+export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<ResponseData> {
     const requestData   = httpRequest.requestData;
     const startTime     = new Date().getTime();
     try {
         const res           = await httpRequest.request;
         const executionTime = new Date().getTime() - startTime;        
-        response = {
+        // console.log(res.headers, `${executionTime} ms`);
+        return {
             requestData:    requestData,
             httpResponse:   getHttpResult(res),
             executionTime:  executionTime,
         };
-        // console.log(res.headers, `${executionTime} ms`);
     }
     catch (e: any) {
         const executionTime = new Date().getTime() - startTime;
         const err: HTTPError = e;
         const res = err.response;
         if (res) {
-            response = {
+            return {
                 requestData:    requestData,
                 httpResponse:   getHttpResult(res),
                 executionTime:  executionTime,
             };
-        } else {            
-            const err: RequestError = e;
-            const message = err.name == "CancelError" ? "request canceled" : err.message;
-            response = {
-                requestData:    requestData,
-                httpResponse: {
-                    responseType:   "error",
-                    message:        message
-                },
-                executionTime:      executionTime,
-            };
-        }       
+        }
+        const err2: RequestError = e;
+        const message = err.name == "CancelError" ? "request canceled" : err2.message;
+        return {
+            requestData:    requestData,
+            httpResponse: {
+                responseType:   "error",
+                message:        message
+            },
+            executionTime:      executionTime,
+        };      
     }
-    return response;
 }
 
 function  getHttpResult(res: Response) : HttpResult {
