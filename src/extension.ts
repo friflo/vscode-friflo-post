@@ -16,8 +16,8 @@ import ContentProvider, { } from './ResponseDataProvider';
 let disposables: Disposable[] = [];
 
 export function activate(context: ExtensionContext) {
-    const codelensRequestPost       = new CodelensRequest     ('POST', "codelensPost");
-    const codelensRequestPut        = new CodelensRequest     ('PUT',  "codelensPut");
+    const codelensRequestPost       = new CodelensRequest     ('POST', "vscode-friflo-post.codelensPost");
+    const codelensRequestPut        = new CodelensRequest     ('PUT',  "vscode-friflo-post.codelensPut");
 
     const codelensResponseInfoPost  = new CodelensResponseInfo('POST');
 
