@@ -5,13 +5,16 @@ import { ViewColumn, window } from 'vscode';
 import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import * as http from 'http';
-import * as https from 'https';
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
+// import * as http from 'http';
+// import * as https from 'https';
+// import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
+import got, { CancelableRequest, HTTPError, RequestError, OptionsOfTextResponseBody, Response } from 'got';
+
 import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, getWorkspacePath, openShowTextFile } from '../utils/vscode-utils';
 
+/*
 const axiosInstance = axios.create({
     // 60 sec timeout
     timeout: 60 * 1000,
@@ -26,6 +29,7 @@ const axiosInstance = axios.create({
     // cap the maximum content length we'll accept to 50MBs, just in case
     maxContentLength: 50 * 1000 * 1000
   });
+  */
 
 async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
     const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;
@@ -100,19 +104,20 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         headers:        headers,
     };
 
-    const cancelTokenSource = axios.CancelToken.source();
+    // const cancelTokenSource = axios.CancelToken.source();
 
     const response = await window.withProgress({
         location:       vscode.ProgressLocation.Window,
         cancellable:    true,
         title:          progressStatus
     }, async (progress, token) => {
+        const httpRequest = createHttpRequest (requestData, requestBody);
         token.onCancellationRequested(() => {
-            cancelTokenSource.cancel();
+            httpRequest.request.cancel();
         });
         progress.report({  increment: 0 });
-        const  response = await executeHttpRequest(requestData, requestBody, cancelTokenSource);
-        return response;
+        const  response = await executeHttpRequest(httpRequest);
+        return response; 
     });
     clearInterval(interval);
 
@@ -158,54 +163,66 @@ function prefixExt (fileName: string, extPrefix: string) : string {
     return `${fileWithoutExt}${extPrefix}${ext}`;
 }
 
-async function executeHttpRequest(requestData: RequestData, requestBody: string, cancelTokenSource: CancelTokenSource) : Promise<ResponseData | null> {
+class HttpRequest {
+    readonly requestData:   RequestData;
+    readonly request:       CancelableRequest<Response<string>>;    
+}
+
+function createHttpRequest(requestData: RequestData, requestBody: string) : HttpRequest {
+    const options: OptionsOfTextResponseBody = {
+        headers:    requestData.headers,
+        body:       requestBody,
+        timeout:    3_000
+    };
+    let cancelableRequest: CancelableRequest<Response<string>>;
+    switch (requestData.type) {
+        case "POST":
+            cancelableRequest = got.post(requestData.url, options);
+            break;
+        case "PUT":
+            cancelableRequest = got.put(requestData.url, options);
+            break;
+        default:
+            throw "Unsupported request type: " + requestData.type;
+    }
+    return { request: cancelableRequest, requestData: requestData };
+}
+
+async function executeHttpRequest(httpRequest: HttpRequest) : Promise<ResponseData | null> {
     let response: ResponseData | null;
-    const startTime = new Date().getTime();
+    const requestData   = httpRequest.requestData;
+    const startTime     = new Date().getTime();
     try {
-        const requestConfig: AxiosRequestConfig = {
-            transformResponse:  (r) => r,
-            headers:            requestData.headers,
-            cancelToken:        cancelTokenSource.token
-        };
-        let res: AxiosResponse<string>;
-        switch (requestData.type) {
-            case "POST":
-                res = await axiosInstance.post<string>(requestData.url, requestBody, requestConfig);
-                break;
-            case "PUT":
-                res = await axiosInstance.put<string>(requestData.url, requestBody, requestConfig);
-                break;
-            default:
-                throw "Unsupported request type: " + requestData.type;
-        }        
+        const res           = await httpRequest.request;
         const executionTime = new Date().getTime() - startTime;
         response = {
-            requestData:        requestData,
-            status:         res.status,
-            statusText:     res.statusText,
-            content:        res.data,
+            requestData:    requestData,
+            status:         res.statusCode,
+            statusText:     res.statusMessage!,
+            content:        res.body,
             headers:        res.headers,
             executionTime:  executionTime,
         };
         // console.log(res.headers, `${executionTime} ms`);
     }
-    catch (err) {
+    catch (err: any) {
+
         const executionTime = new Date().getTime() - startTime;
-        const axiosErr = err as AxiosError<string>;
-        if (axiosErr.response) {
+        const error: HTTPError = err;
+        if (error.response) {
             response = {
-                requestData:        requestData,
-                status:         axiosErr.response.status,
-                statusText:     axiosErr.response.statusText,
-                content:        axiosErr.response.data,
-                headers:        axiosErr.response.headers,
+                requestData:    requestData,
+                status:         error.response.statusCode,
+                statusText:     error.response.statusMessage!,
+                content:        error.response.body as string,
+                headers:        error.response.headers,
                 executionTime:  executionTime,
             };
         } else {            
-            const canceled = axios.isCancel(err);
-            const message = canceled ? "request canceled" : axiosErr.message;
+            const error: RequestError = err;
+            const message = error.message;   // canceled ? "request canceled" : axiosErr.message;
             response = {
-                requestData:        requestData,
+                requestData:    requestData,
                 status:         0,
                 statusText:     message,
                 content:        message,

@@ -26,9 +26,9 @@ export default class ResponseDataProvider implements vscode.TextDocumentContentP
 	// Provider method that takes an uri of the `response-data`-scheme and
 	// resolves its content by lookup in globalResponseMap
 	provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
-        const responseDataFile  = uri.path;
+        /* const responseDataFile  = uri.path;
         const responseData      = globalResponseMap[responseDataFile];
-        const headers           = JSON.stringify(responseData.headers, null, 4);
+        const headers           = JSON.stringify(responseData.headers, null, 4); */
 
         return `HTTP/1.1 200 OK
 Date: Sat, 16 May 2020 10:45:13 GMT
