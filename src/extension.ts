@@ -48,7 +48,7 @@ export function activate(context: ExtensionContext) {
         provider.didChangeEmitter.fire(result.requestData.vscodeUri!);
     });
 
-    commands.registerCommand("vscode-friflo-post.responseInfo", async (args: any[]) => {
+    commands.registerCommand("vscode-friflo-post.codelensInfo", async (args: any[]) => {
         commands.executeCommand("vscode-friflo-post.showInfo", args);
     });
 

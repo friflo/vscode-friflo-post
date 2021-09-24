@@ -39,7 +39,7 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
             // Set codeLenses command directly - its fast. So resolveCodeLens() will no be called.
             codeLenses[0].command = {
                 title:      infoStr,
-                command:    "vscode-friflo-post.responseInfo",
+                command:    "vscode-friflo-post.codelensInfo",
                 tooltip:    "Show HTTP response headers",
                 arguments:  [fileName]
             };
@@ -60,7 +60,7 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
         codeLens.command = {
             title:      infoStr,
             tooltip:    "Show HTTP response headers",
-            command:    "vscode-friflo-post.responseInfo",
+            command:    "vscode-friflo-post.codelensInfo",
             arguments:  ["Argument 1", false]
         }; */
         return codeLens;
