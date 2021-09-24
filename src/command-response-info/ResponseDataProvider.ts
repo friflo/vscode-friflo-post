@@ -2,7 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 import * as vscode from 'vscode';
-// import { globalResponseMap } from '../models/RequestData';
+import { globalResponseMap } from '../models/RequestData';
 
 
 export default class ResponseDataProvider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
@@ -26,17 +26,25 @@ export default class ResponseDataProvider implements vscode.TextDocumentContentP
 	// Provider method that takes an uri of the `response-data`-scheme and
 	// resolves its content by lookup in globalResponseMap
 	provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
-        /* const responseDataFile  = uri.path;
+        const responseDataFile  = uri.path;
         const responseData      = globalResponseMap[responseDataFile];
-        const headers           = JSON.stringify(responseData.headers, null, 4); */
-
-        return `HTTP/1.1 200 OK
-Date: Sat, 16 May 2020 10:45:13 GMT
-Server: Apache
-Last-Modified: Mon, 27 Apr 2020 11:00:44 GMT
-Accept-Ranges: bytes
-Content-Length: 16209
-Content-Type: text/html`;
+        if (!responseData) {
+            return "Response not found";
+        }
+        const res = responseData.httpResponse;
+        if (res.httpType == "result") {            
+            let headers = "";
+            for (let n = 0; n < res.rawHeaders.length; n++) {
+                const header = res.rawHeaders[n];
+                if (n % 2 == 0) {
+                    headers += header;
+                } else {
+                    headers += `: ${header}\n`;
+                }
+            }            
+            return `HTTP/${res.httpVersion} ${res.status} ${res.statusText}\n${headers}`;
+        }
+        return res.message;
 	}
 
 	provideDocumentLinks(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.DocumentLink[] | undefined {

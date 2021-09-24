@@ -22,6 +22,8 @@ export class HttpResult extends HttpResponse {
     readonly    statusText:     string;
     readonly    content:        string;
     readonly    headers:        any;
+    readonly    rawHeaders:     string[];
+    readonly    httpVersion:    string;
 }
 
 export class HttpError extends HttpResponse {

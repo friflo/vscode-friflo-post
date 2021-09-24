@@ -55,7 +55,7 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
     const startTime     = new Date().getTime();
     try {
         const res           = await httpRequest.request;
-        const executionTime = new Date().getTime() - startTime;
+        const executionTime = new Date().getTime() - startTime;        
         response = {
             requestData:    requestData,
             httpResponse: {
@@ -64,6 +64,8 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
                 statusText: res.statusMessage!,
                 content:    res.body,
                 headers:    res.headers,
+                rawHeaders: res.rawHeaders,
+                httpVersion:res.httpVersion
             },
             executionTime:  executionTime,
         };
@@ -72,15 +74,18 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
     catch (e: any) {
         const executionTime = new Date().getTime() - startTime;
         const err: HTTPError = e;
-        if (err.response) {
+        const res = err.response;
+        if (res) {
             response = {
                 requestData:    requestData,
                 httpResponse: {
                     httpType:  "result",
-                    status:     err.response.statusCode,
-                    statusText: err.response.statusMessage!,
-                    content:    err.response.body as string,
-                    headers:    err.response.headers,
+                    status:     res.statusCode,
+                    statusText: res.statusMessage!,
+                    content:    res.body as string,
+                    headers:    res.headers,
+                    rawHeaders: res.rawHeaders,
+                    httpVersion:res.httpVersion
                 },
                 executionTime:  executionTime,
             };
