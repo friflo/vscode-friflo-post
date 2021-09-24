@@ -6,8 +6,8 @@ import * as path from 'path';
 import { promises as fs } from 'fs';
 import { RequestType } from '../models/RequestData';
 import { getConfigPath, getEndpoint, isConfigFile, parseConfig } from '../models/PostConfig';
-import { standardContentTypes } from '../standard-content-types';
-import { createCodelens } from '../vscode-utils';
+import { standardContentTypes } from '../utils/standard-content-types';
+import { createCodelens } from '../utils/vscode-utils';
 
 /**
  * CodelensRequest

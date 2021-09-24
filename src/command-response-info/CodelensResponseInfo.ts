@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { getInfo, globalResponseMap, RequestType } from '../models/RequestData';
-import { createCodelens } from '../vscode-utils';
+import { createCodelens } from '../utils/vscode-utils';
 
 /**
  * CodelensResponseInfoPost
