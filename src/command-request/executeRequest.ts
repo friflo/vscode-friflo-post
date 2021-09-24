@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType, ResponseData } from '../models/RequestData';
-import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from '../models/PostConfig';
+import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, getWorkspacePath, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
 
@@ -78,10 +78,12 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     }, 1000);
 
     const headers       = getHeaders(config, endpoint, fileContent.path);
-    let filePath        = prefixExt (fileContent.path, config.response.ext);
+    const destFile      = getDestFile(fileContent.path, config.response);
+    const relativePath  = getWorkspacePath(destFile)!;
+    
     const requestData: RequestData = {
         url:            endpoint.url,
-        vscodeUri:      null,
+        vscodeUri:      vscode.Uri.parse("response-data:" + relativePath),
         type:           requestType,
         requestSeq:   ++requestCount,
         headers:        headers,
@@ -115,22 +117,16 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         return null;
     }
 
-    let dstFolder     = path.dirname (fileContent.path) + "/";
-    if (config.response.folder) {
-        dstFolder   += config.response.folder + "/";
-        filePath    = dstFolder + path.basename(filePath);
-    }
-    const relativePath              = getWorkspacePath(filePath)!; // todo 
-    requestData.vscodeUri           = vscode.Uri.parse("response-data:" + relativePath);
+    const dstFolder                 = path.dirname (destFile) + "/";
     globalResponseMap[relativePath] = response;
     ensureDirectoryExists(dstFolder);
 
     const res       = response.httpResponse;
     const content   = res.httpType == "result" ? res.content : res.message;
-    await fs.writeFile(filePath, content, 'utf8');
+    await fs.writeFile(destFile, content, 'utf8');
     // console.log(`saved: ${filePath}`);
 
-    await openShowTextFile(filePath, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
+    await openShowTextFile(destFile, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
     const iconResult    = response.httpResponse == null ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
@@ -146,6 +142,15 @@ function prefixExt (fileName: string, extPrefix: string) : string {
     const ext               = path.extname(fileName);
     const fileWithoutExt    =  fileName.substring(0, fileName.length - ext.length);
     return `${fileWithoutExt}${extPrefix}${ext}`;
+}
+
+function getDestFile (fileName: string, responseConfig: ResponseConfig) : string {
+    const prefixed = prefixExt (fileName, responseConfig.ext);
+    if (responseConfig.folder) {
+        const   dstFolder   = path.dirname (fileName) + "/";
+        return  dstFolder + "/" + responseConfig.folder + "/" + path.basename(prefixed);
+    }
+    return prefixed;
 }
 
 async function createConfigFile(configPath: string) : Promise<boolean> {

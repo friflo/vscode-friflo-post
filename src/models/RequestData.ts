@@ -8,7 +8,7 @@ export type RequestType = "POST" | "PUT";
 
 export class RequestData {
     readonly    url:            string;
-                vscodeUri:      Uri | null; // todo
+    readonly    vscodeUri:      Uri;
     readonly    type:           RequestType;
     readonly    requestSeq:     number;
     readonly    headers:        any;
