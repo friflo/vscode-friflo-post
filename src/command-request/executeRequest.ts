@@ -123,12 +123,15 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     globalResponseMap[relativePath] = response;
 
     ensureDirectoryExists(dstFolder);
-    await fs.writeFile(filePath, response.content, 'utf8');
+
+    const res       = response.httpResponse;
+    const content   = res.httpType == "result" ? res.content : res.message;
+    await fs.writeFile(filePath, content, 'utf8');
     // console.log(`saved: ${filePath}`);
 
     await openShowTextFile(filePath, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
-    const iconResult    = response.status == 0 ? "😕" : iconType;
+    const iconResult    = response.httpResponse == null ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
     // dont await
     window.setStatusBarMessage(status, 10 * 1000);

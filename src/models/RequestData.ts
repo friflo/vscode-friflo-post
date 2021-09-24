@@ -12,12 +12,26 @@ export class RequestData {
     readonly    headers:        any;
 }
 
-export class ResponseData {
-    readonly    requestData:    RequestData;
+export abstract class HttpResponse {
+    readonly abstract httpType: "result" | "error" ;
+}
+
+export class HttpResult extends HttpResponse {
+    readonly    httpType:      "result";
     readonly    status:         number;
     readonly    statusText:     string;
     readonly    content:        string;
     readonly    headers:        any;
+}
+
+export class HttpError extends HttpResponse {
+    readonly    httpType:      "error";
+    readonly    message:        string;
+}
+
+export class ResponseData {
+    readonly    requestData:    RequestData;
+    readonly    httpResponse:   HttpResult | HttpError;
     readonly    executionTime:  number;
 }
 
@@ -39,16 +53,17 @@ export function isPrivateIP(urlString: string) : boolean {
  }
 
 export function getInfo (data: ResponseData ) : string {
-    const contentLength = data.headers && data.headers["content-length"];
-    // const contentType   = data.headers["content-type"];
-    const length = contentLength ? ` • length ${contentLength}` : "";
-    let status: string;
-    if (data.status == 0) {
-        status = data.content;
+    const   res     = data.httpResponse;
+    let     result: string;
+    if (res.httpType == "result") {
+        const contentLength = res.headers && res.headers["content-length"];
+        const length = contentLength ? ` • length ${contentLength}` : "";
+        const status = `${res.status}${res.statusText == 'OK' ? " OK" : ""}`;
+        result = `${status}${length}`;
     } else {
-        status = `${data.status}${data.statusText == 'OK' ? " OK" : ""}`;
+        result = res.message;
     }
-    const info = `${status}${length} • ${data.executionTime} ms • #${data.requestData.requestSeq}`;
+    const info = `${result} • ${data.executionTime} ms • #${data.requestData.requestSeq}`;
     return info;
 }
 

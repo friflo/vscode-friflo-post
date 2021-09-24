@@ -58,36 +58,41 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
         const executionTime = new Date().getTime() - startTime;
         response = {
             requestData:    requestData,
-            status:         res.statusCode,
-            statusText:     res.statusMessage!,
-            content:        res.body,
-            headers:        res.headers,
+            httpResponse: {
+                httpType:  "result",
+                status:     res.statusCode,
+                statusText: res.statusMessage!,
+                content:    res.body,
+                headers:    res.headers,
+            },
             executionTime:  executionTime,
         };
         // console.log(res.headers, `${executionTime} ms`);
     }
-    catch (err: any) {
-
+    catch (e: any) {
         const executionTime = new Date().getTime() - startTime;
-        const error: HTTPError = err;
-        if (error.response) {
+        const err: HTTPError = e;
+        if (err.response) {
             response = {
                 requestData:    requestData,
-                status:         error.response.statusCode,
-                statusText:     error.response.statusMessage!,
-                content:        error.response.body as string,
-                headers:        error.response.headers,
+                httpResponse: {
+                    httpType:  "result",
+                    status:     err.response.statusCode,
+                    statusText: err.response.statusMessage!,
+                    content:    err.response.body as string,
+                    headers:    err.response.headers,
+                },
                 executionTime:  executionTime,
             };
         } else {            
-            const error: RequestError = err;
-            const message = error.message;   // canceled ? "request canceled" : axiosErr.message;
+            const err: RequestError = e;
+            const message = err.message;
             response = {
                 requestData:    requestData,
-                status:         0,
-                statusText:     message,
-                content:        message,
-                headers:        null,
+                httpResponse: {
+                    httpType:   "error",
+                    message:    message
+                },
                 executionTime:  executionTime,
             };
         }       

@@ -2,7 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 import * as vscode from 'vscode';
-import { globalResponseMap } from '../models/RequestData';
+// import { globalResponseMap } from '../models/RequestData';
 
 
 export default class ResponseDataProvider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
@@ -36,10 +36,7 @@ Server: Apache
 Last-Modified: Mon, 27 Apr 2020 11:00:44 GMT
 Accept-Ranges: bytes
 Content-Length: 16209
-Content-Type: text/html
-Cache-Control: maxe-age=180
-eTag: "x26e3"
-Set-Cookie: id=dlvbhd32; Expires=Tue, 13 Oct 2020 00:00:00 GMT`;
+Content-Type: text/html`;
 	}
 
 	provideDocumentLinks(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.DocumentLink[] | undefined {
