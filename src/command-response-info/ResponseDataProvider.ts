@@ -30,7 +30,16 @@ export default class ResponseDataProvider implements vscode.TextDocumentContentP
         const responseData      = globalResponseMap[responseDataFile];
         const headers           = JSON.stringify(responseData.headers, null, 4);
 
-        return "Hello-World\n\n" + headers;
+        return `HTTP/1.1 200 OK
+Date: Sat, 16 May 2020 10:45:13 GMT
+Server: Apache
+Last-Modified: Mon, 27 Apr 2020 11:00:44 GMT
+Accept-Ranges: bytes
+Content-Length: 16209
+Content-Type: text/html
+Cache-Control: maxe-age=180
+eTag: "x26e3"
+Set-Cookie: id=dlvbhd32; Expires=Tue, 13 Oct 2020 00:00:00 GMT`;
 	}
 
 	provideDocumentLinks(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.DocumentLink[] | undefined {
