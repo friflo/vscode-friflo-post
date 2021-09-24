@@ -31,20 +31,31 @@ export default class ResponseDataProvider implements vscode.TextDocumentContentP
         if (!responseData) {
             return "ResponseInfo not found: " + responseDataFile;
         }
-        const res = responseData.httpResponse;
-        if (res.httpType == "result") {            
-            let headers = "";
-            for (let n = 0; n < res.rawHeaders.length; n++) {
-                const header = res.rawHeaders[n];
-                if (n % 2 == 0) {
-                    headers += header;
-                } else {
-                    headers += `: ${header}\n`;
-                }
-            }            
-            return `HTTP/${res.httpVersion} ${res.status} ${res.statusText}\n${headers}`;
+        const req = responseData.requestData;
+        let requestHeaders = "";
+        for (const header in req.headers) {
+            requestHeaders += `${header}: ${req.headers[header]}\n`;
         }
-        return res.message;
+        const request = `request # ${req.requestSeq}
+
+${req.type} ${req.url}
+${requestHeaders}`;        
+        const res = responseData.httpResponse;
+        if (res.httpType == "error") {
+            return `${res.message}\n\n${request}`;
+        }
+        let responseHeaders = "";
+        for (let n = 0; n < res.rawHeaders.length; n++) {
+            const header = res.rawHeaders[n];
+            if (n % 2 == 0) {
+                responseHeaders += header;
+            } else {
+                responseHeaders += `: ${header}\n`;
+            }
+        }
+        return `${request}
+HTTP/${res.httpVersion} ${res.status} ${res.statusText}
+${responseHeaders}`;
 	}
 
 	provideDocumentLinks(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.DocumentLink[] | undefined {
