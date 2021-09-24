@@ -5,31 +5,10 @@ import { ViewColumn, window } from 'vscode';
 import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-// import * as http from 'http';
-// import * as https from 'https';
-// import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
-import got, { CancelableRequest, HTTPError, RequestError, OptionsOfTextResponseBody, Response } from 'got';
-
-import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from '../models/RequestData';
+import { globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, getWorkspacePath, openShowTextFile } from '../utils/vscode-utils';
-
-/*
-const axiosInstance = axios.create({
-    // 60 sec timeout
-    timeout: 60 * 1000,
-  
-    // keepAlive pools and reuses TCP connections, so it's faster
-    httpAgent:  new http.Agent ({ keepAlive: true }),
-    httpsAgent: new https.Agent({ keepAlive: true }),
-    
-    //follow up to 3 HTTP 3xx redirects
-    maxRedirects: 3,
-    
-    // cap the maximum content length we'll accept to 50MBs, just in case
-    maxContentLength: 50 * 1000 * 1000
-  });
-  */
+import { createHttpRequest, executeHttpRequest } from '../utils/http-utils';
 
 async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
     const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;
@@ -50,6 +29,8 @@ async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
         content:    editor.document.getText()
     };
 }
+
+let requestCount = 0;
 
 export async function executeRequest (requestType: RequestType, ...args: any[]) {
     const fileContent   = await GetFileContent(args);
@@ -103,14 +84,13 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         requestSeq:   ++requestCount,
         headers:        headers,
     };
-
-    // const cancelTokenSource = axios.CancelToken.source();
-
+    
     const response = await window.withProgress({
         location:       vscode.ProgressLocation.Window,
         cancellable:    true,
         title:          progressStatus
     }, async (progress, token) => {
+        // const cancelTokenSource = axios.CancelToken.source();
         const httpRequest = createHttpRequest (requestData, requestBody);
         token.onCancellationRequested(() => {
             httpRequest.request.cancel();
@@ -162,79 +142,6 @@ function prefixExt (fileName: string, extPrefix: string) : string {
     const fileWithoutExt    =  fileName.substring(0, fileName.length - ext.length);
     return `${fileWithoutExt}${extPrefix}${ext}`;
 }
-
-class HttpRequest {
-    readonly requestData:   RequestData;
-    readonly request:       CancelableRequest<Response<string>>;    
-}
-
-function createHttpRequest(requestData: RequestData, requestBody: string) : HttpRequest {
-    const options: OptionsOfTextResponseBody = {
-        headers:    requestData.headers,
-        body:       requestBody,
-        timeout:    3_000
-    };
-    let cancelableRequest: CancelableRequest<Response<string>>;
-    switch (requestData.type) {
-        case "POST":
-            cancelableRequest = got.post(requestData.url, options);
-            break;
-        case "PUT":
-            cancelableRequest = got.put(requestData.url, options);
-            break;
-        default:
-            throw "Unsupported request type: " + requestData.type;
-    }
-    return { request: cancelableRequest, requestData: requestData };
-}
-
-async function executeHttpRequest(httpRequest: HttpRequest) : Promise<ResponseData | null> {
-    let response: ResponseData | null;
-    const requestData   = httpRequest.requestData;
-    const startTime     = new Date().getTime();
-    try {
-        const res           = await httpRequest.request;
-        const executionTime = new Date().getTime() - startTime;
-        response = {
-            requestData:    requestData,
-            status:         res.statusCode,
-            statusText:     res.statusMessage!,
-            content:        res.body,
-            headers:        res.headers,
-            executionTime:  executionTime,
-        };
-        // console.log(res.headers, `${executionTime} ms`);
-    }
-    catch (err: any) {
-
-        const executionTime = new Date().getTime() - startTime;
-        const error: HTTPError = err;
-        if (error.response) {
-            response = {
-                requestData:    requestData,
-                status:         error.response.statusCode,
-                statusText:     error.response.statusMessage!,
-                content:        error.response.body as string,
-                headers:        error.response.headers,
-                executionTime:  executionTime,
-            };
-        } else {            
-            const error: RequestError = err;
-            const message = error.message;   // canceled ? "request canceled" : axiosErr.message;
-            response = {
-                requestData:    requestData,
-                status:         0,
-                statusText:     message,
-                content:        message,
-                headers:        null,
-                executionTime:  executionTime,
-            };
-        }       
-    }
-    return response;
-}
-
-let requestCount = 0;
 
 async function createConfigFile(configPath: string) : Promise<boolean> {
     const answer = await window.showInformationMessage(
