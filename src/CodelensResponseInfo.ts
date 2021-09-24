@@ -29,23 +29,24 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
      */
     public async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken):  Promise<vscode.CodeLens[]>
     {
-        if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
-            const fileName  = path.normalize(document.fileName);
-            const responseMap = globalResponseMap;
-            const info = responseMap[fileName];
-            if (info) {
-                const codeLenses = createCodelens(document);
-                const infoStr = getInfo(info);
-                // Set codeLenses command directly - its fast. So resolveCodeLens() will no be called.
-                codeLenses[0].command = {
-                    title:      infoStr,
-                    command:    "vscode-friflo-post.responseInfo",
-                    tooltip:    "Show HTTP response headers",
-                    arguments:  [fileName]
-                };
-                return codeLenses;
-            }    
+        if (!vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)){
+            return [];
         }
+        const fileName  = path.normalize(document.fileName);
+        const responseMap = globalResponseMap;
+        const info = responseMap[fileName];
+        if (info) {
+            const codeLenses = createCodelens(document);
+            const infoStr = getInfo(info);
+            // Set codeLenses command directly - its fast. So resolveCodeLens() will no be called.
+            codeLenses[0].command = {
+                title:      infoStr,
+                command:    "vscode-friflo-post.responseInfo",
+                tooltip:    "Show HTTP response headers",
+                arguments:  [fileName]
+            };
+            return codeLenses;
+        }    
         return [];
     }
 
@@ -54,17 +55,17 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
      * calls to [compute](#CodeLensProvider.provideCodeLenses)-lenses.
      */
     public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
-        if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
-            /* const infoStr = (codeLens as any)["infoStr"] as string;
-            codeLens.command = {
-                title:      infoStr,
-                tooltip:    "Show HTTP response headers",
-                command:    "vscode-friflo-post.responseInfo",
-                arguments:  ["Argument 1", false]
-            }; */
-            return codeLens;
+        if (!vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
+            return null;
         }
-        return null;
+        /* const infoStr = (codeLens as any)["infoStr"] as string;
+        codeLens.command = {
+            title:      infoStr,
+            tooltip:    "Show HTTP response headers",
+            command:    "vscode-friflo-post.responseInfo",
+            arguments:  ["Argument 1", false]
+        }; */
+        return codeLens;
     }
 }
 
