@@ -10,7 +10,7 @@ import * as https from 'https';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from '../models/PostConfig';
-import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils';
+import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../vscode-utils';
 
 const axiosInstance = axios.create({
     // 60 sec timeout
