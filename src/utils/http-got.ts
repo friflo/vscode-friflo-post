@@ -5,7 +5,7 @@
 // import * as https from 'https';
 import got, { CancelableRequest, HTTPError, RequestError, OptionsOfTextResponseBody, Response } from 'got';
 // import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
-import { RequestData, ResponseData } from '../models/RequestData';
+import { HttpResult, RequestData, ResponseData } from '../models/RequestData';
 
 /*
 const axiosInstance = axios.create({
@@ -58,15 +58,7 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
         const executionTime = new Date().getTime() - startTime;        
         response = {
             requestData:    requestData,
-            httpResponse: {
-                httpType:  "result",
-                status:     res.statusCode,
-                statusText: res.statusMessage!,
-                content:    res.body,
-                headers:    res.headers,
-                rawHeaders: res.rawHeaders,
-                httpVersion:res.httpVersion
-            },
+            httpResponse:   getHttpResult(res),
             executionTime:  executionTime,
         };
         // console.log(res.headers, `${executionTime} ms`);
@@ -78,15 +70,7 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
         if (res) {
             response = {
                 requestData:    requestData,
-                httpResponse: {
-                    httpType:  "result",
-                    status:     res.statusCode,
-                    statusText: res.statusMessage!,
-                    content:    res.body as string,
-                    headers:    res.headers,
-                    rawHeaders: res.rawHeaders,
-                    httpVersion:res.httpVersion
-                },
+                httpResponse:   getHttpResult(res),
                 executionTime:  executionTime,
             };
         } else {            
@@ -95,12 +79,24 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
             response = {
                 requestData:    requestData,
                 httpResponse: {
-                    httpType:   "error",
-                    message:    message
+                    responseType:   "error",
+                    message:        message
                 },
-                executionTime:  executionTime,
+                executionTime:      executionTime,
             };
         }       
     }
     return response;
+}
+
+function  getHttpResult(res: Response) : HttpResult {
+    return {
+        responseType:  "result",
+        status:         res.statusCode,
+        statusText:     res.statusMessage!,
+        content:        res.body as string,
+        headers:        res.headers,
+        rawHeaders:     res.rawHeaders,
+        httpVersion:    res.httpVersion
+    };
 }

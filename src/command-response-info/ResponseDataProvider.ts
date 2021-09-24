@@ -36,12 +36,12 @@ export default class ResponseDataProvider implements vscode.TextDocumentContentP
         for (const header in req.headers) {
             requestHeaders += `${header}: ${req.headers[header]}\n`;
         }
-        const request = `request # ${req.requestSeq}
+        const request = `request #${req.requestSeq} ${responseData.executionTime} ms
 
 ${req.type} ${req.url}
 ${requestHeaders}`;        
         const res = responseData.httpResponse;
-        if (res.httpType == "error") {
+        if (res.responseType == "error") {
             return `${res.message}\n\n${request}`;
         }
         let responseHeaders = "";

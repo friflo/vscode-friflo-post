@@ -122,7 +122,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     ensureDirectoryExists(dstFolder);
 
     const res       = response.httpResponse;
-    const content   = res.httpType == "result" ? res.content : res.message;
+    const content   = res.responseType == "result" ? res.content : res.message;
     await fs.writeFile(destFile, content, 'utf8');
     // console.log(`saved: ${filePath}`);
 

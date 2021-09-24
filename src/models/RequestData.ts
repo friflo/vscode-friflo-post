@@ -15,22 +15,22 @@ export class RequestData {
 }
 
 export abstract class HttpResponse {
-    readonly abstract httpType: "result" | "error" ;
+    readonly abstract responseType:"result" | "error" ;
 }
 
 export class HttpResult extends HttpResponse {
-    readonly    httpType:      "result";
-    readonly    status:         number;
-    readonly    statusText:     string;
-    readonly    content:        string;
-    readonly    headers:        any;
-    readonly    rawHeaders:     string[];
-    readonly    httpVersion:    string;
+    readonly    responseType:      "result";
+    readonly    status:             number;
+    readonly    statusText:         string;
+    readonly    content:            string;
+    readonly    headers:            any;
+    readonly    rawHeaders:         string[];
+    readonly    httpVersion:        string;
 }
 
 export class HttpError extends HttpResponse {
-    readonly    httpType:      "error";
-    readonly    message:        string;
+    readonly    responseType:      "error";
+    readonly    message:            string;
 }
 
 export class ResponseData {
@@ -59,7 +59,7 @@ export function isPrivateIP(urlString: string) : boolean {
 export function getInfo (data: ResponseData ) : string {
     const   res     = data.httpResponse;
     let     result: string;
-    if (res.httpType == "result") {
+    if (res.responseType == "result") {
         const contentLength = res.headers && res.headers["content-length"];
         const length = contentLength ? ` • length ${contentLength}` : "";
         const status = `${res.status}${res.statusText == 'OK' ? " OK" : ""}`;
