@@ -4,8 +4,9 @@
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 
 
-export async function executeResponseInfoPost () {
-    const uri = Uri.parse("response-data:" + "test-abc");
-    const doc = await workspace.openTextDocument(uri);
+export async function executeResponseInfoPost (args: any) {
+    const responseFile = args;
+    const uri = Uri.parse("response-data:" + responseFile);
+    const doc = await workspace.openTextDocument(uri);    
     await window.showTextDocument(doc, ViewColumn.Active);
 }

@@ -19,7 +19,7 @@ export function activate(context: ExtensionContext) {
     const codelensRequestPost       = new CodelensRequest     ('POST', "codelensPost");
     const codelensRequestPut        = new CodelensRequest     ('PUT',  "codelensPut");
 
-    const codelensResponseInfoPost  = new CodelensResponseInfo('POST', "responseInfo");
+    const codelensResponseInfoPost  = new CodelensResponseInfo('POST');
 
     languages.registerCodeLensProvider("*", codelensRequestPost);
     languages.registerCodeLensProvider("*", codelensRequestPut);
@@ -42,8 +42,8 @@ export function activate(context: ExtensionContext) {
         await executeRequest("PUT", args);
     });
 
-    commands.registerCommand("vscode-friflo-post.responseInfo", async (args: any) => {
-        commands.executeCommand('vscode-friflo-post.showInfo');
+    commands.registerCommand("vscode-friflo-post.responseInfo", async (args: any[]) => {
+        commands.executeCommand("vscode-friflo-post.showInfo", args);
     });
 
     // ----- TextDocumentContentProvider
@@ -62,8 +62,8 @@ export function activate(context: ExtensionContext) {
 
 	// register command that crafts an uri with the `response-data` scheme,
 	// open the dynamic document, and shows it in the next editor
-	const commandRegistration = commands.registerTextEditorCommand('vscode-friflo-post.showInfo', async(editor) => {
-        await executeResponseInfoPost();
+	const commandRegistration = commands.registerTextEditorCommand("vscode-friflo-post.showInfo", async(editor, edit, args) => {
+        await executeResponseInfoPost(args);
 	});
 
 	context.subscriptions.push(

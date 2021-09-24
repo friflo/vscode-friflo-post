@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';
-import { getInfo, globalResponseMap, RequestType } from './RequestData';
+import { RequestType } from './RequestData';
 import { getConfigPath, getEndpoint, isConfigFile, parseConfig } from './PostConfig';
 import { standardContentTypes } from './standardContentTypes';
 
@@ -71,38 +71,6 @@ export function resolveRequestCommand(codeLens: vscode.CodeLens, commandName: st
             tooltip:    tooltip,
             command:    "vscode-friflo-post." + commandName,
             // arguments: ["Argument 1", false]
-        };
-        return codeLens;
-    }
-    return null;
-}
-
-// ------------------------------ response info
-export async function addResponseInfoCommand(document: vscode.TextDocument) : Promise<vscode.CodeLens[]>{
-    if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
-        const fileName  = path.normalize(document.fileName);
-        const responseMap = globalResponseMap;
-        const info = responseMap[fileName];
-        if (info) {
-            const codeLenses = createCodelens(document);
-            const infoStr = getInfo(info);
-            const entry = codeLenses[0];
-            (entry as any)["infoStr"] = infoStr;                    
-            return codeLenses;
-        }    
-        //}
-    }
-    return [];
-}
-
-export function resolveResponseInfoCommand(codeLens: vscode.CodeLens, commandName: string) : vscode.CodeLens | null {
-    if (vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
-        const infoStr = (codeLens as any)["infoStr"] as string;
-        codeLens.command = {
-            title:      infoStr,
-            tooltip:    "Show HTTP response headers",
-            command:    "vscode-friflo-post." + commandName,
-            // arguments:  ["Argument 1", false]
         };
         return codeLens;
     }
