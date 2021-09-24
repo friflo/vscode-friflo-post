@@ -5,6 +5,8 @@ import * as minimatch  from "minimatch";
 import * as path from 'path';
 import { standardContentTypes } from "./standardContentTypes";
 
+export const configFileName  =".post-config";
+
 export class Endpoint {
     readonly    fileMatch:      string[];
     readonly    url:            string;
@@ -54,8 +56,6 @@ export function getEndpoint(config: PostConfig, filePath: string) : Endpoint | n
     }
     return null;
 }
-
-export const configFileName  =".post";
 
 export function getConfigPath(fileName: string) : string {
     const srcFolder     = path.dirname (fileName) + "/";

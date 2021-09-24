@@ -222,7 +222,7 @@ let requestCount = 0;
 
 async function createConfigFile(configPath: string) : Promise<boolean> {
     const answer = await window.showInformationMessage(
-        `"config file: '${configFileName}' not found. Create?`,
+        `"${configFileName} file not found. Create?`,
         ...["Yes", "No"]
     );
     if (answer !== "Yes") {
