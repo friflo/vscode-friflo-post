@@ -52,5 +52,6 @@ export function getInfo (data: ResponseData ) : string {
     return info;
 }
 
+/** they key is the (relative) file path of the request response within the workspace */
 export const globalResponseMap: { [key: string]: ResponseData } = {};
 

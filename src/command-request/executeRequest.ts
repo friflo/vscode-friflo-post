@@ -10,7 +10,7 @@ import * as https from 'https';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from '../models/PostConfig';
-import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
+import { ensureDirectoryExists, getWorkspaceFolder, getWorkspacePath, openShowTextFile } from '../utils/vscode-utils';
 
 const axiosInstance = axios.create({
     // 60 sec timeout
@@ -134,9 +134,8 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         dstFolder   += config.response.folder + "/";
         filePath    = dstFolder + path.basename(filePath);
     }
-    const filePathNorm  = path.normalize(filePath);
-
-    globalResponseMap[filePathNorm] = response;
+    const relativePath = getWorkspacePath(filePath)!;
+    globalResponseMap[relativePath] = response;
 
     ensureDirectoryExists(dstFolder);
     await fs.writeFile(filePath, response.content, 'utf8');

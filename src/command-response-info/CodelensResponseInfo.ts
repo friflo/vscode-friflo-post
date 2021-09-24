@@ -2,9 +2,8 @@
 // See LICENSE file in the project root for full license information.
 
 import * as vscode from 'vscode';
-import * as path from 'path';
 import { getInfo, globalResponseMap, RequestType } from '../models/RequestData';
-import { createCodelens } from '../utils/vscode-utils';
+import { createCodelens, getWorkspacePath } from '../utils/vscode-utils';
 
 /**
  * CodelensResponseInfoPost
@@ -32,9 +31,8 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
         if (!vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)){
             return [];
         }
-        const fileName  = path.normalize(document.fileName);
-        const responseMap = globalResponseMap;
-        const info = responseMap[fileName];
+        const fileName  = getWorkspacePath(document.fileName)!;
+        const info = globalResponseMap[fileName];
         if (info) {
             const codeLenses = createCodelens(document);
             const infoStr = getInfo(info);

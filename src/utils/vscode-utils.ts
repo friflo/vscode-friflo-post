@@ -2,6 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 import { promises as fs } from 'fs';
+import * as path from 'path';
 import { CodeLens, languages, Position, TextDocument, TextDocumentShowOptions, TextEditor, Uri, window, workspace } from 'vscode';
 
 export async function ensureDirectoryExists(dir: string) {
@@ -17,6 +18,15 @@ export function getWorkspaceFolder() : string | null {
         // const wf = workspace.workspaceFolders[0].uri.path ;
         const f = workspace.workspaceFolders[0].uri.fsPath ; 
         return f;
+    }
+    return null;
+}
+
+export function getWorkspacePath(filePath: string) : string | null {
+    if(workspace.workspaceFolders !== undefined) {
+        const normPath = path.normalize(filePath);
+        const workspacePath = workspace.workspaceFolders[0].uri.fsPath ; 
+        return path.relative(workspacePath, normPath);
     }
     return null;
 }
