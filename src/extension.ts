@@ -8,7 +8,7 @@ import { CodelensRequest } from './CodelensRequest';
 import { CodelensResponseInfo } from './CodelensResponseInfo';
 import { executeRequest } from './executeRequest';
 import { executeResponseInfoPost } from './executeResponseInfo';
-import ContentProvider, { } from './provider';
+import ContentProvider, { } from './ResponseDataProvider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -47,20 +47,23 @@ export function activate(context: ExtensionContext) {
     });
 
     // ----- TextDocumentContentProvider
+    // [Virtual Documents | Visual Studio Code Extension API]
+    //   https://code.visualstudio.com/api/extension-guides/virtual-documents
+    // [vscode-extension-samples/virtual-document-sample at main · microsoft/vscode-extension-samples]
+    //   https://github.com/microsoft/vscode-extension-samples/tree/main/virtual-document-sample
     const provider = new ContentProvider();
 
-	// register content provider for scheme `references`
-	// register document link provider for scheme `references`
+	// register content provider for scheme `response-data`
+	// register document link provider for scheme `response-data`
 	const providerRegistrations = Disposable.from(
 		workspace.registerTextDocumentContentProvider(ContentProvider.scheme, provider),
 		languages.registerDocumentLinkProvider({ scheme: ContentProvider.scheme }, provider)
 	);
 
-	// register command that crafts an uri with the `references` scheme,
+	// register command that crafts an uri with the `response-data` scheme,
 	// open the dynamic document, and shows it in the next editor
 	const commandRegistration = commands.registerTextEditorCommand('vscode-friflo-post.showInfo', async(editor) => {
-
-        await executeResponseInfoPost(editor);
+        await executeResponseInfoPost();
 	});
 
 	context.subscriptions.push(
