@@ -8,7 +8,7 @@ import * as path from 'path';
 import { globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, getWorkspacePath, openShowTextFile } from '../utils/vscode-utils';
-import { createHttpRequest, executeHttpRequest } from '../utils/http-utils';
+import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
 
 async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
     const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;
