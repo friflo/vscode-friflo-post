@@ -46,11 +46,15 @@ export class CodelensRequest implements vscode.CodeLensProvider
                     return [];
             }
             const codeLenses    = createCodelens(document);
-            const entry = codeLenses[0];
-            if (this.requestType == "POST") {
-                (entry as any)["endpoint"]  = endpoint?.url;
-            }
-            (entry as any)["requestType"]   = this.requestType;
+            const codeLense     = codeLenses[0];
+            const tooltip       = `${this.requestType} file content to: ${endpoint?.url}`;
+            const isPost        = this.requestType == "POST";
+            codeLense.command = {
+                title:      isPost ? `${this.requestType} ${endpoint?.url}` : this.requestType,
+                tooltip:    tooltip,
+                command:    this.commandName,
+                arguments: [fileName]
+            };
             return codeLenses;
         }
         catch (err) { 
@@ -59,23 +63,11 @@ export class CodelensRequest implements vscode.CodeLensProvider
         return [];
     }
 
-    public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
+    public resolveCodeLens(codeLense: vscode.CodeLens, token: vscode.CancellationToken) {
         if (!vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
             return null;
         }
-        const   requestType = (codeLens as any)["requestType"]  as RequestType;
-        const   endpoint    = (codeLens as any)["endpoint"]     as string | null;
-        let     tooltip     = `POST file content an REST API`;
-        if (endpoint) {
-            tooltip = `${requestType} file content to: ${endpoint}`;
-        }
-        codeLens.command = {
-            title:      endpoint ? `${requestType} ${endpoint}` : requestType,
-            tooltip:    tooltip,
-            command:    this.commandName,
-            // arguments: ["Argument 1", false]
-        };
-        return codeLens;
+        return codeLense;
     }
 }
 
