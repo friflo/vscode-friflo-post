@@ -13,7 +13,7 @@ export class RequestData {
 }
 
 export class ResponseData {
-    readonly    request:        RequestData;
+    readonly    requestData:    RequestData;
     readonly    status:         number;
     readonly    statusText:     string;
     readonly    content:        string;
@@ -48,7 +48,7 @@ export function getInfo (data: ResponseData ) : string {
     } else {
         status = `${data.status}${data.statusText == 'OK' ? " OK" : ""}`;
     }
-    const info = `${status}${length} • ${data.executionTime} ms • #${data.request.requestSeq}`;
+    const info = `${status}${length} • ${data.executionTime} ms • #${data.requestData.requestSeq}`;
     return info;
 }
 

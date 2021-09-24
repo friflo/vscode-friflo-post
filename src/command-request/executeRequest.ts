@@ -8,9 +8,9 @@ import * as path from 'path';
 import * as http from 'http';
 import * as https from 'https';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
-import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from './RequestData';
-import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from './PostConfig';
-import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from './utils';
+import { ResponseData, globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from '../models/RequestData';
+import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from '../models/PostConfig';
+import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils';
 
 const axiosInstance = axios.create({
     // 60 sec timeout
@@ -181,7 +181,7 @@ async function executeHttpRequest(requestData: RequestData, requestBody: string,
         }        
         const executionTime = new Date().getTime() - startTime;
         response = {
-            request:        requestData,
+            requestData:        requestData,
             status:         res.status,
             statusText:     res.statusText,
             content:        res.data,
@@ -195,7 +195,7 @@ async function executeHttpRequest(requestData: RequestData, requestBody: string,
         const axiosErr = err as AxiosError<string>;
         if (axiosErr.response) {
             response = {
-                request:        requestData,
+                requestData:        requestData,
                 status:         axiosErr.response.status,
                 statusText:     axiosErr.response.statusText,
                 content:        axiosErr.response.data,
@@ -206,7 +206,7 @@ async function executeHttpRequest(requestData: RequestData, requestBody: string,
             const canceled = axios.isCancel(err);
             const message = canceled ? "request canceled" : axiosErr.message;
             response = {
-                request:        requestData,
+                requestData:        requestData,
                 status:         0,
                 statusText:     message,
                 content:        message,

@@ -4,11 +4,11 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
-import { CodelensRequest } from './CodelensRequest';
-import { CodelensResponseInfo } from './CodelensResponseInfo';
-import { executeRequest } from './executeRequest';
-import { executeResponseInfoPost } from './executeResponseInfo';
-import ContentProvider, { } from './ResponseDataProvider';
+import { CodelensRequest } from './command-request/CodelensRequest';
+import { CodelensResponseInfo } from './command-response-info/CodelensResponseInfo';
+import { executeRequest } from './command-request/executeRequest';
+import { executeResponseInfoPost } from './command-response-info/executeResponseInfo';
+import ContentProvider, { } from './command-response-info/ResponseDataProvider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

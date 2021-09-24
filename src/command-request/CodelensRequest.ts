@@ -4,10 +4,10 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';
-import { RequestType } from './RequestData';
-import { createCodelens } from './Codelens-utils';
-import { getConfigPath, getEndpoint, isConfigFile, parseConfig } from './PostConfig';
-import { standardContentTypes } from './standardContentTypes';
+import { RequestType } from '../models/RequestData';
+import { createCodelens } from '../Codelens-utils';
+import { getConfigPath, getEndpoint, isConfigFile, parseConfig } from '../models/PostConfig';
+import { standardContentTypes } from '../standardContentTypes';
 
 /**
  * CodelensRequest

@@ -2,7 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 import * as vscode from 'vscode';
-import { globalResponseMap } from './RequestData';
+import { globalResponseMap } from '../models/RequestData';
 
 
 export default class ResponseDataProvider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {

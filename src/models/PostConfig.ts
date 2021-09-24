@@ -3,7 +3,7 @@
 
 import * as minimatch  from "minimatch";
 import * as path from 'path';
-import { standardContentTypes } from "./standardContentTypes";
+import { standardContentTypes } from "../standardContentTypes";
 
 export const configFileName  =".post-config";
 
