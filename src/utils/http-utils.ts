@@ -86,7 +86,7 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
             };
         } else {            
             const err: RequestError = e;
-            const message = err.message;
+            const message = err.name == "CancelError" ? "request canceled" : err.message;
             response = {
                 requestData:    requestData,
                 httpResponse: {
