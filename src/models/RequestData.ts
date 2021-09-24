@@ -2,11 +2,13 @@
 // See LICENSE file in the project root for full license information.
 
 import * as url from "url";
+import { Uri } from "vscode";
 
 export type RequestType = "POST" | "PUT";
 
 export class RequestData {
     readonly    url:            string;
+                vscodeUri:      Uri | null; // todo
     readonly    type:           RequestType;
     readonly    requestSeq:     number;
     readonly    headers:        any;

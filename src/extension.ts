@@ -3,7 +3,7 @@
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
+import { ExtensionContext, languages, commands, Disposable, workspace, Uri } from 'vscode';
 import { CodelensRequest } from './command-request/CodelensRequest';
 import { CodelensResponseInfo } from './command-response-info/CodelensResponseInfo';
 import { executeRequest } from './command-request/executeRequest';
@@ -35,11 +35,17 @@ export function activate(context: ExtensionContext) {
     });
 
     commands.registerCommand("vscode-friflo-post.codelensPost", async (args: any) => {
-        await executeRequest("POST", args);
+        const result = await executeRequest("POST", args);
+        if (!result)
+            return;
+        provider.didChangeEmitter.fire(result.requestData.vscodeUri!);
     });
 
     commands.registerCommand("vscode-friflo-post.codelensPut", async (args: any) => {
-        await executeRequest("PUT", args);
+        const result = await executeRequest("PUT", args);
+        if (!result)
+            return;
+        provider.didChangeEmitter.fire(result.requestData.vscodeUri!);
     });
 
     commands.registerCommand("vscode-friflo-post.responseInfo", async (args: any[]) => {
@@ -63,7 +69,9 @@ export function activate(context: ExtensionContext) {
 	// register command that crafts an uri with the `response-data` scheme,
 	// open the dynamic document, and shows it in the next editor
 	const commandRegistration = commands.registerTextEditorCommand("vscode-friflo-post.showInfo", async(editor, edit, args) => {
-        await executeResponseInfoPost(args);
+        const responseFile  = args;
+        const uri           = Uri.parse("response-data:" + responseFile);
+        await executeResponseInfoPost(uri);
 	});
 
 	context.subscriptions.push(

@@ -5,7 +5,7 @@ import { ViewColumn, window } from 'vscode';
 import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import { globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType } from '../models/RequestData';
+import { globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType, ResponseData } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, getWorkspacePath, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
@@ -32,10 +32,10 @@ async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
 
 let requestCount = 0;
 
-export async function executeRequest (requestType: RequestType, ...args: any[]) {
+export async function executeRequest (requestType: RequestType, ...args: any[]) : Promise<ResponseData | null>{
     const fileContent   = await GetFileContent(args);
     if (fileContent == null)
-        return;
+        return null;
     const requestBody   = fileContent.content;
     const configPath    = getConfigPath(fileContent.path);
     let config: PostConfig;
@@ -49,12 +49,12 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
             // dont await
             window.showInformationMessage(`error in: ${configFileName} config. ${err}'`);
             await openShowConfigFile (configPath);
-            return;
+            return null;
         }
     }
     catch (err) {
         await createConfigFile(configPath);
-        return;
+        return null;
     }
 
     const endpoint = getEndpoint(config, fileContent.path);
@@ -62,7 +62,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         // dont await
         window.showInformationMessage(`found no matching endpoint in: ${configFileName} config.'`);
         await openShowConfigFile(configPath);
-        return;
+        return null;
     }
     
     const srcBaseName       = path.basename(fileContent.path);
@@ -77,9 +77,11 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         window.setStatusBarMessage(`${++seconds} sec`, 1100);
     }, 1000);
 
-    const headers = getHeaders(config, endpoint, fileContent.path);
+    const headers       = getHeaders(config, endpoint, fileContent.path);
+    let filePath        = prefixExt (fileContent.path, config.response.ext);
     const requestData: RequestData = {
         url:            endpoint.url,
+        vscodeUri:      null,
         type:           requestType,
         requestSeq:   ++requestCount,
         headers:        headers,
@@ -101,27 +103,26 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     });
     clearInterval(interval);
 
-    if (!response)
-        return;
+    if (!response) {
+        return null;
+    }
 
     const workspaceFolder = getWorkspaceFolder();
     if (workspaceFolder == null) {
         const message = "Working folder not found, open a folder and try again" ;
         // dont await
         window.showErrorMessage(message);
-        return;
+        return null;
     }
 
-    let     dstFolder     = path.dirname (fileContent.path) + "/";
-
-    let filePath      = prefixExt (fileContent.path, config.response.ext);
+    let dstFolder     = path.dirname (fileContent.path) + "/";
     if (config.response.folder) {
         dstFolder   += config.response.folder + "/";
         filePath    = dstFolder + path.basename(filePath);
     }
-    const relativePath = getWorkspacePath(filePath)!;
+    const relativePath              = getWorkspacePath(filePath)!; // todo 
+    requestData.vscodeUri           = vscode.Uri.parse("response-data:" + relativePath);
     globalResponseMap[relativePath] = response;
-
     ensureDirectoryExists(dstFolder);
 
     const res       = response.httpResponse;
@@ -135,6 +136,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
     // dont await
     window.setStatusBarMessage(status, 10 * 1000);
+    return response;
 }
 
 function prefixExt (fileName: string, extPrefix: string) : string {
