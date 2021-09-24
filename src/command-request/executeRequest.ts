@@ -83,7 +83,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     
     const requestData: RequestData = {
         url:            endpoint.url,
-        vscodeUri:      vscode.Uri.parse("response-data:" + relativePath),
+        infoUri:        vscode.Uri.parse("response-data:" + relativePath),
         type:           requestType,
         requestSeq:   ++requestCount,
         headers:        headers,

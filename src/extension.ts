@@ -38,14 +38,14 @@ export function activate(context: ExtensionContext) {
         const result = await executeRequest("POST", args);
         if (!result)
             return;
-        provider.didChangeEmitter.fire(result.requestData.vscodeUri!);
+        provider.didChangeEmitter.fire(result.requestData.infoUri);
     });
 
     commands.registerCommand("vscode-friflo-post.codelensPut", async (args: any) => {
         const result = await executeRequest("PUT", args);
         if (!result)
             return;
-        provider.didChangeEmitter.fire(result.requestData.vscodeUri!);
+        provider.didChangeEmitter.fire(result.requestData.infoUri);
     });
 
     commands.registerCommand("vscode-friflo-post.codelensInfo", async (args: any[]) => {
