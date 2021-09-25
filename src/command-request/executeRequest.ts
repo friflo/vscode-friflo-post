@@ -113,7 +113,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     await fs.writeFile(responseContent.path,    responseContent.content, 'utf8');
     // console.log(`saved: ${filePath}`);
     // open response ViewColumn.Beside to enable instant modification to request and POST again.
-    await openShowTextFile(responseContent.path, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
+    await openShowTextFile(responseContent.path, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: true });
 
     const iconResult    = response.httpResponse.responseType == "error" ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
