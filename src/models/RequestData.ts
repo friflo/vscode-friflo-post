@@ -96,3 +96,31 @@ export async function GetFileContent(...args: any[]) : Promise<FileContent | nul
     };
 }
 
+export function renderResponseData(responseData: ResponseData) {
+    const req = responseData.requestData;
+    let requestHeaders = "";
+    for (const header in req.headers) {
+        requestHeaders += `${header}: ${req.headers[header]}\n`;
+    }
+    const request = `request #${req.requestSeq} ${responseData.executionTime} ms
+
+${req.type} ${req.url}
+${requestHeaders}`;        
+    const res = responseData.httpResponse;
+    if (res.responseType == "error") {
+        return `${res.message}\n\n${request}`;
+    }
+    let responseHeaders = "";
+    for (let n = 0; n < res.rawHeaders.length; n++) {
+        const header = res.rawHeaders[n];
+        if (n % 2 == 0) {
+            responseHeaders += header;
+        } else {
+            responseHeaders += `: ${header}\n`;
+        }
+    }
+    return `${request}
+HTTP/${res.httpVersion} ${res.status} ${res.statusText}
+${responseHeaders}`;
+}
+

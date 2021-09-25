@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as minimatch  from "minimatch";
-import { responseInfoMap, getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent } from '../models/RequestData';
+import { responseInfoMap, getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent, renderResponseData } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists,   getResponseInfoFromDestPathTrunk,   getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
@@ -104,12 +104,13 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     responseInfoMap[respInfoPath]   = response;
     ensureDirectoryExists(dstFolder);
 
-    const responseContent = getResponseFileContent(response);
+    const responseContent   = getResponseFileContent(response);
+    const responseData      = renderResponseData(response);
 
     await removeDestFiles(dstFolder, destPathTrunk);
 
-    await fs.writeFile(destPathTrunk,       "response infos...", 'utf8');
-    await fs.writeFile(responseContent.path, responseContent.content, 'utf8');
+    await fs.writeFile(destPathTrunk,           responseData, 'utf8');
+    await fs.writeFile(responseContent.path,    responseContent.content, 'utf8');
     // console.log(`saved: ${filePath}`);
     // open response ViewColumn.Beside to enable instant modification to request and POST again.
     await openShowTextFile(responseContent.path, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
