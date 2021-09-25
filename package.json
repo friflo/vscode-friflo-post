@@ -4,6 +4,10 @@
     "description": "HTTP Client for Visual Studio Code to POST JSON, XML, image, ... files to REST APIs",
     "version": "0.0.1",
     "publisher": "friflo",
+    "author": {
+        "name": "Ullrich Praetz"
+    },
+    "icon": "docs/images/friflo-POST.png",
     "private": true,
     "license": "MIT",
     "repository": {
