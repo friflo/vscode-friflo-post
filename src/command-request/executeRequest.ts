@@ -7,7 +7,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import { responseInfoMap, getInfo, RequestData, isPrivateIP, RequestType, ResponseData, GetFileContent } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, ResponseConfig } from '../models/PostConfig';
-import { ensureDirectoryExists, getWorkspaceFolder, getResponseInfoPath, openShowTextFile } from '../utils/vscode-utils';
+import { ensureDirectoryExists, getResponseInfoFromResponse, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
 
 
@@ -56,7 +56,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     let   seconds       = 0;
     const headers       = getHeaders(config, endpoint, fileContent.path);
     const destFile      = getDestFile(fileContent.path, config.response);
-    const respInfoPath  = getResponseInfoPath(destFile)!;
+    const respInfoPath  = getResponseInfoFromResponse(destFile)!;
     
     const requestData: RequestData = {
         url:            endpoint.url,

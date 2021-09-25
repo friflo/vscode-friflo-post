@@ -22,8 +22,11 @@ export function getWorkspaceFolder() : string | null {
     return null;
 }
 
-export function getResponseInfoPath(filePath: string) : string | null {
+/** in case filePath is a response file simply remove its (specific) extension. */
+export function getResponseInfoFromResponse(filePath: string) : string | null {
     if(workspace.workspaceFolders !== undefined) {
+        const ext = path.extname(filePath);
+        filePath = filePath.substring(0, filePath.length - ext.length);
         const normPath = path.normalize(filePath);
         const workspacePath = workspace.workspaceFolders[0].uri.fsPath ; 
         return path.relative(workspacePath, normPath);

@@ -3,7 +3,7 @@
 
 import * as vscode from 'vscode';
 import { getInfo, responseInfoMap, RequestType } from '../models/RequestData';
-import { createCodelens, getResponseInfoPath } from '../utils/vscode-utils';
+import { createCodelens, getResponseInfoFromResponse } from '../utils/vscode-utils';
 
 /**
  * CodelensResponseInfoPost
@@ -31,8 +31,9 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
         if (!vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)){
             return [];
         }
-        const respInfoPath  = getResponseInfoPath(document.fileName)!;
-        const info          = responseInfoMap[respInfoPath];
+        const respInfoPath  = getResponseInfoFromResponse(document.fileName)!;
+        const map           = responseInfoMap[respInfoPath];
+        const info          = map;
         if (info) {
             const codeLenses = createCodelens(document);
             const infoStr = getInfo(info);
