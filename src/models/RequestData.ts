@@ -2,7 +2,8 @@
 // See LICENSE file in the project root for full license information.
 
 import * as url from "url";
-import { Uri } from "vscode";
+import { promises as fs } from 'fs';
+import { Uri, window } from "vscode";
 
 export type RequestType = "POST" | "PUT";
 
@@ -73,4 +74,24 @@ export function getInfo (data: ResponseData ) : string {
 
 /** they key is the (relative) file path of the request response within the workspace */
 export const globalResponseMap: { [key: string]: ResponseData } = {};
+
+export async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
+    const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;
+    if (selectedFilePath) {
+        const selectedFilePath = args[0][0].fsPath;
+        const content       = await fs.readFile(selectedFilePath,'utf8');
+        return {
+            path:       selectedFilePath,
+            content:    content
+        };
+    }
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        return null;
+    }
+    return {
+        path:       editor.document.fileName,
+        content:    editor.document.getText()
+    };
+}
 

@@ -5,30 +5,11 @@ import { ViewColumn, window } from 'vscode';
 import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import { globalResponseMap, getInfo, RequestData, isPrivateIP, FileContent, RequestType, ResponseData } from '../models/RequestData';
+import { globalResponseMap, getInfo, RequestData, isPrivateIP, RequestType, ResponseData, GetFileContent } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, getWorkspacePath, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
 
-async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
-    const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;
-    if (selectedFilePath) {
-        const selectedFilePath = args[0][0].fsPath;
-        const content       = await fs.readFile(selectedFilePath,'utf8');
-        return {
-            path:       selectedFilePath,
-            content:    content
-        };
-    }
-    const editor = window.activeTextEditor;
-    if (!editor) {
-        return null;
-    }
-    return {
-        path:       editor.document.fileName,
-        content:    editor.document.getText()
-    };
-}
 
 let requestCount = 0;
 
