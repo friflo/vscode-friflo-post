@@ -5,12 +5,13 @@ import { ViewColumn, window } from 'vscode';
 import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import * as minimatch  from "minimatch";
 import { responseInfoMap, getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists,   getResponseInfoFromDestPathTrunk,   getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
 import { getExtensionFromContentType } from '../utils/standard-content-types';
-import * as minimatch  from "minimatch";
+
 
 
 let requestCount = 0;
@@ -106,6 +107,8 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const responseContent = getResponseFileContent(response);
 
     await removeDestFiles(dstFolder, destPathTrunk);
+
+    await fs.writeFile(destPathTrunk,       "response infos...", 'utf8');
     await fs.writeFile(responseContent.path, responseContent.content, 'utf8');
     // console.log(`saved: ${filePath}`);
     // open response ViewColumn.Beside to enable instant modification to request and POST again.

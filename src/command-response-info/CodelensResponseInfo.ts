@@ -2,8 +2,11 @@
 // See LICENSE file in the project root for full license information.
 
 import * as vscode from 'vscode';
-import { getInfo, responseInfoMap, RequestType } from '../models/RequestData';
-import { createCodelens, getResponseInfoFromResponse } from '../utils/vscode-utils';
+import * as path from 'path';
+import { promises as fs } from 'fs';
+import { respExt } from '../models/PostConfig';
+import { RequestType } from '../models/RequestData';
+import { createCodelens } from '../utils/vscode-utils';
 
 /**
  * CodelensResponseInfoPost
@@ -31,22 +34,19 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
         if (!vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)){
             return [];
         }
-        const respInfoPath  = getResponseInfoFromResponse(document.fileName)!;
-        const map           = responseInfoMap[respInfoPath];
-        const info          = map;
-        if (info) {
-            const codeLenses = createCodelens(document);
-            const infoStr = getInfo(info);
-            // Set codeLenses command directly - its fast. So resolveCodeLens() will no be called.
-            codeLenses[0].command = {
-                title:      infoStr,
-                command:    "vscode-friflo-post.codelensInfo",
-                tooltip:    "Show HTTP response headers",
-                arguments:  [respInfoPath]
-            };
-            return codeLenses;
-        }    
-        return [];
+        const respInfoPath  = await findRespFile(document.fileName)!;
+        if (!respInfoPath)
+            return [];
+        const codeLenses = createCodelens(document);
+        const infoStr = "Response info";
+        // Set codeLenses command directly - its fast. So resolveCodeLens() will no be called.
+        codeLenses[0].command = {
+            title:      infoStr,
+            command:    "vscode-friflo-post.codelensInfo",
+            tooltip:    "Show response information",
+            arguments:  [respInfoPath]
+        };
+        return codeLenses;
     }
 
     /**
@@ -67,4 +67,19 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
         return codeLens;
     }
 }
+
+async function findRespFile (contentPath: string) : Promise<string | null> {
+    const ext       = path.extname(contentPath);
+    const trunk     = contentPath.substring(0, contentPath.length - ext.length);
+    if (!trunk.endsWith(respExt))
+        return null;
+    try {
+        await fs.access(trunk);
+        return trunk;
+    }
+    catch (err) {
+        return null;
+    }    
+}
+
 

@@ -3,12 +3,14 @@
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { ExtensionContext, languages, commands, Disposable, workspace, Uri } from 'vscode';
+import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
 import { CodelensRequest } from './command-request/CodelensRequest';
 import { CodelensResponseInfo } from './command-response-info/CodelensResponseInfo';
 import { executeRequest } from './command-request/executeRequest';
-import { executeResponseInfoPost } from './command-response-info/executeResponseInfo';
+import { executeResponseInfo } from './command-response-info/executeResponseInfo';
 import ContentProvider, { } from './command-response-info/ResponseDataProvider';
+import { CodelensResponseContent } from './command-response-content/CodelensResponseContent';
+import { executeResponseContent } from './command-response-content/executeResponseInfo';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -16,13 +18,15 @@ import ContentProvider, { } from './command-response-info/ResponseDataProvider';
 let disposables: Disposable[] = [];
 
 export function activate(context: ExtensionContext) {
-    const codelensRequestPost       = new CodelensRequest     ('POST', "vscode-friflo-post.codelensPost");
-    const codelensRequestPut        = new CodelensRequest     ('PUT',  "vscode-friflo-post.codelensPut");
+    const codelensRequestPost       = new CodelensRequest           ('POST', "vscode-friflo-post.codelensPost");
+    const codelensRequestPut        = new CodelensRequest           ('PUT',  "vscode-friflo-post.codelensPut");
+    const codelensResponseContent   = new CodelensResponseContent   ();
 
     const codelensResponseInfoPost  = new CodelensResponseInfo('POST');
 
     languages.registerCodeLensProvider("*", codelensRequestPost);
     languages.registerCodeLensProvider("*", codelensRequestPut);
+    languages.registerCodeLensProvider("*", codelensResponseContent);
 
     languages.registerCodeLensProvider("*", codelensResponseInfoPost);
 
@@ -48,8 +52,13 @@ export function activate(context: ExtensionContext) {
         provider.didChangeEmitter.fire(result.requestData.infoUri);
     });
 
-    commands.registerCommand("vscode-friflo-post.codelensInfo", async (args: any[]) => {
-        commands.executeCommand("vscode-friflo-post.showInfo", args);
+    commands.registerCommand("vscode-friflo-post.codelensContent", async (args: any) => {
+        await executeResponseContent(args);
+    });
+
+    commands.registerCommand("vscode-friflo-post.codelensInfo", async (args: any) => {
+        await executeResponseInfo(args);
+        // commands.executeCommand("vscode-friflo-post.showInfo", args);
     });
 
     // ----- TextDocumentContentProvider
@@ -68,15 +77,15 @@ export function activate(context: ExtensionContext) {
 
 	// register command that crafts an uri with the `response-data` scheme,
 	// open the dynamic document, and shows it in the next editor
-	const commandRegistration = commands.registerTextEditorCommand("vscode-friflo-post.showInfo", async(editor, edit, args) => {
+	/* const commandRegistration = commands.registerTextEditorCommand("vscode-friflo-post.showInfo", async(editor, edit, args) => {
         const responseFile  = args;
         const uri           = Uri.parse("response-data:" + responseFile);
-        await executeResponseInfoPost(uri);
-	});
+        await executeResponseInfo(uri);
+	}); */
 
 	context.subscriptions.push(
 		provider,
-		commandRegistration,
+		// commandRegistration,
 		providerRegistrations
 	);
 }
