@@ -5,7 +5,7 @@ import { ViewColumn, window } from 'vscode';
 import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import { responseInfoMap, getInfo, RequestData, isPrivateIP, RequestType, ResponseData, GetFileContent, FileContent } from '../models/RequestData';
+import { responseInfoMap, getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists,   getResponseInfoFromDestPathTrunk,   getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
@@ -49,8 +49,8 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     }
     
     const srcBaseName       = path.basename(fileContent.path);
-    const isPrivate         = isPrivateIP(endpoint.url);
-    const iconType          = isPrivate ?  "💻" : "🌐";
+    // const isPrivate      = isPrivateIP(endpoint.url);
+    const iconType          = "🌐";
     const progressStatus    = `${requestType} ${iconType} ${srcBaseName}`;
     // dont await
     window.setStatusBarMessage(""); // clear status. Otherwise its confusing having a previous result & a pending request which is created below
