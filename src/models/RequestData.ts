@@ -107,7 +107,9 @@ export function renderResponseData(responseData: ResponseData) {
     const request   = `${req.type} ${req.url}\n${requestHeaders}`;
     const res       = responseData.httpResponse;
     if (res.responseType == "error") {
-        return `${info}\n\n${res.message}\n\n${request}`;
+        return `no content\n
+${info}\n
+${request}`;
     }
     let responseHeaders = "";
     for (let n = 0; n < res.rawHeaders.length; n++) {
@@ -118,7 +120,8 @@ export function renderResponseData(responseData: ResponseData) {
             responseHeaders += `: ${header}\n`;
         }
     }
-    return `${info}\n\n${request}
+    return `${info}\n
+${request}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}
 ${responseHeaders}`;
 }

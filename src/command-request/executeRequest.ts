@@ -101,17 +101,20 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const dstFolder                 = path.dirname (destPathTrunk) + "/";
     ensureDirectoryExists(dstFolder);
 
-    const responseContent   = getResponseFileContent(response);
-    const responseData      = renderResponseData(response);
-
     await removeDestFiles(dstFolder, destPathTrunk);
 
+    const responseData      = renderResponseData(response);
     await fs.writeFile(destPathTrunk,           responseData, 'utf8');
-    await fs.writeFile(responseContent.path,    responseContent.content, 'utf8');
-    // console.log(`saved: ${filePath}`);
-    // open response ViewColumn.Beside to enable instant modification to request and POST again.
-    await openShowTextFile(responseContent.path, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: true });
 
+    const responseContent   = getResponseFileContent(response);
+        // open response ViewColumn.Beside to enable instant modification to request and POST again.
+        const showOptions: vscode.TextDocumentShowOptions = { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: true };
+    if (responseContent) {
+        await fs.writeFile(responseContent.path,    responseContent.content, 'utf8');
+        await openShowTextFile(responseContent.path,    null, showOptions);
+    } else {
+        await openShowTextFile(destPathTrunk,           null, showOptions);
+    }
     const iconResult    = response.httpResponse.responseType == "error" ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
     // dont await    
@@ -130,7 +133,7 @@ async function removeDestFiles (dstFolder: string, destPathTrunk: string) {
     }
 }
 
-function getResponseFileContent(responseData: ResponseData) : FileContent {
+function getResponseFileContent(responseData: ResponseData) : FileContent | null{
     const res = responseData.httpResponse;
     if (res.responseType == "result") {
         const contentType = res.headers["content-type"]; // todo casing
@@ -140,10 +143,7 @@ function getResponseFileContent(responseData: ResponseData) : FileContent {
             content:    res.content,
         };
     }
-    return {
-        path:       responseData.requestData.destPathTrunk,
-        content:    res.message
-    };
+    return null;
 }
 
 function replaceExt (fileName: string, respExt: string) : string {
