@@ -3,14 +3,13 @@
 
 import * as url from "url";
 import { promises as fs } from 'fs';
-import { Uri, window } from "vscode";
+import { window } from "vscode";
 
 export type RequestType = "POST" | "PUT";
 
 export class RequestData {
     readonly    url:            string;
     readonly    destPathTrunk:  string;
-    readonly    infoUri:        Uri;
     readonly    type:           RequestType;
     readonly    requestSeq:     number;
     readonly    headers:        any;
@@ -72,9 +71,6 @@ export function getInfo (data: ResponseData ) : string {
     const info = `${result} • ${data.executionTime} ms • #${data.requestData.requestSeq}`;
     return info;
 }
-
-/** they key is the (relative) file path of the request response within the workspace */
-export const responseInfoMap: { [key: string]: ResponseData } = {};
 
 export async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
     const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;
