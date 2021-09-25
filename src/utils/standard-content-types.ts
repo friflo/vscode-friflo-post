@@ -1,6 +1,16 @@
 // Copyright (c) Ullrich Praetz. All rights reserved.
 // See LICENSE file in the project root for full license information.
 
+
+
+export function getExtensionFromContentType(contentType: string) {
+    if (contentType == "application/json")
+        return ".json";
+    return ".xxx";
+}
+
+
+
 /**
  * Note! language specific files types must only be used here - nowhere else.
  * 

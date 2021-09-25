@@ -5,10 +5,11 @@ import { ViewColumn, window } from 'vscode';
 import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import { responseInfoMap, getInfo, RequestData, isPrivateIP, RequestType, ResponseData, GetFileContent } from '../models/RequestData';
+import { responseInfoMap, getInfo, RequestData, isPrivateIP, RequestType, ResponseData, GetFileContent, FileContent } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, ResponseConfig } from '../models/PostConfig';
-import { ensureDirectoryExists, getResponseInfoFromResponse, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
+import { ensureDirectoryExists,   getResponseInfoFromDestPathTrunk,   getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
+import { getExtensionFromContentType } from '../utils/standard-content-types';
 
 
 let requestCount = 0;
@@ -55,18 +56,19 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
 
     let   seconds       = 0;
     const headers       = getHeaders(config, endpoint, fileContent.path);
-    const destFile      = getDestFile(fileContent.path, config.response);
-    const respInfoPath  = getResponseInfoFromResponse(destFile)!;
+    const destPathTrunk = getDestPathTrunk(fileContent.path, config.response);
+    const respInfoPath  = getResponseInfoFromDestPathTrunk(destPathTrunk)!;
     
     const requestData: RequestData = {
         url:            endpoint.url,
         infoUri:        vscode.Uri.parse("response-data:" + respInfoPath),
+        destPathTrunk:  destPathTrunk,
         type:           requestType,
         requestSeq:   ++requestCount,
         headers:        headers,
     };
     
-    const response = await window.withProgress({
+    const response: ResponseData = await window.withProgress({
         location:       vscode.ProgressLocation.Window,
         cancellable:    true,
         title:          progressStatus
@@ -96,16 +98,16 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         return null;
     }
 
-    const dstFolder                 = path.dirname (destFile) + "/";
+    const dstFolder                 = path.dirname (destPathTrunk) + "/";
     responseInfoMap[respInfoPath]   = response;
     ensureDirectoryExists(dstFolder);
 
-    const res       = response.httpResponse;
-    const content   = res.responseType == "result" ? res.content : res.message;
-    await fs.writeFile(destFile, content, 'utf8');
+    const responseContent = getResponseFileContent(response);
+
+    await fs.writeFile(responseContent.path, responseContent.content, 'utf8');
     // console.log(`saved: ${filePath}`);
     // open response ViewColumn.Beside to enable instant modification to request and POST again.
-    await openShowTextFile(destFile, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
+    await openShowTextFile(responseContent.path, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
     const iconResult    = response.httpResponse == null ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
@@ -114,22 +116,38 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     return response;
 }
 
-function prefixExt (fileName: string, extPrefix: string) : string {
-    if (!extPrefix) {
+function getResponseFileContent(responseData: ResponseData) : FileContent {
+    const res = responseData.httpResponse;
+    if (res.responseType == "result") {
+        const contentType = res.headers["content-type"]; // todo casing
+        const ext = getExtensionFromContentType(contentType);
+        return {
+            path:       responseData.requestData.destPathTrunk + ext,
+            content:    res.content,
+        };
+    }
+    return {
+        path:       responseData.requestData.destPathTrunk,
+        content:    res.message
+    };
+}
+
+function replaceExt (fileName: string, respExt: string) : string {
+    if (!respExt) {
         return fileName;
     }
     const ext               = path.extname(fileName);
     const fileWithoutExt    =  fileName.substring(0, fileName.length - ext.length);
-    return `${fileWithoutExt}${extPrefix}${ext}`;
+    return `${fileWithoutExt}${respExt}`;
 }
 
-function getDestFile (fileName: string, responseConfig: ResponseConfig) : string {
-    const prefixed = prefixExt (fileName, responseConfig.ext);
+function getDestPathTrunk (fileName: string, responseConfig: ResponseConfig) : string {
+    const responseBase = replaceExt (fileName, responseConfig.ext);
     if (responseConfig.folder) {
         const   dstFolder   = path.dirname (fileName) + "/";
-        return  dstFolder + "/" + responseConfig.folder + "/" + path.basename(prefixed);
+        return  dstFolder + "/" + responseConfig.folder + "/" + path.basename(responseBase);
     }
-    return prefixed;
+    return responseBase;
 }
 
 async function createConfigFile(configPath: string) : Promise<boolean> {
