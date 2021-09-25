@@ -21,7 +21,6 @@ export class RequestHeaders {
 
 export class ResponseConfig {
     readonly    folder:         string;
-    readonly    ext:            string;
 }
 
 export class PostConfig {
@@ -39,8 +38,7 @@ export const defaultConfigString = `{
     "Connection":   "Keep-Alive"
   },
   "response": {
-    "folder":       "response",
-    "ext":          ".resp"
+    "folder":       "response"
   }
 }`;
 

@@ -7,7 +7,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as minimatch  from "minimatch";
 import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent, renderResponseData } from '../models/RequestData';
-import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, ResponseConfig } from '../models/PostConfig';
+import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, respExt, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
 import { getExtensionFromContentType } from '../utils/standard-content-types';
@@ -156,7 +156,7 @@ function replaceExt (fileName: string, respExt: string) : string {
 }
 
 function getDestPathTrunk (fileName: string, responseConfig: ResponseConfig) : string {
-    const responseBase = replaceExt (fileName, responseConfig.ext);
+    const responseBase = replaceExt (fileName, respExt);
     if (responseConfig.folder) {
         const   dstFolder   = path.dirname (fileName) + "/";
         return  dstFolder + "/" + responseConfig.folder + "/" + path.basename(responseBase);
