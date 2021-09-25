@@ -2,7 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 import * as vscode from 'vscode';
-import { globalResponseMap } from '../models/RequestData';
+import { responseInfoMap } from '../models/RequestData';
 
 
 export default class ResponseDataProvider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
@@ -24,10 +24,10 @@ export default class ResponseDataProvider implements vscode.TextDocumentContentP
 	}
 
 	// Provider method that takes an uri of the `response-data`-scheme and
-	// resolves its content by lookup in globalResponseMap
+	// resolves its content by lookup in responseInfoMap
 	provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
         const responseDataFile  = uri.path;
-        const responseData      = globalResponseMap[responseDataFile];
+        const responseData      = responseInfoMap[responseDataFile];
         if (!responseData) {
             return "ResponseInfo not found: " + responseDataFile;
         }

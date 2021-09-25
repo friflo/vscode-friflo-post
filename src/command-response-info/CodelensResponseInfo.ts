@@ -2,8 +2,8 @@
 // See LICENSE file in the project root for full license information.
 
 import * as vscode from 'vscode';
-import { getInfo, globalResponseMap, RequestType } from '../models/RequestData';
-import { createCodelens, getWorkspacePath } from '../utils/vscode-utils';
+import { getInfo, responseInfoMap, RequestType } from '../models/RequestData';
+import { createCodelens, getResponseInfoPath } from '../utils/vscode-utils';
 
 /**
  * CodelensResponseInfoPost
@@ -31,8 +31,8 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
         if (!vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)){
             return [];
         }
-        const fileName  = getWorkspacePath(document.fileName)!;
-        const info = globalResponseMap[fileName];
+        const respInfoPath  = getResponseInfoPath(document.fileName)!;
+        const info          = responseInfoMap[respInfoPath];
         if (info) {
             const codeLenses = createCodelens(document);
             const infoStr = getInfo(info);
@@ -41,7 +41,7 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
                 title:      infoStr,
                 command:    "vscode-friflo-post.codelensInfo",
                 tooltip:    "Show HTTP response headers",
-                arguments:  [fileName]
+                arguments:  [respInfoPath]
             };
             return codeLenses;
         }    

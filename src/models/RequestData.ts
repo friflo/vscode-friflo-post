@@ -73,7 +73,7 @@ export function getInfo (data: ResponseData ) : string {
 }
 
 /** they key is the (relative) file path of the request response within the workspace */
-export const globalResponseMap: { [key: string]: ResponseData } = {};
+export const responseInfoMap: { [key: string]: ResponseData } = {};
 
 export async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
     const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;

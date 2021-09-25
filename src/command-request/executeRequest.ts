@@ -5,9 +5,9 @@ import { ViewColumn, window } from 'vscode';
 import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import { globalResponseMap, getInfo, RequestData, isPrivateIP, RequestType, ResponseData, GetFileContent } from '../models/RequestData';
+import { responseInfoMap, getInfo, RequestData, isPrivateIP, RequestType, ResponseData, GetFileContent } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, ResponseConfig } from '../models/PostConfig';
-import { ensureDirectoryExists, getWorkspaceFolder, getWorkspacePath, openShowTextFile } from '../utils/vscode-utils';
+import { ensureDirectoryExists, getWorkspaceFolder, getResponseInfoPath, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
 
 
@@ -60,11 +60,11 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
 
     const headers       = getHeaders(config, endpoint, fileContent.path);
     const destFile      = getDestFile(fileContent.path, config.response);
-    const relativePath  = getWorkspacePath(destFile)!;
+    const respInfoPath  = getResponseInfoPath(destFile)!;
     
     const requestData: RequestData = {
         url:            endpoint.url,
-        infoUri:        vscode.Uri.parse("response-data:" + relativePath),
+        infoUri:        vscode.Uri.parse("response-data:" + respInfoPath),
         type:           requestType,
         requestSeq:   ++requestCount,
         headers:        headers,
@@ -99,7 +99,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     }
 
     const dstFolder                 = path.dirname (destFile) + "/";
-    globalResponseMap[relativePath] = response;
+    responseInfoMap[respInfoPath]   = response;
     ensureDirectoryExists(dstFolder);
 
     const res       = response.httpResponse;

@@ -22,7 +22,7 @@ export function getWorkspaceFolder() : string | null {
     return null;
 }
 
-export function getWorkspacePath(filePath: string) : string | null {
+export function getResponseInfoPath(filePath: string) : string | null {
     if(workspace.workspaceFolders !== undefined) {
         const normPath = path.normalize(filePath);
         const workspacePath = workspace.workspaceFolders[0].uri.fsPath ; 
