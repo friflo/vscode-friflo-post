@@ -33,7 +33,7 @@ export function createHttpRequest(requestData: RequestData, requestBody: string)
     const options: OptionsOfTextResponseBody = {
         headers:    requestData.headers,
         body:       requestBody,
-        timeout:    3_000
+        timeout:    60_000
     };
     let cancelableRequest: CancelableRequest<Response<string>>;
     switch (requestData.type) {

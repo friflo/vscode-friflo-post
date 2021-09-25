@@ -51,13 +51,8 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const iconType          = isPrivate ?  "💻" : "🌐";
     const progressStatus    = `${requestType} ${iconType} ${srcBaseName}`;
     // dont await
-    window.setStatusBarMessage("0 sec", 1100);
 
-    let seconds = 0;
-    const interval = setInterval(() => {
-        window.setStatusBarMessage(`${++seconds} sec`, 1100);
-    }, 1000);
-
+    let   seconds       = 0;
     const headers       = getHeaders(config, endpoint, fileContent.path);
     const destFile      = getDestFile(fileContent.path, config.response);
     const respInfoPath  = getResponseInfoPath(destFile)!;
@@ -75,16 +70,18 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         cancellable:    true,
         title:          progressStatus
     }, async (progress, token) => {
+        const interval = setInterval(() => {
+            progress.report({message: `${++seconds} sec`});
+        }, 1000);
         // const cancelTokenSource = axios.CancelToken.source();
         const httpRequest = createHttpRequest (requestData, requestBody);
         token.onCancellationRequested(() => {
             httpRequest.request.cancel();
         });
-        progress.report({  increment: 0 });
         const  response = await executeHttpRequest(httpRequest);
+        clearInterval(interval);
         return response; 
     });
-    clearInterval(interval);
 
     if (!response) {
         return null;
