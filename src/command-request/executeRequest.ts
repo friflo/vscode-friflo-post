@@ -126,7 +126,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     await fs.writeFile(destFile, content, 'utf8');
     // console.log(`saved: ${filePath}`);
 
-    await openShowTextFile(destFile, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
+    await openShowTextFile(destFile, null, { viewColumn: ViewColumn.One, preserveFocus: true, preview: false });
 
     const iconResult    = response.httpResponse == null ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
@@ -168,5 +168,5 @@ async function createConfigFile(configPath: string) : Promise<boolean> {
 }
 
 async function openShowConfigFile(configPath: string) : Promise<vscode.TextEditor> {
-    return await openShowTextFile( configPath, "json", { viewColumn: ViewColumn.Active, preserveFocus: false, preview: false });
+    return await openShowTextFile( configPath, "json", { viewColumn: ViewColumn.One, preserveFocus: false, preview: false });
 }
