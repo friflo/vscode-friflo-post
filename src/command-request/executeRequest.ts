@@ -111,7 +111,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     // open response ViewColumn.Beside to enable instant modification to request and POST again.
     await openShowTextFile(responseContent.path, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
-    const iconResult    = response.httpResponse == null ? "😕" : iconType;
+    const iconResult    = response.httpResponse.responseType == "error" ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
     // dont await    
     window.setStatusBarMessage(status, 10 * 1000);
