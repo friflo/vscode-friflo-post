@@ -103,8 +103,8 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const content   = res.responseType == "result" ? res.content : res.message;
     await fs.writeFile(destFile, content, 'utf8');
     // console.log(`saved: ${filePath}`);
-
-    await openShowTextFile(destFile, null, { viewColumn: ViewColumn.One, preserveFocus: true, preview: false });
+    // open response ViewColumn.Beside to enable instant modification to request and POST again.
+    await openShowTextFile(destFile, null, { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: false });
 
     const iconResult    = response.httpResponse == null ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
