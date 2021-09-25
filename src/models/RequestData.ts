@@ -45,6 +45,11 @@ export class FileContent {
     readonly    content:    string;
 }
 
+export class RespInfo {
+    readonly    path:       string;
+    readonly    info:       string;
+}
+
 export function isPrivateIP(urlString: string) : boolean {
     const urlValue = url.parse(urlString);
     if (!urlValue.hostname)
