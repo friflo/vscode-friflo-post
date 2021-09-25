@@ -51,6 +51,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const iconType          = isPrivate ?  "💻" : "🌐";
     const progressStatus    = `${requestType} ${iconType} ${srcBaseName}`;
     // dont await
+    window.setStatusBarMessage(""); // clear status. Otherwise its confusing having a previous result & a pending request which is created below
 
     let   seconds       = 0;
     const headers       = getHeaders(config, endpoint, fileContent.path);
@@ -108,7 +109,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
 
     const iconResult    = response.httpResponse == null ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
-    // dont await
+    // dont await    
     window.setStatusBarMessage(status, 10 * 1000);
     return response;
 }
