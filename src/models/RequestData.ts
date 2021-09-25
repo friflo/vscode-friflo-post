@@ -107,7 +107,7 @@ export function renderResponseData(responseData: ResponseData) {
     const request   = `${req.type} ${req.url}\n${requestHeaders}`;
     const res       = responseData.httpResponse;
     if (res.responseType == "error") {
-        return `no content\n
+        return `no response\n
 ${info}\n
 ${request}`;
     }
