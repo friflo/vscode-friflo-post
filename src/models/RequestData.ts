@@ -99,7 +99,8 @@ export async function GetFileContent(...args: any[]) : Promise<FileContent | nul
     };
 }
 
-const bt = "`"; // backtick used to markdown header keys
+const bt    = "`";      // backtick for markdown
+const code  = "```";    // backtick for markdown
 
 export function renderResponseData(responseData: ResponseData) {
     const title = getInfo(responseData);
@@ -110,15 +111,17 @@ export function renderResponseData(responseData: ResponseData) {
     const req = responseData.requestData;
     let requestHeaders = "";
     for (const header in req.headers) {
-        requestHeaders += `${bt}${header}${bt}:${indent(header, max)} ${req.headers[header]}  \n`;
+        requestHeaders += `${header}:${indent(header, max)} ${req.headers[header]}  \n`;
     }
     const request   = `${req.type} ${req.url}  \n${requestHeaders}`;
     const res       = responseData.httpResponse;
     if (res.responseType == "error") {
         return `${title}\n
 result: 🐛 ${bt}${res.message}${bt}\n
-${responseLink}\n
-${request}`;
+${responseLink}
+
+${code}
+${request}${code}`;
     }
     // res.responseType == "result"
     const emoji = res.status == 200 ? "🙂" : "😕";
@@ -127,17 +130,20 @@ ${request}`;
     for (let n = 0; n < res.rawHeaders.length; n++) {
         const header = res.rawHeaders[n];
         if (n % 2 == 0) {
-            responseHeaders += `${bt}${header}${bt}: ${indent(header, max)}`;
+            responseHeaders += `${header}: ${indent(header, max)}`;
         } else {
             responseHeaders += `${header}  \n`;
         }
     }
     return `${title}\n
 result: ${resultState}  \n
-${responseLink}\n
-${request}
+${responseLink}
+
+${code}
+${request}${code}
+${code}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}  
-${responseHeaders}`;
+${responseHeaders}${code}`;
 }
 
 function indent(key: string, max: number) : string {
