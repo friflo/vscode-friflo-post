@@ -62,7 +62,7 @@ async function findContentFile (respPath: string) : Promise<string | null> {
     const list      = await fs.readdir(folder);
     for (let i = 0; i < list.length; i++) {
         const filePath = list[i];
-        if (filePath == respName)
+        if (filePath.endsWith(respMdExt))
             continue;
         if (minimatch(filePath, filter, { matchBase: true })) {
             return folder + filePath;
