@@ -102,14 +102,15 @@ export async function GetFileContent(...args: any[]) : Promise<FileContent | nul
 export function renderResponseData(responseData: ResponseData) {
     const title = getInfo(responseData);
     const responsePath = path.basename(responseData.path);
-    const responseLink = `[Response](${responsePath})`;
+    const responseLink = `[Content](${responsePath})`;
+    const max = getMaxKeyName(responseData);
 
     const req = responseData.requestData;
     let requestHeaders = "";
     for (const header in req.headers) {
-        requestHeaders += `${header}: ${req.headers[header]}\n`;
+        requestHeaders += `${header}:${indent(header, max)} ${req.headers[header]}  \n`;
     }
-    const request   = `${req.type} ${req.url}\n${requestHeaders}`;
+    const request   = `${req.type} ${req.url}  \n${requestHeaders}`;
     const res       = responseData.httpResponse;
     if (res.responseType == "error") {
         return `${title}\n
@@ -123,17 +124,40 @@ ${request}`;
     for (let n = 0; n < res.rawHeaders.length; n++) {
         const header = res.rawHeaders[n];
         if (n % 2 == 0) {
-            responseHeaders += header;
+            responseHeaders += header + ": " + indent(header, max);
         } else {
-            responseHeaders += `: ${header}\n`;
+            responseHeaders += `${header}  \n`;
         }
     }
     return `${title}\n
-${resultState}
-
+${resultState}  \n
 ${responseLink}\n
 ${request}
-HTTP/${res.httpVersion} ${res.status} ${res.statusText}
+HTTP/${res.httpVersion} ${res.status} ${res.statusText}  
 ${responseHeaders}`;
+}
+
+function indent(key: string, max: number) : string {
+    return " ".repeat(max - key.length);
+}
+
+function getMaxKeyName(responseData: ResponseData) : number {
+    let max = 0;
+    const req = responseData.requestData;
+    for (const header in req.headers) {
+        if (max < header.length)
+            max = header.length;
+    }
+    const res = responseData.httpResponse;
+    if (res.responseType == "result") {
+        for (let n = 0; n < res.rawHeaders.length; n++) {
+            const header = res.rawHeaders[n];
+            if (n % 2 == 0) {
+                if (max < header.length)
+                    max = header.length;
+            }
+        }
+    }
+    return max;
 }
 
