@@ -32,6 +32,11 @@
                 "category": "friflo POST"
             },
             {
+                "command": "vscode-friflo-post.codelensPut",
+                "title": "PUT Request",
+                "category": "friflo POST"
+            },
+            {
                 "title": "Enable friflo POST",
                 "command": "vscode-friflo-post.enablePostClient",
                 "category": "friflo POST"
@@ -58,6 +63,11 @@
             "editor/context": [
                 {
                     "command": "vscode-friflo-post.codelensPost",
+                    "when": "editorTextFocus && editorLangId == json",
+                    "group": "vscode-friflo-post@1"
+                },
+                {
+                    "command": "vscode-friflo-post.codelensPut",
                     "when": "editorTextFocus && editorLangId == json",
                     "group": "vscode-friflo-post@1"
                 },
