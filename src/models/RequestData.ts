@@ -116,12 +116,13 @@ export function renderResponseData(responseData: ResponseData) {
     const res       = responseData.httpResponse;
     if (res.responseType == "error") {
         return `${title}\n
-${bt}result${bt}: 🐛 ${res.message}\n
+result: 🐛 ${bt}${res.message}${bt}\n
 ${responseLink}\n
 ${request}`;
     }
     // res.responseType == "result"
-    const resultState = res.status == 200 ? `🙂 200 OK` : `😕 ${res.status}: ${res.statusText}`;
+    const emoji = res.status == 200 ? "🙂" : "😕";
+    const resultState = `${emoji} ${res.status} ${bt}${res.statusText}${bt}`;
     let responseHeaders = "";
     for (let n = 0; n < res.rawHeaders.length; n++) {
         const header = res.rawHeaders[n];
@@ -132,7 +133,7 @@ ${request}`;
         }
     }
     return `${title}\n
-${bt}result${bt}: ${resultState}  \n
+result: ${resultState}  \n
 ${responseLink}\n
 ${request}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}  
