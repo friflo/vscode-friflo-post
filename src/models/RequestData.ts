@@ -110,6 +110,14 @@ export function getResultIcon(httpResponse: HttpResult | HttpError) : string {
     return "😕";        // error
 }
 
+export function getResultText(httpResponse: HttpResult | HttpError) : string {
+    if (httpResponse.responseType == "error")
+        return "no response";
+    if (httpResponse.status == 200)
+        return "success";
+    return "error";
+}
+
 export function renderResponseData(responseData: ResponseData) {
     const title         = getInfo(responseData);
     const responsePath  = path.basename(responseData.path);
@@ -123,17 +131,15 @@ export function renderResponseData(responseData: ResponseData) {
     }
     const request   = `${req.type} ${req.url}  \n${requestHeaders}`;
     const res       = responseData.httpResponse;
-    const icon      = getResultIcon(res);
+    const result    = getResultText(res) + " " + getResultIcon(res);
     if (res.responseType == "error") {
         return `${title}\n
-result: ${icon}
+${result}
 
 ${responseLink}
 
 ${request}`;
     }
-    // res.responseType == "result"
-    const resultState = `${icon}`; // ${res.status} ${bt}${res.statusText}${bt}`;
     let responseHeaders = "";
     for (let n = 0; n < res.rawHeaders.length; n++) {
         const header = res.rawHeaders[n];
@@ -144,7 +150,7 @@ ${request}`;
         }
     }
     return `${title}\n
-result: ${resultState}  \n
+${result}\n
 ${responseLink}
 
 ${request}
