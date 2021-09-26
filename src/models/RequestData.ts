@@ -124,8 +124,8 @@ export function renderResponseData(responseData: ResponseData) {
     const res           = responseData.httpResponse;
     const title         = getInfo(responseData);
     const responsePath  = path.basename(responseData.path);
-    const responseLink  = res.responseType == "result" ? `\n[response](${responsePath})` : "";
-    const requestLink   = res.responseType == "result" ? `\n[request](${getRequestLink(req)})` : "";
+    const responseLink  = res.responseType == "result" ? `\n[response](${responsePath})\n` : "";
+    const requestLink   = res.responseType == "result" ? `\n[request](${getRequestLink(req)})\n` : "";
     const max           = getMaxKeyName(responseData);
 
     let requestHeaders = "";
@@ -137,8 +137,8 @@ export function renderResponseData(responseData: ResponseData) {
     if (res.responseType == "error") {
         return `${title}\n
 ${result}
-${responseLink}
-${request}${requestLink}`;
+
+${request}${responseLink}${requestLink}`;
     }
     let responseHeaders = "";
     for (let n = 0; n < res.rawHeaders.length; n++) {
@@ -151,11 +151,10 @@ ${request}${requestLink}`;
     }
     return `${title}\n
 ${result}
-${responseLink}
 
 ${request}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}  
-${responseHeaders}${requestLink}`;
+${responseHeaders}${responseLink}${requestLink}`;
 }
 
 function indent(key: string, max: number) : string {
