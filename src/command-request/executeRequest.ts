@@ -10,6 +10,7 @@ import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileCo
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, respExt, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
+import { showResponseInfo } from '../command-response-info/executeResponseInfo';
 
 
 let requestCount = 0;
@@ -111,7 +112,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         await fs.writeFile(response.path,    responseContent.content, 'utf8');
         await openShowTextFile(response.path,    null, showOptions);
     } else {
-        await openShowTextFile(destPathTrunk,           null, showOptions);
+        await showResponseInfo(destPathTrunk, false, true);
     }
     const iconResult    = response.httpResponse.responseType == "error" ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
