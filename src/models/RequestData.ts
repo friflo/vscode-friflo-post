@@ -116,12 +116,12 @@ export function renderResponseData(responseData: ResponseData) {
     const res       = responseData.httpResponse;
     if (res.responseType == "error") {
         return `${title}\n
-🐛 request failed\n
+${bt}result${bt}: 🐛 ${res.message}\n
 ${responseLink}\n
 ${request}`;
     }
     // res.responseType == "result"
-    const resultState = res.status == 200 ? "🙂 response: OK" : "😕 response: error";
+    const resultState = res.status == 200 ? `🙂 200 OK` : `😕 ${res.status}: ${res.statusText}`;
     let responseHeaders = "";
     for (let n = 0; n < res.rawHeaders.length; n++) {
         const header = res.rawHeaders[n];
@@ -132,7 +132,7 @@ ${request}`;
         }
     }
     return `${title}\n
-${resultState}  \n
+${bt}result${bt}: ${resultState}  \n
 ${responseLink}\n
 ${request}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}  
