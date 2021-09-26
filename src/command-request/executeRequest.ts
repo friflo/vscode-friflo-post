@@ -50,8 +50,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     
     const srcBaseName       = path.basename(fileContent.path);
     // const isPrivate      = isPrivateIP(endpoint.url);
-    const iconType          = "🌐";
-    const progressStatus    = `${requestType} ${iconType} ${srcBaseName}`;
+    const progressStatus    = `${requestType} 🌐 ${srcBaseName}`;
     // dont await
     window.setStatusBarMessage(""); // clear status. Otherwise its confusing having a previous result & a pending request which is created below
 
