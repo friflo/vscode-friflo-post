@@ -5,7 +5,6 @@ import * as url from "url";
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { window } from "vscode";
-import { getWorkspaceFolder } from "../utils/vscode-utils";
 
 export type RequestType = "POST" | "PUT";
 
