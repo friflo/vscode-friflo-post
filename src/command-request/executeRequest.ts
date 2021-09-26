@@ -10,8 +10,6 @@ import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileCo
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, respExt, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
-import { getExtensionFromContentType } from '../utils/standard-content-types';
-
 
 
 let requestCount = 0;
@@ -110,8 +108,8 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         // open response ViewColumn.Beside to enable instant modification to request and POST again.
         const showOptions: vscode.TextDocumentShowOptions = { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: true };
     if (responseContent) {
-        await fs.writeFile(responseContent.path,    responseContent.content, 'utf8');
-        await openShowTextFile(responseContent.path,    null, showOptions);
+        await fs.writeFile(response.path,    responseContent.content, 'utf8');
+        await openShowTextFile(response.path,    null, showOptions);
     } else {
         await openShowTextFile(destPathTrunk,           null, showOptions);
     }
@@ -133,14 +131,12 @@ async function removeDestFiles (dstFolder: string, destPathTrunk: string) {
     }
 }
 
-function getResponseFileContent(responseData: ResponseData) : FileContent | null{
+function getResponseFileContent(responseData: ResponseData) : FileContent | null { // todo obsolete
     const res = responseData.httpResponse;
     if (res.responseType == "result") {
-        const contentType = res.headers["content-type"]; // todo casing
-        const ext = getExtensionFromContentType(contentType);
         return {
-            path:       responseData.requestData.destPathTrunk + ext,
             content:    res.content,
+            path:       null!
         };
     }
     return null;

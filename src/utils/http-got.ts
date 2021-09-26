@@ -6,6 +6,7 @@
 import got, { CancelableRequest, HTTPError, RequestError, OptionsOfTextResponseBody, Response } from 'got';
 // import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 import { HttpResult, RequestData, ResponseData } from '../models/RequestData';
+import { getExtensionFromContentType } from './standard-content-types';
 
 /*
 const axiosInstance = axios.create({
@@ -52,6 +53,7 @@ export function createHttpRequest(requestData: RequestData, requestBody: string)
 export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<ResponseData> {
     const requestData   = httpRequest.requestData;
     const startTime     = new Date().getTime();
+
     try {
         const res           = await httpRequest.request;
         const executionTime = new Date().getTime() - startTime;        
@@ -59,6 +61,7 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
         return {
             requestData:    requestData,
             httpResponse:   getHttpResult(res),
+            path:           getPath(res, requestData),
             executionTime:  executionTime,
         };
     }
@@ -70,6 +73,7 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
             return {
                 requestData:    requestData,
                 httpResponse:   getHttpResult(res),
+                path:           getPath(res, requestData),
                 executionTime:  executionTime,
             };
         }
@@ -81,9 +85,20 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
                 responseType:   "error",
                 message:        message
             },
+            path:               getPath(res, requestData),
             executionTime:      executionTime,
         };      
     }
+}
+
+function getPath(res: Response, requestData:   RequestData) : string {
+    const contentType = res.headers["content-type"]; // todo casing
+    if (!contentType) {
+        return requestData.destPathTrunk;
+    }
+    const ext   = getExtensionFromContentType(contentType);
+    const path  = requestData.destPathTrunk + ext;
+    return path;
 }
 
 function  getHttpResult(res: Response) : HttpResult {

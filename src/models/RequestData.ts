@@ -3,6 +3,7 @@
 
 import * as url from "url";
 import { promises as fs } from 'fs';
+import * as path from 'path';
 import { window } from "vscode";
 
 export type RequestType = "POST" | "PUT";
@@ -37,6 +38,7 @@ export class HttpError extends HttpResponse {
 export class ResponseData {
     readonly    requestData:    RequestData;
     readonly    httpResponse:   HttpResult | HttpError;
+    readonly    path:           string;
     readonly    executionTime:  number;
 }
 
@@ -98,7 +100,10 @@ export async function GetFileContent(...args: any[]) : Promise<FileContent | nul
 }
 
 export function renderResponseData(responseData: ResponseData) {
-    const info = getInfo(responseData);
+    const title = getInfo(responseData);
+    const responsePath = path.basename(responseData.path);
+    const responseLink = `[Response](${responsePath})`;
+
     const req = responseData.requestData;
     let requestHeaders = "";
     for (const header in req.headers) {
@@ -108,7 +113,8 @@ export function renderResponseData(responseData: ResponseData) {
     const res       = responseData.httpResponse;
     if (res.responseType == "error") {
         return `no response\n
-${info}\n
+${title}\n
+${responseLink}\n
 ${request}`;
     }
     let responseHeaders = "";
@@ -120,7 +126,8 @@ ${request}`;
             responseHeaders += `: ${header}\n`;
         }
     }
-    return `${info}\n
+    return `${title}\n
+${responseLink}\n
 ${request}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}
 ${responseHeaders}`;

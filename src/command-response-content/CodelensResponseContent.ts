@@ -32,7 +32,7 @@ export class CodelensResponseContent implements vscode.CodeLensProvider
             return [];
         if (!fileName.endsWith(respExt))
             return [];
-        // find the corresponding content file (*.resp.json) for the given *.resp file
+        // find the corresponding content file (*.resp.md.json) for the given *.resp.md file
         const respContentPath = await findContentFile(fileName);
         if (!respContentPath)
             return [];
