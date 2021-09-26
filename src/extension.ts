@@ -19,13 +19,13 @@ let disposables: Disposable[] = [];
 
 export function activate(context: ExtensionContext) {
     const codelensRequestPost       = new CodelensRequest           ('POST', "vscode-friflo-post.codelensPost");
-    const codelensRequestPut        = new CodelensRequest           ('PUT',  "vscode-friflo-post.codelensPut");
+    // const codelensRequestPut        = new CodelensRequest           ('PUT',  "vscode-friflo-post.codelensPut");
     const codelensResponseContent   = new CodelensResponseContent   ();
 
     const codelensResponseInfoPost  = new CodelensResponseInfo('POST');
 
     languages.registerCodeLensProvider("*", codelensRequestPost);
-    languages.registerCodeLensProvider("*", codelensRequestPut);
+    // languages.registerCodeLensProvider("*", codelensRequestPut);
     languages.registerCodeLensProvider("*", codelensResponseContent);
 
     languages.registerCodeLensProvider("*", codelensResponseInfoPost);
