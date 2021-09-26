@@ -99,6 +99,8 @@ export async function GetFileContent(...args: any[]) : Promise<FileContent | nul
     };
 }
 
+const bt = "`"; // backtick used to markdown header keys
+
 export function renderResponseData(responseData: ResponseData) {
     const title = getInfo(responseData);
     const responsePath = path.basename(responseData.path);
@@ -108,7 +110,7 @@ export function renderResponseData(responseData: ResponseData) {
     const req = responseData.requestData;
     let requestHeaders = "";
     for (const header in req.headers) {
-        requestHeaders += `${header}:${indent(header, max)} ${req.headers[header]}  \n`;
+        requestHeaders += `${bt}${header}${bt}:${indent(header, max)} ${req.headers[header]}  \n`;
     }
     const request   = `${req.type} ${req.url}  \n${requestHeaders}`;
     const res       = responseData.httpResponse;
@@ -124,7 +126,7 @@ ${request}`;
     for (let n = 0; n < res.rawHeaders.length; n++) {
         const header = res.rawHeaders[n];
         if (n % 2 == 0) {
-            responseHeaders += header + ": " + indent(header, max);
+            responseHeaders += `${bt}${header}${bt}: ${indent(header, max)}`;
         } else {
             responseHeaders += `${header}  \n`;
         }
