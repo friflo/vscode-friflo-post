@@ -113,7 +113,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         await fs.writeFile(response.path,    responseContent.content, 'utf8');
         await openShowTextFile(response.path,    null, showOptions);
     } else {
-        await showResponseInfo(respMdPath, false, true);
+        await showResponseInfo(respMdPath, true);
     }
     const iconResult    = response.httpResponse.responseType == "error" ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;
