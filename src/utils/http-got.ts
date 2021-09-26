@@ -85,7 +85,7 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
                 responseType:   "error",
                 message:        message
             },
-            path:               getPath(res, requestData),
+            path:               requestData.destPathTrunk,
             executionTime:      executionTime,
         };      
     }

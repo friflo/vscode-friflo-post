@@ -112,11 +112,13 @@ export function renderResponseData(responseData: ResponseData) {
     const request   = `${req.type} ${req.url}\n${requestHeaders}`;
     const res       = responseData.httpResponse;
     if (res.responseType == "error") {
-        return `no response\n
-${title}\n
+        return `${title}\n
+🐛 request failed\n
 ${responseLink}\n
 ${request}`;
     }
+    // res.responseType == "result"
+    const resultState = res.status == 200 ? "🙂 response: OK" : "😕 response: error";
     let responseHeaders = "";
     for (let n = 0; n < res.rawHeaders.length; n++) {
         const header = res.rawHeaders[n];
@@ -127,6 +129,8 @@ ${request}`;
         }
     }
     return `${title}\n
+${resultState}
+
 ${responseLink}\n
 ${request}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}
