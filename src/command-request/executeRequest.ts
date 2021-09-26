@@ -61,6 +61,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     
     const requestData: RequestData = {
         url:            endpoint.url,
+        requestPath:    fileContent.path,
         destPathTrunk:  destPathTrunk,
         type:           requestType,
         requestSeq:   ++requestCount,

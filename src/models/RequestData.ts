@@ -5,11 +5,13 @@ import * as url from "url";
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { window } from "vscode";
+import { getWorkspaceFolder } from "../utils/vscode-utils";
 
 export type RequestType = "POST" | "PUT";
 
 export class RequestData {
     readonly    url:            string;
+    readonly    requestPath:    string;    
     readonly    destPathTrunk:  string;
     readonly    type:           RequestType;
     readonly    requestSeq:     number;
@@ -123,7 +125,8 @@ export function renderResponseData(responseData: ResponseData) {
     const res           = responseData.httpResponse;
     const title         = getInfo(responseData);
     const responsePath  = path.basename(responseData.path);
-    const contentLink   = res.responseType == "result" ? `\n[Content](${responsePath})` : "";
+    const responseLink  = res.responseType == "result" ? `\n[response](${responsePath})` : "";
+    const requestLink   = res.responseType == "result" ? `\n[request](${getRequestLink(req)})` : "";
     const max           = getMaxKeyName(responseData);
 
     let requestHeaders = "";
@@ -135,7 +138,7 @@ export function renderResponseData(responseData: ResponseData) {
     if (res.responseType == "error") {
         return `${title}\n
 ${result}
-${contentLink}
+${responseLink}${requestLink}
 ${request}`;
     }
     let responseHeaders = "";
@@ -149,7 +152,7 @@ ${request}`;
     }
     return `${title}\n
 ${result}
-${contentLink}
+${responseLink}${requestLink}
 
 ${request}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}  
@@ -158,6 +161,13 @@ ${responseHeaders}`;
 
 function indent(key: string, max: number) : string {
     return " ".repeat(max - key.length);
+}
+
+function getRequestLink(req: RequestData) : string {
+    const from      = path.normalize(req.destPathTrunk.replace("\n", "/"));
+    const to        = path.normalize(req.requestPath  .replace("\n", "/"));
+    const reqPath   = path.relative(from, to);
+    return reqPath;
 }
 
 function getMaxKeyName(responseData: ResponseData) : number {
