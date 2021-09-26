@@ -5,13 +5,14 @@ import { commands, TextDocumentShowOptions, Uri, ViewColumn, window, workspace }
 
 
 export async function executeResponseInfo (respPath: string) {
-    await showResponseInfo(respPath, false, false);
+    await showResponseInfo(respPath, true, false);
 }
 
 
 export async function showResponseInfo (respPath: string, asText: boolean, toSide: boolean) {
     if (asText) {
-        const showOptions: TextDocumentShowOptions = { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: true };
+        const viewColumn: ViewColumn = toSide ? ViewColumn.Beside : ViewColumn.Active;
+        const showOptions: TextDocumentShowOptions = { viewColumn: viewColumn, preserveFocus: true, preview: true};
         const doc = await workspace.openTextDocument(respPath);
         // await languages.setTextDocumentLanguage(doc, "markdown");
         await window.showTextDocument(doc, showOptions);

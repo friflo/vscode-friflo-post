@@ -55,9 +55,9 @@ export class CodelensResponseContent implements vscode.CodeLensProvider
     }
 }
 
-async function findContentFile (respPath: string) : Promise<string | null> {
+async function findContentFile (respPath: string) : Promise<string | null> {    
     const folder    = path.dirname(respPath) + "/";
-    const respName  = respPath.substring(folder.length);
+    const respName  = respPath.substring(folder.length, respPath.length - respMdExt.length);
     const filter    = respName + "*";
     const list      = await fs.readdir(folder);
     for (let i = 0; i < list.length; i++) {

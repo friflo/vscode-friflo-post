@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';
-import { mdExt, respExt } from '../models/PostConfig';
+import { respExt, respMdExt } from '../models/PostConfig';
 import { RequestType, RespInfo } from '../models/RequestData';
 import { createCodelens } from '../utils/vscode-utils';
 
@@ -68,12 +68,16 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
 }
 
 async function findRespFile (contentPath: string) : Promise<RespInfo | null> {
-    const ext       = path.extname(contentPath);
-    const trunk     = contentPath.substring(0, contentPath.length - ext.length);
-    if (!trunk.endsWith(respExt))
+    const basename      = path.basename(contentPath);
+    const respIndex     = basename.indexOf(respExt);
+    if (respIndex == -1)
         return null;
+    // End basename with ".resp.md" ?
+    if (basename.indexOf(respMdExt, respIndex) != -1)
+        return null;
+    const trunk     = contentPath.substring(0, contentPath.length - basename.length + respIndex);
     try {
-        const respInfoPath = trunk + mdExt;
+        const respInfoPath = trunk + respMdExt;
         const info  = await fs.readFile(respInfoPath,'utf8');
         const eol   = info.indexOf("\n");
         const firstLine = eol == -1 ? info : info.substring(0, eol);
