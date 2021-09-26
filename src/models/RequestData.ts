@@ -100,7 +100,7 @@ export async function GetFileContent(...args: any[]) : Promise<FileContent | nul
 }
 
 const bt    = "`";      // backtick for markdown
-const code  = "```";    // backtick for markdown
+// const code  = "```";    // backtick for markdown
 
 export function renderResponseData(responseData: ResponseData) {
     const title = getInfo(responseData);
@@ -120,8 +120,7 @@ export function renderResponseData(responseData: ResponseData) {
 result: 🐛 ${bt}${res.message}${bt}\n
 ${responseLink}
 
-${code}
-${request}${code}`;
+${request}`;
     }
     // res.responseType == "result"
     const emoji = res.status == 200 ? "🙂" : "😕";
@@ -139,11 +138,9 @@ ${request}${code}`;
 result: ${resultState}  \n
 ${responseLink}
 
-${code}
-${request}${code}
-${code}
+${request}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}  
-${responseHeaders}${code}`;
+${responseHeaders}`;
 }
 
 function indent(key: string, max: number) : string {

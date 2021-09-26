@@ -8,7 +8,7 @@ export async function executeResponseInfo (respPath: string) {
     await showResponseInfo(respPath, false);
 }
 
-const openMarkdownAsText = false;
+const openMarkdownAsText = true;
 
 export async function showResponseInfo (respPath: string, toSide: boolean) {
     if (openMarkdownAsText) {
