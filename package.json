@@ -18,8 +18,10 @@
         "vscode": "^1.26.0"
     },
     "categories": [
-        "Other"
-    ],
+        "Other",
+        "Testing",
+        "Programming Languages"
+      ],
     "activationEvents": [
         "*"
     ],
