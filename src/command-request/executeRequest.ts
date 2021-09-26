@@ -7,7 +7,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as minimatch  from "minimatch";
 import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent, renderResponseData } from '../models/RequestData';
-import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, ResponseConfig } from '../models/PostConfig';
+import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, respMdExt, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
 import { showResponseInfo } from '../command-response-info/executeResponseInfo';
@@ -127,6 +127,9 @@ async function removeDestFiles (dstFolder: string, destPathTrunk: string) {
     const list = await fs.readdir(dstFolder);
     for (let i = 0; i < list.length; i++) {
         const filePath = list[i];
+        // .resp.md are always written
+        if (filePath.endsWith(respMdExt))
+            continue;
         if (minimatch(filePath, filter, { matchBase: true })) {
             await fs.unlink(dstFolder + "/" + filePath);
         }

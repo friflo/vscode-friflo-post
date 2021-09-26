@@ -69,7 +69,7 @@
                 {
                     "command": "vscode-friflo-post.codelensPut",
                     "when": "editorTextFocus && editorLangId == json",
-                    "group": "vscode-friflo-post@1"
+                    "group": "vscode-friflo-post@2"
                 },
                 {
                     "command": "vscode-friflo-post.showInfo",
