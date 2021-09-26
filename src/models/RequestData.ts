@@ -138,8 +138,8 @@ export function renderResponseData(responseData: ResponseData) {
     if (res.responseType == "error") {
         return `${title}\n
 ${result}
-${responseLink}${requestLink}
-${request}`;
+${responseLink}
+${request}${requestLink}`;
     }
     let responseHeaders = "";
     for (let n = 0; n < res.rawHeaders.length; n++) {
@@ -152,11 +152,11 @@ ${request}`;
     }
     return `${title}\n
 ${result}
-${responseLink}${requestLink}
+${responseLink}
 
 ${request}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}  
-${responseHeaders}`;
+${responseHeaders}${requestLink}`;
 }
 
 function indent(key: string, max: number) : string {
@@ -164,10 +164,21 @@ function indent(key: string, max: number) : string {
 }
 
 function getRequestLink(req: RequestData) : string {
-    const from      = path.normalize(req.destPathTrunk.replace("\n", "/"));
-    const to        = path.normalize(req.requestPath  .replace("\n", "/"));
-    const reqPath   = path.relative(from, to);
-    return reqPath;
+    const   from    = replaceAll(path.normalize(req.destPathTrunk), "\\", "/");
+    const   to      = replaceAll(path.normalize(req.requestPath),   "\\", "/");
+    const   min     = Math.min(from.length, to.length);
+    let     n       = 0;
+    for (n = 0; n < min; n++) {
+        if (from[n] != to[n])
+            break;
+    }
+    const fromSlashes   = from.substring(n).match(/\//g)?.length ?? 0;
+    const result        = "../".repeat(fromSlashes) + to.substring(n);
+    return result;
+}
+
+function replaceAll(str: string, find: string, replace: string) : string {
+    return str.split(find).join(replace);
 }
 
 function getMaxKeyName(responseData: ResponseData) : number {
