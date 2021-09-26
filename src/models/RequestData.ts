@@ -119,25 +119,23 @@ export function getResultText(httpResponse: HttpResult | HttpError) : string {
 }
 
 export function renderResponseData(responseData: ResponseData) {
+    const req           = responseData.requestData;
+    const res           = responseData.httpResponse;
     const title         = getInfo(responseData);
     const responsePath  = path.basename(responseData.path);
-    const responseLink  = `[Content](${responsePath})`;
+    const contentLink   = res.responseType == "result" ? `\n[Content](${responsePath})` : "";
     const max           = getMaxKeyName(responseData);
 
-    const req = responseData.requestData;
     let requestHeaders = "";
     for (const header in req.headers) {
         requestHeaders += `${header}:${indent(header, max)} ${req.headers[header]}  \n`;
     }
     const request   = `${req.type} ${req.url}  \n${requestHeaders}`;
-    const res       = responseData.httpResponse;
     const result    = getResultText(res) + " " + getResultIcon(res);
     if (res.responseType == "error") {
         return `${title}\n
 ${result}
-
-${responseLink}
-
+${contentLink}
 ${request}`;
     }
     let responseHeaders = "";
@@ -150,8 +148,8 @@ ${request}`;
         }
     }
     return `${title}\n
-${result}\n
-${responseLink}
+${result}
+${contentLink}
 
 ${request}
 HTTP/${res.httpVersion} ${res.status} ${res.statusText}  
