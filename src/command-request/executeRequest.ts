@@ -99,7 +99,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
 
     const dstFolder     = path.dirname (destPathTrunk) + "/";
     const respMdPath    = destPathTrunk + mdExt;
-    ensureDirectoryExists(dstFolder);
+    await ensureDirectoryExists(dstFolder);
 
     await removeDestFiles(dstFolder, destPathTrunk);
 
@@ -113,7 +113,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         await fs.writeFile(response.path,    responseContent.content, 'utf8');
         await openShowTextFile(response.path,    null, showOptions);
     } else {
-        await showResponseInfo(respMdPath, true, true);
+        await showResponseInfo(respMdPath, false, true);
     }
     const iconResult    = response.httpResponse.responseType == "error" ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;

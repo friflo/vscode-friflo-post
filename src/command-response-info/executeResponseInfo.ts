@@ -5,7 +5,7 @@ import { commands, TextDocumentShowOptions, Uri, ViewColumn, window, workspace }
 
 
 export async function executeResponseInfo (respPath: string) {
-    await showResponseInfo(respPath, true, false);
+    await showResponseInfo(respPath, false, false);
 }
 
 

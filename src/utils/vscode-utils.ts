@@ -7,7 +7,7 @@ import { CodeLens, languages, Position, TextDocument, TextDocumentShowOptions, T
 
 export async function ensureDirectoryExists(dir: string) {
     try {
-        fs.mkdir(dir, {recursive: true });
+        await fs.mkdir(dir, {recursive: true });
     } catch (err: any) {
         if (err.code !== 'EEXIST') throw err;
     }
