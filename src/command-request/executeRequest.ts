@@ -7,7 +7,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as minimatch  from "minimatch";
 import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent, renderResponseData } from '../models/RequestData';
-import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, parseConfig, PostConfig, respExt, ResponseConfig } from '../models/PostConfig';
+import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
 import { showResponseInfo } from '../command-response-info/executeResponseInfo';
@@ -97,13 +97,14 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         return null;
     }
 
-    const dstFolder                 = path.dirname (destPathTrunk) + "/";
+    const dstFolder     = path.dirname (destPathTrunk) + "/";
+    const respMdPath    = destPathTrunk + mdExt;
     ensureDirectoryExists(dstFolder);
 
     await removeDestFiles(dstFolder, destPathTrunk);
 
     const responseData      = renderResponseData(response);
-    await fs.writeFile(destPathTrunk,           responseData, 'utf8');
+    await fs.writeFile(respMdPath, responseData, 'utf8');
 
     const responseContent   = getResponseFileContent(response);
         // open response ViewColumn.Beside to enable instant modification to request and POST again.
@@ -112,7 +113,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         await fs.writeFile(response.path,    responseContent.content, 'utf8');
         await openShowTextFile(response.path,    null, showOptions);
     } else {
-        await showResponseInfo(destPathTrunk, false, true);
+        await showResponseInfo(respMdPath, false, true);
     }
     const iconResult    = response.httpResponse.responseType == "error" ? "😕" : iconType;
     const status        = `${iconResult} ${srcBaseName} - ${getInfo(response)}`;

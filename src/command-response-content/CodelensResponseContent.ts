@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as minimatch  from "minimatch";
 import { promises as fs } from 'fs';
-import { isConfigFile, respExt } from '../models/PostConfig';
+import { isConfigFile, respMdExt } from '../models/PostConfig';
 import { createCodelens } from '../utils/vscode-utils';
 
 /**
@@ -30,7 +30,7 @@ export class CodelensResponseContent implements vscode.CodeLensProvider
         const isConfig = isConfigFile(fileName);
         if (isConfig)
             return [];
-        if (!fileName.endsWith(respExt))
+        if (!fileName.endsWith(respMdExt))
             return [];
         // find the corresponding content file (*.resp.md.json) for the given *.resp.md file
         const respContentPath = await findContentFile(fileName);

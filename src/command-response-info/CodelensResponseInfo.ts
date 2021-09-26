@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';
-import { respExt } from '../models/PostConfig';
+import { mdExt, respExt } from '../models/PostConfig';
 import { RequestType, RespInfo } from '../models/RequestData';
 import { createCodelens } from '../utils/vscode-utils';
 
@@ -73,11 +73,12 @@ async function findRespFile (contentPath: string) : Promise<RespInfo | null> {
     if (!trunk.endsWith(respExt))
         return null;
     try {
-        const info  = await fs.readFile(trunk,'utf8');
+        const respInfoPath = trunk + mdExt;
+        const info  = await fs.readFile(respInfoPath,'utf8');
         const eol   = info.indexOf("\n");
         const firstLine = eol == -1 ? info : info.substring(0, eol);
         return {
-            path: trunk,
+            path: respInfoPath,
             info: firstLine
         };
     }
