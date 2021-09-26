@@ -1,15 +1,22 @@
 // Copyright (c) Ullrich Praetz. All rights reserved.
 // See LICENSE file in the project root for full license information.
 
-
+let contentTypeFromExtension:  { [ext: string] : string} | null = null;
 
 export function getExtensionFromContentType(contentType: string) {
-    if (contentType == "application/json")
-        return ".json";
-    return ".xxx";
+    if (!contentTypeFromExtension) {
+        contentTypeFromExtension = {};
+        for (const ext in standardContentTypes) {
+            const contentType = standardContentTypes[ext];
+            contentTypeFromExtension[contentType] = ext;
+        }
+    }
+    const extension = contentTypeFromExtension[contentType];
+    if (extension) {
+        return extension;
+    }
+    return ".unknown";
 }
-
-
 
 /**
  * Note! language specific files types must only be used here - nowhere else.
