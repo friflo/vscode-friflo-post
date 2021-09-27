@@ -1,6 +1,6 @@
 #           friflo POST
 
-[![Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/friflo.vscode-friflo-post.svg)](https://marketplace.visualstudio.com/items?itemName=friflo.vscode-friflo-post)
+[![Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/friflo.vscode-friflo-post.svg)](https://marketplace.visualstudio.com/items?itemName=friflo.vscode-friflo-post) [![CodeQL](https://github.com/friflo/vscode-friflo-post/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/friflo/vscode-friflo-post/actions/workflows/codeql-analysis.yml)
 
 
 ## Goal
