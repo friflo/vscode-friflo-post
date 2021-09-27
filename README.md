@@ -1,4 +1,4 @@
-#           _friflo_ **__POST__**
+#           [__friflo POST__](https://github.com/friflo/vscode-friflo-post/)
 
 [![Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/friflo.vscode-friflo-post.svg)](https://marketplace.visualstudio.com/items?itemName=friflo.vscode-friflo-post)
 
@@ -56,3 +56,5 @@ it may be desired to hide them in the __EXPLORER__ panel. To do this add the sec
 }
 
 ```
+
+
