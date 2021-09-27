@@ -1,0 +1,18 @@
+
+Title:  friflo POST
+
+Tags:   http json xml rest rest-client vscode http-client visual-studio-code vscode-extension json-schema
+
+Short description:
+HTTP Client as a VSCode extension to POST JSON, XML, image, ... files to REST APIs and storing response content and headers as files in the VSCode workspace
+
+Description:
+Main goal of this VSCode extension is storing all HTTP request & response data automatically as files in a VSCode workspace.
+This ensures this data is still available in new VSCode sessions. It also enables other VSCode extensions utilizing request & response files.
+E.g. JSON Schema validation of JSON files, storing results in git and comparing subsequent response results with previous ones.
+
+Visual Studio Code - Marketplace:
+https://marketplace.visualstudio.com/items?itemName=friflo.vscode-friflo-post
+
+Open Source Repository - GitHub:
+https://github.com/friflo/vscode-friflo-post
