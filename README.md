@@ -1,4 +1,4 @@
-#           [__friflo POST__](https://github.com/friflo/vscode-friflo-post/)
+#           [friflo POST](https://github.com/friflo/vscode-friflo-post/)
 
 [![Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/friflo.vscode-friflo-post.svg)](https://marketplace.visualstudio.com/items?itemName=friflo.vscode-friflo-post)
 
