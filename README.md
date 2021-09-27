@@ -17,12 +17,12 @@
 *   Enables using other utilities like __node__ processing request & response files as they are __valid__ JSON or XML
 *   Enables using __git__ as a simple regression test to compare response bodies and headers with previous requests.
 *   Enables configuration via the config file `.post-config` for all request files in a folder to:
-    *   set the http endpoint and specific http headers
-    *   set the destination folder for response files. E.g. `foo.resp.json` & `foo.resp.md`
+    *   set the http `endpoints` and specific http `headers`
+    *   set the `response` folder for response files.
 
 ## Usage
 
-The screen recording (one minute) below show the entire usage.  
+The screen recording (one minute) below show the entire workflow.  
 *   Using __Context menu > POST Request__ to create `.post-config` file and adjust the `endpoint` url
 *   Click the __POST__ button on top of the JSON file and toggle in the response tab between response body (JSON) and headers
 *   Demonstrate [__JSON Schema validation__](https://code.visualstudio.com/docs/languages/json#_mapping-to-a-schema-in-the-workspace)
