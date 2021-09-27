@@ -62,3 +62,12 @@ it may be desired to hide them in the __EXPLORER__ panel. To do this add the sec
 ```
 
 
+## License
+[MIT License](LICENSE)
+
+
+## Feedback
+As this project is very young GitHub issue reports are welcome!  
+First commit: 2021-09-22. Published in VSCode Marketplace: 2021-09-26.  
+[GitHub Issues](https://github.com/friflo/vscode-friflo-post/issues)
+
