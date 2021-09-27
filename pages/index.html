@@ -1,0 +1,57 @@
+<h1>friflo POST</h1>
+<p><a href="https://marketplace.visualstudio.com/items?itemName=friflo.vscode-friflo-post"><img src="https://vsmarketplacebadge.apphb.com/version-short/friflo.vscode-friflo-post.svg" alt="Marketplace Version"></a></p>
+<h2>Goal</h2>
+<p>Main goal of this extension is storing all HTTP request &amp; response data <em>automatically</em> as files in a <strong>VSCode workspace</strong>.<br>
+This ensures this data is still available in new VSCode sessions.
+It also enables other <strong>VSCode extensions</strong> utilizing request &amp; response files.
+E.g. <strong>JSON Schema validation</strong> of JSON files, storing results in <strong>git</strong> and comparing subsequent response results with previous ones.</p>
+<p><a href="https://github.com/friflo/vscode-friflo-post/">GitHub repository link</a></p>
+<h2>Features</h2>
+<ul>
+<li>Send files in your workspace like JSON or XML via HTTP <strong>POST</strong>, <strong>PUT</strong> &amp; <strong>PATCH</strong> with a single click on a <strong>CodeLens</strong> button.<br>
+E.g. <code>say-hello.test.json</code></li>
+<li>Store HTTP responses like JSON or XML <em>automatically</em> as files  in the workspace.<br>
+E.g. <code>say-hello.test.resp.json</code></li>
+<li>Store HTTP request / response header <em>automatically</em> as a <strong>markdown</strong> file in the workspace.<br>
+E.g. <code>say-hello.test.resp.md</code></li>
+<li>Enables using <strong>VSCode language validators</strong> like <strong>JSON Schema</strong> for request and response files.</li>
+<li>Show and edit HTTP response directly in a separate workspace editor tab.</li>
+<li>Toggle between response and headers with a single click in the editor tab.<br>
+E.g. toggle between <code>say-hello.test.resp.json</code> &amp; <code>say-hello.test.resp.md</code></li>
+<li>Enables using other utilities like <strong>node</strong> processing request &amp; response files as they are <strong>valid</strong> JSON or XML</li>
+<li>Enables using <strong>git</strong> as a simple regression test to compare response bodies and headers with previous requests.</li>
+<li>Enables configuration via the config file <code>.post-config</code> for all request files in a folder to:
+<ul>
+<li>set the http <code>endpoints</code> and specific http <code>headers</code></li>
+<li>set the <code>response</code> folder for response files.</li>
+</ul>
+</li>
+</ul>
+<h2>Usage</h2>
+<p>The screen recording (one minute) below show the entire workflow.</p>
+<ul>
+<li>Using <strong>Context menu &gt; POST Request</strong> to create <code>.post-config</code> file and adjust the <code>endpoint</code> url</li>
+<li>Click the <strong>POST</strong> button on top of the JSON file and toggle in the response tab between response body (JSON) and headers</li>
+<li>Demonstrate <a href="https://code.visualstudio.com/docs/languages/json#_mapping-to-a-schema-in-the-workspace"><strong>JSON Schema validation</strong></a>
+of JSON request &amp; response files.</li>
+<li>Execute a second request with a single click using the configuration from the beginning.</li>
+<li>Execute a third request - this time <strong>PUT</strong> - to show the error case when the server is not responding.<br>
+The request is canceled by clicking on the <em>progress indicator</em> in the status bar.</li>
+<li>Use <strong>VSCode Source Control</strong> to show the diff of the response info with a previous successful request.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/friflo/vscode-friflo-post/master/docs/friflo-POST.gif" alt=""></p>
+<h2>Tips</h2>
+<ul>
+<li>As every request file generate two response files e.g. <code>test.resp.json</code> and <code>test.resp.md</code> in the <code>response</code> folder
+it may be desired to hide them in the <strong>EXPLORER</strong> panel. To do this add the section below to <code>.vscode/settings.json</code>.</li>
+</ul>
+<pre><code class="language-json">{
+    &quot;settings&quot;: {
+        &quot;files.exclude&quot;: {
+            &quot;**/response/*.resp.json&quot;: true,
+            &quot;**/response/*.resp.md&quot;:   true
+        }
+    }
+}
+
+</code></pre>
