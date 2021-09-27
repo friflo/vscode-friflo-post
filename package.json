@@ -2,7 +2,7 @@
     "name": "vscode-friflo-post",
     "displayName": "friflo POST",
     "description": "HTTP Client for Visual Studio Code to POST JSON, XML, image, ... files to REST APIs",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "publisher": "friflo",
     "author": {
         "name": "Ullrich Praetz"
