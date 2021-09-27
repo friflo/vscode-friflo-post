@@ -2,6 +2,11 @@
 
 [![Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/friflo.vscode-friflo-post.svg)](https://marketplace.visualstudio.com/items?itemName=friflo.vscode-friflo-post)
 
+## Goal
+Main goal of this extension is storing all HTTP request & response data _automatically_ as files in a __VSCode workspace__.  
+This ensures this data is still available in new VSCode sessions.
+It also enables other __VSCode extensions__ utilizing request & response files.
+E.g. __JSON Schema validation__ of JSON files, storing results in __git__ and comparing subsequent response results with previous ones.
 
 ## Features
 *   Send files in your workspace like JSON or XML via HTTP __POST__, __PUT__ & __PATCH__ with a single click on a __CodeLens__ button.  
