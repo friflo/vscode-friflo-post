@@ -1,4 +1,4 @@
-#           **_friflo_ __POST__**
+#           _friflo_ **__POST__**
 
 [![Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/friflo.vscode-friflo-post.svg)](https://marketplace.visualstudio.com/items?itemName=friflo.vscode-friflo-post)
 
@@ -29,7 +29,7 @@ The screen recording (one minute) below show the entire workflow.
 of JSON request & response files.
 *   Execute a second request with a single click using the configuration from the beginning.
 *   Execute a third request - this time __PUT__ - to show the error case when the server is not responding.  
-    The request is canceled by clicking on the progress indicator in the status bar.
+    The request is canceled by clicking on the _progress indicator_ in the status bar.
 *   Use __VSCode Source Control__ to show the diff of the response info with a previous successful request.
 
 ![](https://raw.githubusercontent.com/friflo/vscode-friflo-post/master/docs/friflo-POST.gif)
