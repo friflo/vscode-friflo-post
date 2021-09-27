@@ -1,1 +1,1 @@
-https://friflo.github.io/vscode-friflo-post/
+https://friflo.github.io/vscode-friflo-post/index.html
