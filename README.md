@@ -6,13 +6,13 @@
 ## Features
 *   Send files in your workspace like JSON or XML via HTTP __POST__, __PUT__ & __PATCH__ with a single click on a __CodeLens__ button.  
     E.g. `say-hello.test.json`
-*   Store HTTP responses like JSON or XML as files _automatically_ in the workspace.  
+*   Store HTTP responses like JSON or XML _automatically_ as files  in the workspace.  
     E.g. `say-hello.test.resp.json`
-*   Store HTTP request / response header as a __markdown__ file _automatically_ in the workspace.  
+*   Store HTTP request / response header _automatically_ as a __markdown__ file in the workspace.  
     E.g. `say-hello.test.resp.md`
 *   Enables using VSCode language validators like __JSON Schema__ on request and response files.  
 *   Show and edit HTTP response directly in a separate workspace editor tab.
-*   Toggle between response and and headers with a single click in the editor tab.  
+*   Toggle between response and headers with a single click in the editor tab.  
     E.g. toggle between `say-hello.test.resp.json` & `say-hello.test.resp.md`
 *   Enables using other utilities like __node__ processing request & response files as they are __valid__ JSON or XML
 *   Enables using __git__ as a simple regression test to compare response bodies and headers with previous requests.
