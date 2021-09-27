@@ -22,10 +22,11 @@
 
 ## Usage
 
-The screen recording (one minute) bellow show the entire usage.  
+The screen recording (one minute) below show the entire usage.  
 *   Using __Context menu > POST Request__ to create `.post-config` file and adjust the `endpoint` url
-*   Click the button __POST http://your-endpoint__ on top of the JSON file and toggle in the response tab between response body (JSON) and headers
-*   Demonstrate __JSON Schema__ validation of JSON request & response files.
+*   Click the __POST__ button on top of the JSON file and toggle in the response tab between response body (JSON) and headers
+*   Demonstrate [__JSON Schema validation__](https://code.visualstudio.com/docs/languages/json#_mapping-to-a-schema-in-the-workspace)
+of JSON request & response files.
 *   Execute a second request with a single click using the configuration from the beginning.
 *   Execute a third request - this time __PUT__ - to show the error case when the server is not responding.  
     The request is canceled by clicking on the progress indicator in the status bar.
