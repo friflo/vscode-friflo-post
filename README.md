@@ -49,8 +49,8 @@ it may be desired to hide them in the __EXPLORER__ panel. To do this add the sec
 {
     "settings": {
         "files.exclude": {
-		    "**/response/*.resp.json": true,
-		    "**/response/*.resp.md":   true
+            "**/response/*.resp.json": true,
+            "**/response/*.resp.md":   true
         }
     }
 }
