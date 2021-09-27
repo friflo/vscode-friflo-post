@@ -11,6 +11,9 @@ Main goal of this VSCode extension is storing all HTTP request & response data a
 This ensures this data is still available in new VSCode sessions. It also enables other VSCode extensions utilizing request & response files.
 E.g. JSON Schema validation of JSON files, storing results in git and comparing subsequent response results with previous ones.
 
+Image Screenshot description
+POST HTTP JSON request and showing its http header results
+
 Visual Studio Code - Marketplace:
 https://marketplace.visualstudio.com/items?itemName=friflo.vscode-friflo-post
 
