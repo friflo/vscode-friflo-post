@@ -39,3 +39,20 @@ of JSON request & response files.
 
 ![](https://raw.githubusercontent.com/friflo/vscode-friflo-post/master/docs/friflo-POST.gif)
 
+
+## Tips
+
+* As every request file generate two response files e.g. `test.resp.json` and `test.resp.md` in the `response` folder
+it may be desired to hide them in the __EXPLORER__ panel. To do this add the section below to `.vscode/settings.json`.
+
+```json
+{
+    "settings": {
+        "files.exclude": {
+		    "**/response/*.resp.json": true,
+		    "**/response/*.resp.md":   true
+        }
+    }
+}
+
+```
