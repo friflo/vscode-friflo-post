@@ -101,22 +101,24 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
                     continue;
                 throw "Expected HttpResult.header keys are lower case. Was: " + header;
             }
-            return {
+            const response: ResponseData = {
                 requestData:    requestData,
                 httpResponse:   httpResponse,
                 path:           getResponsePath(httpResponse, requestData),
                 executionTime:  executionTime,
             };
+            return response;
         }
-        return {
-            requestData:    requestData,
+        const response: ResponseData = {
+            requestData:        requestData,
             httpResponse: {
                 responseType:   "error",
                 message:        httpResponse.message
             },
             path:               requestData.destPathTrunk,
             executionTime:      executionTime,
-        }; 
+        };
+        return response;
     });
 
     const workspaceFolder = getWorkspaceFolder();
