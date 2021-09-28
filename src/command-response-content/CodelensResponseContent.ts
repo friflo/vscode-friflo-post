@@ -43,8 +43,8 @@ export class CodelensResponseContent implements vscode.CodeLensProvider
         const codeLenses        = createCodelens(document);
         const codeLense     = codeLenses[0];
         codeLense.command = {
-            title:      "Content",
-            tooltip:    "Show the response content",
+            title:      "Show response body",
+            tooltip:    "Show file containing the http response body",
             command:    "vscode-friflo-post.codelensContent",
             arguments:  [respContentPath]
         };

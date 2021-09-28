@@ -81,8 +81,8 @@ async function findRespFile (contentPath: string) : Promise<RespInfo | null> {
         const info  = await fs.readFile(respInfoPath,'utf8');
         const eol   = info.indexOf("\n");
         const firstLine = eol == -1 ? info : info.substring(0, eol);
-        const status = getStatus(firstLine);
-        const icon = status == null ? "❌" : ((200 <= status && status < 300) ? "✔️" : "😕");
+        // const status = getStatus(firstLine);
+        // const icon = status == null ? "❌" : ((200 <= status && status < 300) ? "✔️" : "😕");
         return {
             path: respInfoPath,
             info: `${firstLine}`
@@ -92,7 +92,7 @@ async function findRespFile (contentPath: string) : Promise<RespInfo | null> {
         return null;
     }    
 }
-
+/*
 function getStatus (str: string) : number | null {
     if (str.length < 3)
         return null;
@@ -113,5 +113,4 @@ function digit (str: string, index: number) : number | null {
         return null;
     return digit;
 }
-
-
+*/
