@@ -2,7 +2,6 @@
 // See LICENSE file in the project root for full license information.
 
 import { promises as fs } from 'fs';
-import * as path from 'path';
 import { CodeLens, languages, Position, TextDocument, TextDocumentShowOptions, TextEditor, Uri, window, workspace } from 'vscode';
 
 export async function ensureDirectoryExists(dir: string) {
@@ -11,18 +10,6 @@ export async function ensureDirectoryExists(dir: string) {
     } catch (err: any) {
         if (err.code !== 'EEXIST') throw err;
     }
-}
-
-/** in case filePath is a response file simply remove its (specific) extension. */
-export function getResponseInfoFromResponse(filePath: string) : string | null {
-    if(workspace.workspaceFolders !== undefined) {
-        const ext = path.extname(filePath);
-        filePath = filePath.substring(0, filePath.length - ext.length);
-        const normPath = path.normalize(filePath);
-        const workspacePath = workspace.workspaceFolders[0].uri.fsPath ; 
-        return path.relative(workspacePath, normPath);
-    }
-    return null;
 }
 
 export async function openShowTextFile (path: string, languageId: string | null, options?: TextDocumentShowOptions) : Promise<TextEditor> {
