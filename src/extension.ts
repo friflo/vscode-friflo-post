@@ -41,6 +41,7 @@ export function activate(context: ExtensionContext) {
 
     commands.registerCommand("vscode-friflo-post.codelensPost", async (args: any) => {
         const result = await executeRequest("POST", args);
+        codelensResponseContent.reload();
         if (!result)
             return;
         // provider.didChangeEmitter.fire(result.requestData.infoUri);

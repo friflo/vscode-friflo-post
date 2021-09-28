@@ -81,14 +81,37 @@ async function findRespFile (contentPath: string) : Promise<RespInfo | null> {
         const info  = await fs.readFile(respInfoPath,'utf8');
         const eol   = info.indexOf("\n");
         const firstLine = eol == -1 ? info : info.substring(0, eol);
+        const status = getStatus(firstLine);
+        const icon = status == null ? "❌" : ((200 <= status && status < 300) ? "✔️" : "😕");
         return {
             path: respInfoPath,
-            info: firstLine
+            info: `${firstLine} ${icon}`
         };
     }
     catch (err) {
         return null;
     }    
+}
+
+function getStatus (str: string) : number | null {
+    if (str.length < 3)
+        return null;
+    const d0 = digit(str, 0);
+    const d1 = digit(str, 0);
+    const d2 = digit(str, 0);
+    if (d0 === null || d1 === null || d2 == null)
+        return null;
+    return d0 * 100 + d1 * 10 * d2;
+}
+
+function digit (str: string, index: number) : number | null {
+    const codePoint = str.codePointAt(index);
+    if (codePoint == null)
+        return null;
+    const digit = codePoint - 48;
+    if (digit < 0 || digit > 9)
+        return null;
+    return digit;
 }
 
 

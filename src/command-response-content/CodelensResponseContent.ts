@@ -22,6 +22,10 @@ export class CodelensResponseContent implements vscode.CodeLensProvider
         });
     }
 
+    public reload() {
+        this._onDidChangeCodeLenses.fire();
+    }
+
     public async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {        
         if (!vscode.workspace.getConfiguration("vscode-friflo-post").get("enablePostClient", true)) {
             return [];

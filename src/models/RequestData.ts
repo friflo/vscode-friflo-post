@@ -104,9 +104,9 @@ export async function GetFileContent(...args: any[]) : Promise<FileContent | nul
 
 export function getResultIcon(httpResponse: HttpResult | HttpError) : string {
     if (httpResponse.responseType == "error")
-        return "🐛";    // no response
+        return "❌";    // no response
     if (httpResponse.status == 200)
-        return "🙂";    // success
+        return "✔️";    // success
     return "😕";        // error
 }
 
