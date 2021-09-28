@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as minimatch  from "minimatch";
-import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent, renderResponseData, getResultIcon, HttpResponse, HttpResult } from '../models/RequestData';
+import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, renderResponseData, getResultIcon, HttpResponse, HttpResult } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, respMdExt, ResponseConfig } from '../models/PostConfig';
 import { RequestBase } from '../models/RequestBase';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
@@ -133,19 +133,19 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
 
     await removeDestFiles(dstFolder, destPathTrunk);
 
-    const responseData      = renderResponseData(response);
+    const responseData  = renderResponseData(response);
     await fs.writeFile(respMdPath, responseData, 'utf8');
 
-    const responseContent   = getResponseFileContent(response);
+    const httpResponse  = response.httpResponse;
+    if (httpResponse.responseType == "result") {
+        await fs.writeFile(response.path, httpResponse.content, 'utf8');
         // open response ViewColumn.Beside to enable instant modification to request and POST again.
         const showOptions: vscode.TextDocumentShowOptions = { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: true };
-    if (responseContent) {
-        await fs.writeFile(response.path,    responseContent.content, 'utf8');
         await openShowTextFile(response.path,    null, showOptions);
     } else {
         await showResponseInfo(respMdPath, true);
     }
-    const icon      = getResultIcon(response.httpResponse);
+    const icon      = getResultIcon(httpResponse);
     const status    = `${icon} ${srcBaseName} - ${getInfo(response)}`;
     // dont await    
     window.setStatusBarMessage(status, 10 * 1000);
@@ -164,17 +164,6 @@ async function removeDestFiles (dstFolder: string, destPathTrunk: string) {
             await fs.unlink(dstFolder + "/" + filePath);
         }
     }
-}
-
-function getResponseFileContent(responseData: ResponseData) : FileContent | null { // todo obsolete
-    const res = responseData.httpResponse;
-    if (res.responseType == "result") {
-        return {
-            content:    res.content,
-            path:       null!
-        };
-    }
-    return null;
 }
 
 function replaceExt (fileName: string, respExt: string) : string {
