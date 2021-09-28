@@ -8,7 +8,6 @@ import * as path from 'path';
 import * as minimatch  from "minimatch";
 import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, renderResponseData, getResultIcon, HttpResponse, HttpResult } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, respMdExt, ResponseConfig } from '../models/PostConfig';
-import { RequestBase } from '../models/RequestBase';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { showResponseInfo } from '../command-response-info/executeResponseInfo';
 import { getExtensionFromContentType } from '../utils/standard-content-types';
