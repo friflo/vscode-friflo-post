@@ -38,7 +38,7 @@ export class HttpError  {
 export class ResponseData {
     readonly    requestData:    RequestData;
     readonly    httpResponse:   HttpResult | HttpError;
-    readonly    responsePath:           string;
+    readonly    responsePath:   string;
     readonly    executionTime:  number;
 }
 
@@ -64,7 +64,7 @@ export function isPrivateIP(urlString: string) : boolean {
        (parts[0] === '192' && parts[1] === '168');
  }
 
-export function getInfo (data: ResponseData ) : string {
+export function getInfoLabel (data: ResponseData ) : string {
     const   res     = data.httpResponse;
     let     result: string;
     if (res.responseType == "result") {
@@ -121,7 +121,7 @@ export function getResultText(httpResponse: HttpResult | HttpError) : string {
 export function renderResponseData(responseData: ResponseData) {
     const req           = responseData.requestData;
     const res           = responseData.httpResponse;
-    const title         = getInfo(responseData);
+    const title         = getInfoLabel(responseData);
     const responsePath  = path.basename(responseData.responsePath);
     const responseLink  = res.responseType == "result" ? `\n[response](${responsePath})\n` : "";
     const requestLink   = res.responseType == "result" ? `\n[request](${getRequestLink(req)})\n` : "";

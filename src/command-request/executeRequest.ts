@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as minimatch  from "minimatch";
-import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, renderResponseData, getResultIcon, HttpResponse } from '../models/RequestData';
+import { getInfoLabel, RequestData, RequestType, ResponseData, GetFileContent, renderResponseData, getResultIcon, HttpResponse } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, respMdExt, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { showResponseInfo } from '../command-response-info/executeResponseInfo';
@@ -95,7 +95,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         await showResponseInfo(respMdPath, true);
     }
     const icon      = getResultIcon(httpResponse);
-    const status    = `${icon} ${srcBaseName} - ${getInfo(response)}`;
+    const status    = `${icon} ${srcBaseName} - ${getInfoLabel(response)}`;
     // dont await    
     window.setStatusBarMessage(status, 10 * 1000);
     return response;
