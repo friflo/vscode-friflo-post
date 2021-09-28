@@ -16,10 +16,6 @@ import { createGotRequest } from '../utils/http-got';
 
 let requestCount = 0;
 
-function createRequest(requestData: RequestData) : RequestBase {
-    return createGotRequest(requestData);
-}
-
 export async function executeRequest (requestType: RequestType, ...args: any[]) : Promise<ResponseData | null>{
     const fileContent   = await GetFileContent(args);
     if (fileContent == null)
@@ -55,11 +51,9 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     
     const srcBaseName       = path.basename(fileContent.path);
     // const isPrivate      = isPrivateIP(endpoint.url);
-    const progressStatus    = `${requestType} 🌐 ${srcBaseName}`;
     // dont await
     window.setStatusBarMessage(""); // clear status. Otherwise its confusing having a previous result & a pending request which is created below
 
-    let   seconds       = 0;
     const headers       = getHeaders(config, endpoint, fileContent.path);
     const destPathTrunk = getDestPathTrunk(fileContent.path, config.response);
     
@@ -73,8 +67,46 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         headers:        headers,
     };
 
+    const response: ResponseData = await requestWithProgress(requestData);
 
-    
+    const workspaceFolder = getWorkspaceFolder();
+    if (workspaceFolder == null) {
+        const message = "Working folder not found, open a folder and try again" ;
+        // dont await
+        window.showErrorMessage(message);
+        return null;
+    }
+
+    const dstFolder     = path.dirname (destPathTrunk) + "/";
+    const respMdPath    = destPathTrunk + mdExt;
+    await ensureDirectoryExists(dstFolder);
+
+    await removeDestFiles(dstFolder, destPathTrunk);
+
+    const responseData  = renderResponseData(response);
+    await fs.writeFile(respMdPath, responseData, 'utf8');
+
+    const httpResponse  = response.httpResponse;
+    if (httpResponse.responseType == "result") {
+        await fs.writeFile(response.path, httpResponse.content, 'utf8');
+        // open response ViewColumn.Beside to enable instant modification to request and POST again.
+        const showOptions: vscode.TextDocumentShowOptions = { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: true };
+        await openShowTextFile(response.path,    null, showOptions);
+    } else {
+        await showResponseInfo(respMdPath, true);
+    }
+    const icon      = getResultIcon(httpResponse);
+    const status    = `${icon} ${srcBaseName} - ${getInfo(response)}`;
+    // dont await    
+    window.setStatusBarMessage(status, 10 * 1000);
+    return response;
+}
+
+async function requestWithProgress(requestData: RequestData) : Promise<ResponseData> {
+    let   seconds           = 0;
+    const srcBaseName       = path.basename(requestData.requestPath);
+    const progressStatus    = `${requestData.type} 🌐 ${srcBaseName}`;
+
     const response: ResponseData = await window.withProgress({
         location:       vscode.ProgressLocation.Window,
         cancellable:    true,
@@ -84,7 +116,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
             progress.report({message: `${++seconds} sec`});
         }, 1000);
         // const cancelTokenSource = axios.CancelToken.source();
-        const httpRequest = createRequest (requestData);
+        const httpRequest = createGotRequest(requestData); (requestData);
         token.onCancellationRequested(() => {
             httpRequest.cancelRequest();
         });
@@ -120,37 +152,6 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         };
         return response;
     });
-
-    const workspaceFolder = getWorkspaceFolder();
-    if (workspaceFolder == null) {
-        const message = "Working folder not found, open a folder and try again" ;
-        // dont await
-        window.showErrorMessage(message);
-        return null;
-    }
-
-    const dstFolder     = path.dirname (destPathTrunk) + "/";
-    const respMdPath    = destPathTrunk + mdExt;
-    await ensureDirectoryExists(dstFolder);
-
-    await removeDestFiles(dstFolder, destPathTrunk);
-
-    const responseData  = renderResponseData(response);
-    await fs.writeFile(respMdPath, responseData, 'utf8');
-
-    const httpResponse  = response.httpResponse;
-    if (httpResponse.responseType == "result") {
-        await fs.writeFile(response.path, httpResponse.content, 'utf8');
-        // open response ViewColumn.Beside to enable instant modification to request and POST again.
-        const showOptions: vscode.TextDocumentShowOptions = { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: true };
-        await openShowTextFile(response.path,    null, showOptions);
-    } else {
-        await showResponseInfo(respMdPath, true);
-    }
-    const icon      = getResultIcon(httpResponse);
-    const status    = `${icon} ${srcBaseName} - ${getInfo(response)}`;
-    // dont await    
-    window.setStatusBarMessage(status, 10 * 1000);
     return response;
 }
 
