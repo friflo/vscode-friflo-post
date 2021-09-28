@@ -8,15 +8,17 @@ import * as path from 'path';
 import * as minimatch  from "minimatch";
 import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent, renderResponseData, getResultIcon, HttpResponse, HttpResult } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, respMdExt, ResponseConfig } from '../models/PostConfig';
-import { CreateRequest } from '../models/RequestBase';
+import { RequestBase } from '../models/RequestBase';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { showResponseInfo } from '../command-response-info/executeResponseInfo';
-import { createGotRequest } from '../utils/http-got';
 import { getExtensionFromContentType } from '../utils/standard-content-types';
+import { createGotRequest } from '../utils/http-got';
 
 let requestCount = 0;
 
-const createRequest: CreateRequest = createGotRequest;
+function createRequest(requestData: RequestData) : RequestBase {
+    return createGotRequest(requestData);
+}
 
 export async function executeRequest (requestType: RequestType, ...args: any[]) : Promise<ResponseData | null>{
     const fileContent   = await GetFileContent(args);
@@ -70,6 +72,8 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         requestSeq:   ++requestCount,
         headers:        headers,
     };
+
+
     
     const response: ResponseData = await window.withProgress({
         location:       vscode.ProgressLocation.Window,

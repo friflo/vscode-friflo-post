@@ -6,7 +6,7 @@
 import got, { CancelableRequest, HTTPError, RequestError, OptionsOfTextResponseBody, Response } from 'got';
 // import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 import { HttpResponse, HttpResult, RequestData } from '../models/RequestData';
-import { CreateRequest, RequestBase } from '../models/RequestBase';
+import { RequestBase } from '../models/RequestBase';
 
 /*
 const axiosInstance = axios.create({
@@ -25,8 +25,7 @@ const axiosInstance = axios.create({
   });
 */
 
-
-export const createGotRequest: CreateRequest = function (requestData: RequestData) : RequestBase {
+export function createGotRequest  (requestData: RequestData) : RequestBase {
     const options: OptionsOfTextResponseBody = {
         headers:    requestData.headers,
         body:       requestData.requestBody,
@@ -45,7 +44,7 @@ export const createGotRequest: CreateRequest = function (requestData: RequestDat
     }
     const request = new GotRequest(requestData, cancelableRequest);
     return request;
-};
+}
 
 export class GotRequest extends RequestBase {
     readonly request:       CancelableRequest<Response<string>>;
