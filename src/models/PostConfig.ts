@@ -1,9 +1,9 @@
 // Copyright (c) Ullrich Praetz. All rights reserved.
 // See LICENSE file in the project root for full license information.
 
-import * as minimatch  from "minimatch";
 import * as path from 'path';
 import { getContentTypeFromExtension } from "../utils/standard-content-types";
+import { Match } from "../utils/utils";
 
 export const configFileName     = ".post-config";
 export const respExt            = ".resp";
@@ -50,7 +50,7 @@ export function getEndpoint(config: PostConfig, filePath: string) : Endpoint | n
     
     for (const endpoint of config.endpoints) {
         for (const fileMatch of endpoint.fileMatch) {
-            if (minimatch(filePath, fileMatch, { matchBase: true })) {
+            if (Match(filePath, fileMatch)) {
                 return endpoint;
             }
         }

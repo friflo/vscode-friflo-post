@@ -5,13 +5,13 @@ import { ViewColumn, window } from 'vscode';
 import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import * as minimatch  from "minimatch";
 import { getInfoLabel, RequestData, RequestType, ResponseData, GetFileContent, renderResponseData, getResultIcon, HttpResponse } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, respMdExt, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, openShowTextFile } from '../utils/vscode-utils';
 import { showResponseInfo } from '../command-response-info/executeResponseInfo';
 import { getExtensionFromContentType } from '../utils/standard-content-types';
 import { createGotRequest } from '../utils/http-got';
+import { Match } from '../utils/utils';
 
 let requestCount = 0;
 
@@ -144,7 +144,7 @@ async function removeDestFiles (dstFolder: string, destPathTrunk: string) {
         // .resp.md are always written
         if (filePath.endsWith(respMdExt))
             continue;
-        if (minimatch(filePath, filter, { matchBase: true })) {
+        if (Match(filePath, filter)) {
             await fs.unlink(dstFolder + "/" + filePath);
         }
     }

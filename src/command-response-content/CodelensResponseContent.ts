@@ -3,10 +3,10 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as minimatch  from "minimatch";
 import { promises as fs } from 'fs';
 import { isConfigFile, respMdExt } from '../models/PostConfig';
 import { createCodelens } from '../utils/vscode-utils';
+import { Match } from '../utils/utils';
 
 /**
  * CodelensResponseContent
@@ -64,7 +64,7 @@ async function findContentFile (respPath: string) : Promise<string | null> {
         const filePath = list[i];
         if (filePath.endsWith(respMdExt))
             continue;
-        if (minimatch(filePath, filter, { matchBase: true })) {
+        if (Match(filePath, filter)) {
             return folder + filePath;
         }
     }
