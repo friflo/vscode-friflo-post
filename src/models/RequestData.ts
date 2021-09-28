@@ -38,7 +38,7 @@ export class HttpError  {
 export class ResponseData {
     readonly    requestData:    RequestData;
     readonly    httpResponse:   HttpResult | HttpError;
-    readonly    path:           string;
+    readonly    responsePath:           string;
     readonly    executionTime:  number;
 }
 
@@ -122,7 +122,7 @@ export function renderResponseData(responseData: ResponseData) {
     const req           = responseData.requestData;
     const res           = responseData.httpResponse;
     const title         = getInfo(responseData);
-    const responsePath  = path.basename(responseData.path);
+    const responsePath  = path.basename(responseData.responsePath);
     const responseLink  = res.responseType == "result" ? `\n[response](${responsePath})\n` : "";
     const requestLink   = res.responseType == "result" ? `\n[request](${getRequestLink(req)})\n` : "";
     const max           = getMaxKeyName(responseData);

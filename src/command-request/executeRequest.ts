@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as minimatch  from "minimatch";
-import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, renderResponseData, getResultIcon, HttpResponse, HttpResult } from '../models/RequestData';
+import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, renderResponseData, getResultIcon, HttpResponse } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, respMdExt, ResponseConfig } from '../models/PostConfig';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { showResponseInfo } from '../command-response-info/executeResponseInfo';
@@ -87,10 +87,10 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
 
     const httpResponse  = response.httpResponse;
     if (httpResponse.responseType == "result") {
-        await fs.writeFile(response.path, httpResponse.content, 'utf8');
+        await fs.writeFile(response.responsePath, httpResponse.content, 'utf8');
         // open response ViewColumn.Beside to enable instant modification to request and POST again.
         const showOptions: vscode.TextDocumentShowOptions = { viewColumn: ViewColumn.Beside, preserveFocus: true, preview: true };
-        await openShowTextFile(response.path,    null, showOptions);
+        await openShowTextFile(response.responsePath,    null, showOptions);
     } else {
         await showResponseInfo(respMdPath, true);
     }
@@ -132,22 +132,12 @@ async function requestWithProgress(requestData: RequestData) : Promise<ResponseD
                     continue;
                 throw "Expected HttpResult.header keys are lower case. Was: " + header;
             }
-            const response: ResponseData = {
-                requestData:    requestData,
-                httpResponse:   httpResponse,
-                path:           getResponsePath(httpResponse, requestData),
-                executionTime:  executionTime,
-            };
-            return response;
         }
         const response: ResponseData = {
-            requestData:        requestData,
-            httpResponse: {
-                responseType:   "error",
-                message:        httpResponse.message
-            },
-            path:               requestData.destPathTrunk,
-            executionTime:      executionTime,
+            requestData:    requestData,
+            httpResponse:   httpResponse,
+            responsePath:   getResponsePath(httpResponse, requestData),
+            executionTime:  executionTime,
         };
         return response;
     });
@@ -204,12 +194,15 @@ async function openShowConfigFile(configPath: string) : Promise<vscode.TextEdito
     return await openShowTextFile( configPath, "json", { viewColumn: ViewColumn.One, preserveFocus: false, preview: false });
 }
 
-function getResponsePath(res: HttpResult, requestData: RequestData) : string {
-    const contentType = res.headers["content-type"];
-    if (!contentType) {
-        return requestData.destPathTrunk;
+function getResponsePath(res: HttpResponse, requestData: RequestData) : string {
+    if (res.responseType == "result") {
+        const contentType = res.headers["content-type"];
+        if (!contentType) {
+            return requestData.destPathTrunk;
+        }
+        const ext   = getExtensionFromContentType(contentType);
+        const path  = requestData.destPathTrunk + ext;
+        return path;
     }
-    const ext   = getExtensionFromContentType(contentType);
-    const path  = requestData.destPathTrunk + ext;
-    return path;
+    return requestData.destPathTrunk;
 }
