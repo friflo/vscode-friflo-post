@@ -3,6 +3,8 @@
     "editor.detectIndentation": false,
     "cSpell.words": [
         "epub",
+        "esbuild",
+        "outfile",
         "Ullrich"
     ],
 }
