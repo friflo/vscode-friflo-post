@@ -6,12 +6,13 @@ import * as vscode from 'vscode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as minimatch  from "minimatch";
-import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent, renderResponseData, getResultIcon } from '../models/RequestData';
+import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent, renderResponseData, getResultIcon, HttpResponse, HttpResult } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, respMdExt, ResponseConfig } from '../models/PostConfig';
 import { CreateRequest } from '../models/RequestBase';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
 import { showResponseInfo } from '../command-response-info/executeResponseInfo';
 import { createGotRequest } from '../utils/http-got';
+import { getExtensionFromContentType } from '../utils/standard-content-types';
 
 let requestCount = 0;
 
@@ -83,10 +84,41 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         token.onCancellationRequested(() => {
             httpRequest.cancelRequest();
         });
-        const  response = await httpRequest.executeHttpRequest();
+
+        const startTime     = new Date().getTime();
+        const httpResponse: HttpResponse = await httpRequest.executeHttpRequest();
+        const executionTime = new Date().getTime() - startTime;
+
         clearInterval(interval);
-        return response; 
+
+        if (httpResponse.responseType == "result") {
+            return {
+                requestData:    requestData,
+                httpResponse:   httpResponse,
+                path:           getPath(httpResponse, requestData),
+                executionTime:  executionTime,
+            };
+        }
+        return {
+            requestData:    requestData,
+            httpResponse: {
+                responseType:   "error",
+                message:        httpResponse.message
+            },
+            path:               requestData.destPathTrunk,
+            executionTime:      executionTime,
+        }; 
     });
+
+    function getPath(res: HttpResult, requestData: RequestData) : string {
+        const contentType = res.headers["content-type"]; // todo casing
+        if (!contentType) {
+            return requestData.destPathTrunk;
+        }
+        const ext   = getExtensionFromContentType(contentType);
+        const path  = requestData.destPathTrunk + ext;
+        return path;
+    }
 
     if (!response) {
         return null;

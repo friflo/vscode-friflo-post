@@ -5,9 +5,8 @@
 // import * as https from 'https';
 import got, { CancelableRequest, HTTPError, RequestError, OptionsOfTextResponseBody, Response } from 'got';
 // import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
-import { HttpResult, RequestData, ResponseData } from '../models/RequestData';
+import { HttpResponse, HttpResult, RequestData } from '../models/RequestData';
 import { CreateRequest, RequestBase } from '../models/RequestBase';
-import { getExtensionFromContentType } from './standard-content-types';
 
 /*
 const axiosInstance = axios.create({
@@ -56,60 +55,30 @@ export class GotRequest extends RequestBase {
         this.request = request;
     }
 
-    async executeHttpRequest() : Promise<ResponseData> {
-        const requestData   = this.requestData;
-        const startTime     = new Date().getTime();
-
+    async executeHttpRequest() : Promise<HttpResponse> {
         try {
-            const res           = await this.request;
-            const executionTime = new Date().getTime() - startTime;        
+            const res           = await this.request;  
             // console.log(res.headers, `${executionTime} ms`);
-            return {
-                requestData:    requestData,
-                httpResponse:   getHttpResult(res),
-                path:           getPath(res, requestData),
-                executionTime:  executionTime,
-            };
+            return getHttpResult(res);
         }
         catch (e: any) {
-            const executionTime = new Date().getTime() - startTime;
             const err: HTTPError = e;
             const res = err.response;
             if (res) {
-                return {
-                    requestData:    requestData,
-                    httpResponse:   getHttpResult(res),
-                    path:           getPath(res, requestData),
-                    executionTime:  executionTime,
-                };
+                return getHttpResult(res);
             }
             const err2: RequestError = e;
             const message = err.name == "CancelError" ? "request canceled" : err2.message;
             return {
-                requestData:    requestData,
-                httpResponse: {
-                    responseType:   "error",
-                    message:        message
-                },
-                path:               requestData.destPathTrunk,
-                executionTime:      executionTime,
-            };      
+                responseType:   "error",
+                message:        message
+            };
         }
     }
 
     cancelRequest() : void {
         this.request.cancel();
     }
-}
-
-function getPath(res: Response, requestData:   RequestData) : string {
-    const contentType = res.headers["content-type"]; // todo casing
-    if (!contentType) {
-        return requestData.destPathTrunk;
-    }
-    const ext   = getExtensionFromContentType(contentType);
-    const path  = requestData.destPathTrunk + ext;
-    return path;
 }
 
 function  getHttpResult(res: Response) : HttpResult {

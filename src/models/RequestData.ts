@@ -18,11 +18,9 @@ export class RequestData {
     readonly    headers:        any;
 }
 
-export abstract class HttpResponse {
-    readonly abstract responseType:"result" | "error" ;
-}
+export type HttpResponse  = HttpResult | HttpError;
 
-export class HttpResult extends HttpResponse {
+export class HttpResult {
     readonly    responseType:      "result";
     readonly    status:             number;
     readonly    statusText:         string;
@@ -32,7 +30,7 @@ export class HttpResult extends HttpResponse {
     readonly    httpVersion:        string;
 }
 
-export class HttpError extends HttpResponse {
+export class HttpError  {
     readonly    responseType:      "error";
     readonly    message:            string;
 }

@@ -1,4 +1,4 @@
-import { RequestData, ResponseData } from "./RequestData";
+import { HttpResponse, RequestData } from "./RequestData";
 
 
 export type CreateRequest = (requestData: RequestData) => RequestBase;
@@ -10,6 +10,6 @@ export abstract class RequestBase {
         this.requestData = requestData;
     }
 
-    abstract executeHttpRequest() : Promise<ResponseData>;
+    abstract executeHttpRequest() : Promise<HttpResponse>;
     abstract cancelRequest() : void;
 }
