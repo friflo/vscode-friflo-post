@@ -13,15 +13,6 @@ export async function ensureDirectoryExists(dir: string) {
     }
 }
 
-export function getWorkspaceFolder() : string | null {
-    if(workspace.workspaceFolders !== undefined) {
-        // const wf = workspace.workspaceFolders[0].uri.path ;
-        const f = workspace.workspaceFolders[0].uri.fsPath ; 
-        return f;
-    }
-    return null;
-}
-
 /** in case filePath is a response file simply remove its (specific) extension. */
 export function getResponseInfoFromResponse(filePath: string) : string | null {
     if(workspace.workspaceFolders !== undefined) {

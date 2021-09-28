@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as minimatch  from "minimatch";
 import { getInfoLabel, RequestData, RequestType, ResponseData, GetFileContent, renderResponseData, getResultIcon, HttpResponse } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, respMdExt, ResponseConfig } from '../models/PostConfig';
-import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
+import { ensureDirectoryExists, openShowTextFile } from '../utils/vscode-utils';
 import { showResponseInfo } from '../command-response-info/executeResponseInfo';
 import { getExtensionFromContentType } from '../utils/standard-content-types';
 import { createGotRequest } from '../utils/http-got';
@@ -67,14 +67,6 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     };
 
     const response: ResponseData = await requestWithProgress(requestData);
-
-    const workspaceFolder = getWorkspaceFolder();
-    if (workspaceFolder == null) {
-        const message = "Working folder not found, open a folder and try again" ;
-        // dont await
-        window.showErrorMessage(message);
-        return null;
-    }
 
     const dstFolder     = path.dirname (destPathTrunk) + "/";
     const respMdPath    = destPathTrunk + mdExt;
