@@ -6,6 +6,7 @@
 import got, { CancelableRequest, HTTPError, RequestError, OptionsOfTextResponseBody, Response } from 'got';
 // import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 import { HttpResult, RequestData, ResponseData } from '../models/RequestData';
+import { CreateRequest, RequestBase } from '../models/RequestBase';
 import { getExtensionFromContentType } from './standard-content-types';
 
 /*
@@ -25,12 +26,8 @@ const axiosInstance = axios.create({
   });
 */
 
-export class HttpRequest {
-    readonly requestData:   RequestData;
-    readonly request:       CancelableRequest<Response<string>>;    
-}
 
-export function createHttpRequest(requestData: RequestData, requestBody: string) : HttpRequest {
+export const createGotRequest: CreateRequest = function (requestData: RequestData, requestBody: string) : RequestBase {
     const options: OptionsOfTextResponseBody = {
         headers:    requestData.headers,
         body:       requestBody,
@@ -47,29 +44,26 @@ export function createHttpRequest(requestData: RequestData, requestBody: string)
         default:
             throw "Unsupported request type: " + requestData.type;
     }
-    return { request: cancelableRequest, requestData: requestData };
-}
+    const request = new GotRequest(requestData, cancelableRequest);
+    return request;
+};
 
-export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<ResponseData> {
-    const requestData   = httpRequest.requestData;
-    const startTime     = new Date().getTime();
+export class GotRequest extends RequestBase {
+    readonly request:       CancelableRequest<Response<string>>;
 
-    try {
-        const res           = await httpRequest.request;
-        const executionTime = new Date().getTime() - startTime;        
-        // console.log(res.headers, `${executionTime} ms`);
-        return {
-            requestData:    requestData,
-            httpResponse:   getHttpResult(res),
-            path:           getPath(res, requestData),
-            executionTime:  executionTime,
-        };
+    constructor(requestData: RequestData, request: CancelableRequest<Response<string>>) {
+        super(requestData);
+        this.request = request;
     }
-    catch (e: any) {
-        const executionTime = new Date().getTime() - startTime;
-        const err: HTTPError = e;
-        const res = err.response;
-        if (res) {
+
+    async executeHttpRequest() : Promise<ResponseData> {
+        const requestData   = this.requestData;
+        const startTime     = new Date().getTime();
+
+        try {
+            const res           = await this.request;
+            const executionTime = new Date().getTime() - startTime;        
+            // console.log(res.headers, `${executionTime} ms`);
             return {
                 requestData:    requestData,
                 httpResponse:   getHttpResult(res),
@@ -77,17 +71,34 @@ export async function executeHttpRequest(httpRequest: HttpRequest) : Promise<Res
                 executionTime:  executionTime,
             };
         }
-        const err2: RequestError = e;
-        const message = err.name == "CancelError" ? "request canceled" : err2.message;
-        return {
-            requestData:    requestData,
-            httpResponse: {
-                responseType:   "error",
-                message:        message
-            },
-            path:               requestData.destPathTrunk,
-            executionTime:      executionTime,
-        };      
+        catch (e: any) {
+            const executionTime = new Date().getTime() - startTime;
+            const err: HTTPError = e;
+            const res = err.response;
+            if (res) {
+                return {
+                    requestData:    requestData,
+                    httpResponse:   getHttpResult(res),
+                    path:           getPath(res, requestData),
+                    executionTime:  executionTime,
+                };
+            }
+            const err2: RequestError = e;
+            const message = err.name == "CancelError" ? "request canceled" : err2.message;
+            return {
+                requestData:    requestData,
+                httpResponse: {
+                    responseType:   "error",
+                    message:        message
+                },
+                path:               requestData.destPathTrunk,
+                executionTime:      executionTime,
+            };      
+        }
+    }
+
+    cancelRequest() : void {
+        this.request.cancel();
     }
 }
 

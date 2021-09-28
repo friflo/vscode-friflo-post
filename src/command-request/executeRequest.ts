@@ -8,12 +8,14 @@ import * as path from 'path';
 import * as minimatch  from "minimatch";
 import { getInfo, RequestData, RequestType, ResponseData, GetFileContent, FileContent, renderResponseData, getResultIcon } from '../models/RequestData';
 import { configFileName, defaultConfigString, getConfigPath, getEndpoint, getHeaders, mdExt, parseConfig, PostConfig, respExt, respMdExt, ResponseConfig } from '../models/PostConfig';
+import { CreateRequest } from '../models/RequestBase';
 import { ensureDirectoryExists, getWorkspaceFolder, openShowTextFile } from '../utils/vscode-utils';
-import { createHttpRequest, executeHttpRequest } from '../utils/http-got';
 import { showResponseInfo } from '../command-response-info/executeResponseInfo';
-
+import { createGotRequest } from '../utils/http-got';
 
 let requestCount = 0;
+
+const createRequest: CreateRequest = createGotRequest;
 
 export async function executeRequest (requestType: RequestType, ...args: any[]) : Promise<ResponseData | null>{
     const fileContent   = await GetFileContent(args);
@@ -76,11 +78,11 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
             progress.report({message: `${++seconds} sec`});
         }, 1000);
         // const cancelTokenSource = axios.CancelToken.source();
-        const httpRequest = createHttpRequest (requestData, requestBody);
+        const httpRequest = createRequest (requestData, requestBody);
         token.onCancellationRequested(() => {
-            httpRequest.request.cancel();
+            httpRequest.cancelRequest();
         });
-        const  response = await executeHttpRequest(httpRequest);
+        const  response = await httpRequest.executeHttpRequest();
         clearInterval(interval);
         return response; 
     });
