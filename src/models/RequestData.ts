@@ -10,6 +10,7 @@ export type RequestType = "POST" | "PUT";
 
 export class RequestData {
     readonly    url:            string;
+    readonly    requestBody:    string;
     readonly    requestPath:    string;    
     readonly    destPathTrunk:  string;
     readonly    type:           RequestType;

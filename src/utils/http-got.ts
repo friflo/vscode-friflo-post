@@ -27,10 +27,10 @@ const axiosInstance = axios.create({
 */
 
 
-export const createGotRequest: CreateRequest = function (requestData: RequestData, requestBody: string) : RequestBase {
+export const createGotRequest: CreateRequest = function (requestData: RequestData) : RequestBase {
     const options: OptionsOfTextResponseBody = {
         headers:    requestData.headers,
-        body:       requestBody,
+        body:       requestData.requestBody,
         timeout:    60_000
     };
     let cancelableRequest: CancelableRequest<Response<string>>;

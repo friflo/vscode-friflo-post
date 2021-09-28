@@ -21,7 +21,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     const fileContent   = await GetFileContent(args);
     if (fileContent == null)
         return null;
-    const requestBody   = fileContent.content;
+
     const configPath    = getConfigPath(fileContent.path);
     let config: PostConfig;
 
@@ -62,6 +62,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     
     const requestData: RequestData = {
         url:            endpoint.url,
+        requestBody:    fileContent.content,
         requestPath:    fileContent.path,
         destPathTrunk:  destPathTrunk,
         type:           requestType,
@@ -78,7 +79,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
             progress.report({message: `${++seconds} sec`});
         }, 1000);
         // const cancelTokenSource = axios.CancelToken.source();
-        const httpRequest = createRequest (requestData, requestBody);
+        const httpRequest = createRequest (requestData);
         token.onCancellationRequested(() => {
             httpRequest.cancelRequest();
         });

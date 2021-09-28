@@ -1,7 +1,7 @@
 import { RequestData, ResponseData } from "./RequestData";
 
 
-export type CreateRequest = (requestData: RequestData, requestBody: string) => RequestBase;
+export type CreateRequest = (requestData: RequestData) => RequestBase;
 
 export abstract class RequestBase {
     readonly requestData:   RequestData;
