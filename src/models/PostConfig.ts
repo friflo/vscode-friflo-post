@@ -3,7 +3,7 @@
 
 import * as minimatch  from "minimatch";
 import * as path from 'path';
-import { standardContentTypes } from "../utils/standard-content-types";
+import { getContentTypeFromExtension } from "../utils/standard-content-types";
 
 export const configFileName     = ".post-config";
 export const respExt            = ".resp";
@@ -80,7 +80,7 @@ export function getHeaders (config: PostConfig, endpoint: Endpoint, file: string
     let contentType = endpoint['Content-Type'];
     if (!contentType) {
         const ext = path.extname(file);
-        contentType = standardContentTypes[ext];
+        contentType = getContentTypeFromExtension(ext);
     }
     const customHeaders:    RequestHeaders = {
         "Content-Type": contentType

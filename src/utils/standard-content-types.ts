@@ -22,13 +22,20 @@ export function getExtensionFromContentType(contentType: string) {
     return contentType.substring(slashPos + 1);
 }
 
+export function getContentTypeFromExtension(ext: string) {
+    const contentType = standardContentTypes[ext];
+    if (contentType)
+        return contentType;
+    return "application/" + contentType;
+}
+
 /**
  * Note! language specific files types must only be used here - nowhere else.
  * 
  * List from: [Common MIME types - HTTP | MDN]
  * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
  */
- export const standardContentTypes : { [ext: string] : string} = {
+export const standardContentTypes : { [ext: string] : string} = {
     ".aac":     "audio/aac",
     ".abw":     "application/x-abiword",
     ".arc":     "application/x-freearc",
