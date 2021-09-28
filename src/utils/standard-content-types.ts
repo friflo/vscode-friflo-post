@@ -15,7 +15,11 @@ export function getExtensionFromContentType(contentType: string) {
     if (extension) {
         return extension;
     }
-    return ".unknown";
+    const slashPos = contentType.lastIndexOf("/");
+    if (slashPos == -1) {
+        return contentType;
+    }
+    return contentType.substring(slashPos + 1);
 }
 
 /**
