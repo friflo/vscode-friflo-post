@@ -87,7 +87,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         await showResponseInfo(respMdPath, true);
     }
     const icon      = getResultIcon(httpResponse);
-    const status    = `${icon} ${srcBaseName} - ${getInfoLabel(response)}`;
+    const status    = `${srcBaseName} - ${getInfoLabel(response)} ${icon}`;
     // dont await    
     window.setStatusBarMessage(status, 10 * 1000);
     return response;
