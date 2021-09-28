@@ -31,7 +31,11 @@
             {
                 "command": "vscode-friflo-post.codelensPost",
                 "title": "POST Request",
-                "category": "friflo POST"
+                "category": "friflo POST",
+                "icon": {
+                    "light": "./docs/images/post.svg",
+                    "dark":  "./docs/images/post.svg"
+                }
             },
             {
                 "command": "vscode-friflo-post.codelensPut",
@@ -77,6 +81,13 @@
                     "command": "vscode-friflo-post.showInfo",
                     "when": "editorHasReferenceProvider",
                     "group": "navigation@1.31"
+                }                
+            ],
+            "editor/title": [
+                {
+                  "when": "true",
+                  "command": "vscode-friflo-post.codelensPost",
+                  "group": "navigation@1"
                 }
             ],
             "explorer/context": [
