@@ -80,6 +80,16 @@ export function getInfoLabel (data: ResponseData ) : string {
 }
 
 export async function GetFileContent(...args: any[]) : Promise<FileContent | null> {
+    const editor = window.activeTextEditor;
+    // Check activeTextEditor first, otherwise in case a file is selected in Explorer the file content differ fom a modifier / unsaved file.
+    if (editor) {
+        // Save document to ensure editor content is same as file content
+        editor.document.save();
+        return {
+            path:       editor.document.fileName,
+            content:    editor.document.getText()
+        };
+    }
     const selectedFilePath = args && args[0] && args[0][0] ? args[0][0].fsPath : null;
     if (selectedFilePath) {
         const selectedFilePath = args[0][0].fsPath;
@@ -89,14 +99,7 @@ export async function GetFileContent(...args: any[]) : Promise<FileContent | nul
             content:    content
         };
     }
-    const editor = window.activeTextEditor;
-    if (!editor) {
-        return null;
-    }
-    return {
-        path:       editor.document.fileName,
-        content:    editor.document.getText()
-    };
+    return null;
 }
 
 // const bt    = "`";      // backtick for markdown
@@ -121,7 +124,7 @@ export function getResultText(httpResponse: HttpResult | HttpError) : string {
 export function renderResponseData(responseData: ResponseData) {
     const req           = responseData.requestData;
     const res           = responseData.httpResponse;
-    const title         = getInfoLabel(responseData);
+    const title         = getInfoLabel(responseData) + " " + getResultIcon(res);
     const responsePath  = path.basename(responseData.responsePath);
     const responseLink  = res.responseType == "result" ? `\n[response](${responsePath})\n` : "";
     const requestLink   = res.responseType == "result" ? `\n[request](${getRequestLink(req)})\n` : "";
@@ -132,7 +135,7 @@ export function renderResponseData(responseData: ResponseData) {
         requestHeaders += `${header}:${indent(header, max)} ${req.headers[header]}  \n`;
     }
     const request   = `${req.type} ${req.url}  \n${requestHeaders}`;
-    const result    = getResultText(res) + " " + getResultIcon(res);
+    const result    = getResultText(res);
     if (res.responseType == "error") {
         return `${title}\n
 ${result}

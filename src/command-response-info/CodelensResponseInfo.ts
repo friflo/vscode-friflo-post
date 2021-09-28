@@ -85,7 +85,7 @@ async function findRespFile (contentPath: string) : Promise<RespInfo | null> {
         const icon = status == null ? "❌" : ((200 <= status && status < 300) ? "✔️" : "😕");
         return {
             path: respInfoPath,
-            info: `${firstLine} ${icon}`
+            info: `${firstLine}`
         };
     }
     catch (err) {

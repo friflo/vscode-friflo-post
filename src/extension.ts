@@ -91,7 +91,6 @@ export function activate(context: ExtensionContext) {
 		providerRegistrations
 	);
     workspace.onDidOpenTextDocument (async (document) => {     
-        // console.log("did open", document.fileName);
         const path = document.fileName;
         const config = await getConfigOf(path);
         if (!config)
@@ -99,14 +98,15 @@ export function activate(context: ExtensionContext) {
         const endpoint = getEndpoint(config, path);
         if (!endpoint)
             return;
+        // console.log("did open", document.fileName);
         openForPost[path] = true;
         commands.executeCommand('setContext', 'vscode-friflo-post.openForPost', openForPost);
     });
 
     workspace.onDidCloseTextDocument ((document) => {
-        // console.log("did open", document.fileName);
         const path = document.fileName;
         if (openForPost[path]) {
+            // console.log("did open", document.fileName);
             delete openForPost[path];
             commands.executeCommand('setContext', 'vscode-friflo-post.openForPost', openForPost);
         }
