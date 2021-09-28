@@ -104,7 +104,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
             return {
                 requestData:    requestData,
                 httpResponse:   httpResponse,
-                path:           getPath(httpResponse, requestData),
+                path:           getResponsePath(httpResponse, requestData),
                 executionTime:  executionTime,
             };
         }
@@ -118,20 +118,6 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
             executionTime:      executionTime,
         }; 
     });
-
-    function getPath(res: HttpResult, requestData: RequestData) : string {
-        const contentType = res.headers["content-type"];
-        if (!contentType) {
-            return requestData.destPathTrunk;
-        }
-        const ext   = getExtensionFromContentType(contentType);
-        const path  = requestData.destPathTrunk + ext;
-        return path;
-    }
-
-    if (!response) {
-        return null;
-    }
 
     const workspaceFolder = getWorkspaceFolder();
     if (workspaceFolder == null) {
@@ -225,4 +211,14 @@ async function createConfigFile(configPath: string) : Promise<boolean> {
 
 async function openShowConfigFile(configPath: string) : Promise<vscode.TextEditor> {
     return await openShowTextFile( configPath, "json", { viewColumn: ViewColumn.One, preserveFocus: false, preview: false });
+}
+
+function getResponsePath(res: HttpResult, requestData: RequestData) : string {
+    const contentType = res.headers["content-type"];
+    if (!contentType) {
+        return requestData.destPathTrunk;
+    }
+    const ext   = getExtensionFromContentType(contentType);
+    const path  = requestData.destPathTrunk + ext;
+    return path;
 }
