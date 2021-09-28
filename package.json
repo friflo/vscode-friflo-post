@@ -85,7 +85,7 @@
             ],
             "editor/title": [
                 {
-                  "when": "true",
+                  "when": "resourcePath in vscode-friflo-post.openForPost",
                   "command": "vscode-friflo-post.codelensPost",
                   "group": "navigation@1"
                 }

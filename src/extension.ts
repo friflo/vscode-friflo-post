@@ -4,13 +4,14 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
-import { CodelensRequest } from './command-request/CodelensRequest';
+import { CodelensRequest, getConfigOf } from './command-request/CodelensRequest';
 import { CodelensResponseInfo } from './command-response-info/CodelensResponseInfo';
 import { executeRequest } from './command-request/executeRequest';
 import { executeResponseInfo } from './command-response-info/executeResponseInfo';
 import ContentProvider, { } from './command-response-info/ResponseDataProvider';
 import { CodelensResponseContent } from './command-response-content/CodelensResponseContent';
 import { executeResponseContent } from './command-response-content/executeResponseInfo';
+import { getEndpoint } from './models/PostConfig';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -88,7 +89,30 @@ export function activate(context: ExtensionContext) {
 		// commandRegistration,
 		providerRegistrations
 	);
+    workspace.onDidOpenTextDocument (async (document) => {     
+        // console.log("did open", document.fileName);
+        const path = document.fileName;
+        const config = await getConfigOf(path);
+        if (!config)
+            return;
+        const endpoint = getEndpoint(config, path);
+        if (!endpoint)
+            return;
+        openForPost[path] = true;
+        commands.executeCommand('setContext', 'vscode-friflo-post.openForPost', openForPost);
+    });
+
+    workspace.onDidCloseTextDocument ((document) => {
+        // console.log("did open", document.fileName);
+        const path = document.fileName;
+        if (openForPost[path]) {
+            delete openForPost[path];
+            commands.executeCommand('setContext', 'vscode-friflo-post.openForPost', openForPost);
+        }
+    });
 }
+
+const openForPost : { [key: string] : true} = {};
 
 // this method is called when your extension is deactivated
 export function deactivate() {

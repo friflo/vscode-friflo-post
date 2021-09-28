@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 import { RequestType } from '../models/RequestData';
-import { getConfigPath, getEndpoint, isConfigFile, parseConfig } from '../models/PostConfig';
+import { getConfigPath, getEndpoint, isConfigFile, parseConfig, PostConfig } from '../models/PostConfig';
 import { standardContentTypes } from '../utils/standard-content-types';
 import { createCodelens } from '../utils/vscode-utils';
 
@@ -35,32 +35,32 @@ export class CodelensRequest implements vscode.CodeLensProvider
         const isConfig = isConfigFile(fileName);
         if (isConfig)
             return [];
-        const configPath    = getConfigPath(fileName);
-        try {
-            const configFile    = await fs.readFile(configPath,'utf8');
-            const config        = parseConfig(configFile);
-            const endpoint      = getEndpoint(config, fileName);
-            if (endpoint == null) {
-                const ext       = path.extname(fileName);
-                if (!standardContentTypes[ext])
-                    return [];
-            }
-            const codeLenses    = createCodelens(document);
-            const codeLense     = codeLenses[0];
-            const tooltip       = `${this.requestType} file content to: ${endpoint?.url}`;
-            const isPost        = this.requestType == "POST";
-            codeLense.command = {
-                title:      isPost ? `${this.requestType} ${endpoint?.url}` : this.requestType,
-                tooltip:    tooltip,
-                command:    this.commandName,
-                arguments: [fileName]
-            };
-            return codeLenses;
+        const config = await getConfigOf(fileName);
+        if (config == null)
+            return [];
+        const endpoint = getEndpoint(config, fileName);
+        let requestUrl = "";
+        if (endpoint == null) {
+            const ext       = path.extname(fileName);
+            if (!standardContentTypes[ext])
+                return [];
+        } else {
+            requestUrl = " " + endpoint.url;
         }
-        catch (err) { 
-            // ignore
+        const codeLenses    = createCodelens(document);
+        const codeLense     = codeLenses[0];
+        let   tooltip       = `${this.requestType} file content`;
+        if (endpoint) {
+            tooltip += `to ${endpoint.url}`;
         }
-        return [];
+        const isPost        = this.requestType == "POST";
+        codeLense.command = {
+            title:      isPost ? `${this.requestType} ${requestUrl}` : this.requestType,
+            tooltip:    tooltip,
+            command:    this.commandName,
+            arguments: [fileName]
+        };
+        return codeLenses;
     }
 
     public resolveCodeLens(codeLense: vscode.CodeLens, token: vscode.CancellationToken) {
@@ -69,6 +69,20 @@ export class CodelensRequest implements vscode.CodeLensProvider
         }
         return codeLense;
     }
+}
+
+
+export async function getConfigOf (fileName: string) : Promise<PostConfig | null> {
+    const configPath = getConfigPath(fileName);
+    try {
+        const configFile    = await fs.readFile(configPath,'utf8');
+        const config        = parseConfig(configFile);
+        return config;
+    }
+    catch (err) {
+        // no endpoint configured
+    }
+    return null;
 }
 
 
