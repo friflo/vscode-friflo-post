@@ -25,7 +25,7 @@ export class HttpResult {
     readonly    status:             number;
     readonly    statusText:         string;
     readonly    content:            string;
-    readonly    headers:            any;
+    readonly    headers:            any;    // headers keys must be lower case
     readonly    rawHeaders:         string[];
     readonly    httpVersion:        string;
 }
@@ -68,7 +68,7 @@ export function getInfo (data: ResponseData ) : string {
     const   res     = data.httpResponse;
     let     result: string;
     if (res.responseType == "result") {
-        const contentLength = res.headers && res.headers["content-length"];
+        const contentLength = res.headers["content-length"];
         const length = contentLength ? ` • length ${contentLength}` : "";
         const status = `${res.status}${res.statusText == 'OK' ? " OK" : ""}`;
         result = `${status}${length}`;

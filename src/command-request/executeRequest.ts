@@ -92,6 +92,11 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         clearInterval(interval);
 
         if (httpResponse.responseType == "result") {
+            for (const header in httpResponse.headers) {
+                if (header == header.toLocaleLowerCase())
+                    continue;
+                throw "Expected HttpResult.header keys are lower case. Was: " + header;
+            }
             return {
                 requestData:    requestData,
                 httpResponse:   httpResponse,
@@ -111,7 +116,7 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
     });
 
     function getPath(res: HttpResult, requestData: RequestData) : string {
-        const contentType = res.headers["content-type"]; // todo casing
+        const contentType = res.headers["content-type"];
         if (!contentType) {
             return requestData.destPathTrunk;
         }
