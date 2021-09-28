@@ -198,7 +198,7 @@ function getResponsePath(res: HttpResponse, requestData: RequestData) : string {
     if (res.responseType == "result") {
         const contentType = res.headers["content-type"];
         if (!contentType) {
-            return requestData.destPathTrunk;
+            return requestData.destPathTrunk + ".unknown";
         }
         const ext   = getExtensionFromContentType(contentType);
         const path  = requestData.destPathTrunk + ext;
