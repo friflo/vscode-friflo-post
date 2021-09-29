@@ -75,22 +75,32 @@ async function findRespFile (contentPath: string) : Promise<RespInfo | null> {
     // End basename with ".resp.md" ?
     if (basename.indexOf(respMdExt, respIndex) != -1)
         return null;
-    const trunk     = contentPath.substring(0, contentPath.length - basename.length + respIndex);
+    const trunk         = contentPath.substring(0, contentPath.length - basename.length + respIndex);
+    const respInfoPath  = trunk + respMdExt;
+    const titleLine     = await getTitleLine (respInfoPath);
+    // const status = getStatus(titleLine);
+    // const icon = status == null ? "❌" : ((200 <= status && status < 300) ? "✔️" : "😕");
+    return {
+        path: respInfoPath,
+        info: `${titleLine}`
+    };   
+}
+
+async function getTitleLine (respInfoPath: string) : Promise<string | null> {
     try {
-        const respInfoPath = trunk + respMdExt;
-        const info  = await fs.readFile(respInfoPath,'utf8');
-        const eol   = info.indexOf("\n");
-        const firstLine = eol == -1 ? info : info.substring(0, eol);
-        // const status = getStatus(firstLine);
-        // const icon = status == null ? "❌" : ((200 <= status && status < 300) ? "✔️" : "😕");
-        return {
-            path: respInfoPath,
-            info: `${firstLine}`
-        };
+        const info      = await fs.readFile(respInfoPath,'utf8');
+        const lines     = info.split("\n");
+        for (let n = 0; n < lines.length; n++) {
+            const line = lines[n];
+            if (line.trim().length == 0)
+                continue;
+            return line;
+        }
     }
     catch (err) {
-        return null;
-    }    
+        // cannot create a title => null
+    } 
+    return null;
 }
 /*
 function getStatus (str: string) : number | null {
