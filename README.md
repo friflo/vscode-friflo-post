@@ -21,7 +21,7 @@ E.g. __JSON Schema validation__ of JSON request & response files, storing result
     E.g. `say-hello.test.resp.md`
 *   Enables using __VSCode language validators__ like __JSON Schema__ for request and response files.  
 *   Show and edit HTTP response directly in a separate workspace editor tab.
-*   Toggle between response and headers with a single click in the editor tab.  
+*   Toggle between response body and headers with a single click in the editor tab.  
     E.g. toggle between `say-hello.test.resp.json` & `say-hello.test.resp.md`
 *   Enables using other utilities like __node__ processing request & response files as they are __valid__ JSON or XML
 *   Enables using __git__ as a simple regression test to compare response bodies and headers with previous requests.
