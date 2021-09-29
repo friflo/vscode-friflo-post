@@ -69,7 +69,7 @@ export class CodelensResponseInfo implements vscode.CodeLensProvider
 
 async function findRespFile (contentPath: string) : Promise<RespInfo | null> {
     const basename      = path.basename(contentPath);
-    const respIndex     = basename.indexOf(respExt);
+    const respIndex     = basename.lastIndexOf(respExt);
     if (respIndex == -1)
         return null;
     // End basename with ".resp.md" ?
