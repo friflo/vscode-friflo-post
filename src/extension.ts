@@ -3,7 +3,7 @@
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { ExtensionContext, languages, commands, Disposable, workspace } from 'vscode';
+import { ExtensionContext, languages, commands, Disposable, workspace, window } from 'vscode';
 import { CodelensRequest, getConfigOf } from './command-request/CodelensRequest';
 import { CodelensResponseInfo } from './command-response-info/CodelensResponseInfo';
 import { executeRequest } from './command-request/executeRequest';
@@ -91,26 +91,37 @@ export function activate(context: ExtensionContext) {
 		providerRegistrations
 	);
     workspace.onDidOpenTextDocument (async (document) => {     
-        const path = document.fileName;
-        const config = await getConfigOf(path);
-        if (!config)
-            return;
-        const endpoint = getEndpoint(config, path);
-        if (!endpoint)
-            return;
-        // console.log("did open", document.fileName);
-        openForPost[path] = true;
-        commands.executeCommand('setContext', 'vscode-friflo-post.openForPost', openForPost);
+        addOpenForPost(document.fileName);
     });
 
     workspace.onDidCloseTextDocument ((document) => {
         const path = document.fileName;
-        if (openForPost[path]) {
-            // console.log("did open", document.fileName);
-            delete openForPost[path];
-            commands.executeCommand('setContext', 'vscode-friflo-post.openForPost', openForPost);
-        }
+        if (!openForPost[path])
+            return;
+        // console.log("did open", document.fileName);
+        delete openForPost[path];
+        commands.executeCommand('setContext', 'vscode-friflo-post.openForPost', openForPost);        
     });
+
+    const textEditors = window.visibleTextEditors;
+    // ensure files designated for 'POST' get their 'POST' button
+    if (textEditors) {
+        for (const editor of textEditors) {
+            addOpenForPost(editor.document.fileName);
+        }
+    }
+}
+
+async function addOpenForPost (path: string) {
+    const config = await getConfigOf(path);
+    if (!config)
+        return;
+    const endpoint = getEndpoint(config, path);
+    if (!endpoint)
+        return;
+    // console.log("did open", document.fileName);
+    openForPost[path] = true;
+    commands.executeCommand('setContext', 'vscode-friflo-post.openForPost', openForPost);
 }
 
 const openForPost : { [key: string] : true} = {};
