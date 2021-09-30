@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/PostConfig",
+    "definitions": {
+        "PostConfig": {
+            "type": "object",
+            "properties": {
+                "endpoints":    { "type": "array", "items": { "$ref": "#/definitions/Endpoint" } },
+                "headers":      {},
+                "response":     { "$ref": "#/definitions/Response" }
+            },
+            "required": [
+                "headers",
+                "endpoints",
+                "response"
+            ],
+            "additionalProperties": true
+        },
+        "Endpoint": {
+            "type": "object",
+            "properties": {
+                "fileMatch":    { "type": "array", "items": { "type": "string" } },
+                "url":          { "type": "string" }
+            },
+            "required": [
+                "fileMatch",
+                "url"
+            ],
+            "additionalProperties": true
+        },
+        "Response": {
+            "type": "object",
+            "properties": {
+                "folder":       { "type": ["string", "null"] }
+            },
+            "required": [
+            ],
+            "additionalProperties": true
+        }
+    }
+}

@@ -39,6 +39,12 @@
     ],
     "main": "./out/extension",
     "contributes": {
+        "jsonValidation": [
+            {
+              "fileMatch": "/**/.post-config",
+              "url": "./post-config-schema.json"
+            }
+        ],
         "commands": [
             {
                 "command": "vscode-friflo-post.codelensPost",
