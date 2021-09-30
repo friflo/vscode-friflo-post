@@ -50,7 +50,7 @@
                 "Access-Control-Request-Headers":   { "type": "string" },
                 "Authorization":                    { "type": "string" },
                 "Cache-Control":                    { "type": "string" },
-                "Connection":                       { "enum": ["keep-alive", "close"] },
+                "Connection":                       { "enum": ["Keep-Alive", "Close"] },
                 "Content-Type":                     { "type": "string" },
                 "Cookie":                           { "type": "string" },
                 "Date":                             { "type": "string" },
