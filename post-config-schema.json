@@ -6,7 +6,7 @@
             "type": "object",
             "properties": {
                 "endpoints":    { "type": "array", "items": { "$ref": "#/definitions/Endpoint" } },
-                "headers":      {},
+                "headers":      { "$ref": "#/definitions/Headers" },
                 "response":     { "$ref": "#/definitions/Response" }
             },
             "required": [
@@ -35,6 +35,47 @@
             },
             "required": [
             ],
+            "additionalProperties": true
+        },
+        "Headers": {
+            "type": "object",
+            "properties": {
+                "A-IM":                             { "type": "string" },
+                "Accept":                           { "type": "string" },
+                "Accept-Charset":           	    { "type": "string" },
+                "Accept-Encoding":           	    { "type": "string" },
+                "Accept-Language":           	    { "type": "string" },
+                "Accept-Datetime":           	    { "type": "string" },
+                "Access-Control-Request-Method":    { "type": "string" },
+                "Access-Control-Request-Headers":   { "type": "string" },
+                "Authorization":                    { "type": "string" },
+                "Cache-Control":                    { "type": "string" },
+                "Connection":                       { "enum": ["keep-alive", "close"] },
+                "Content-Type":                     { "type": "string" },
+                "Cookie":                           { "type": "string" },
+                "Date":                             { "type": "string" },
+                "Expect":                           { "type": "string" },
+                "Forwarded":                        { "type": "string" },
+                "From":                             { "type": "string" },
+                "Host":                             { "type": "string" },
+                "If-Match":                         { "type": "string" },
+                "If-Modified-Since":                { "type": "string" },
+                "If-None-Match":                    { "type": "string" },
+                "If-Range":                         { "type": "string" },
+                "If-Unmodified-Since":              { "type": "string" },
+                "Max-Forwards":                     { "type": "string" },
+                "Origin":                           { "type": "string" },
+                "Pragma":                           { "type": "string" },
+                "Proxy-Authorization":              { "type": "string" },
+                "Range":                            { "type": "string" },
+                "Referer":                          { "type": "string" },
+                "TE":                               { "type": "string" },
+                "User-Agent":                       { "type": "string" },
+                "Upgrade":                          { "type": "string" },
+                "Via":                              { "type": "string" },
+                "Warning":                          { "type": "string" }
+            },
+            "required": [ ],
             "additionalProperties": true
         }
     }
