@@ -61,7 +61,7 @@ of JSON request & response files.
     The request is canceled by clicking on the _progress indicator_ in the status bar.
 *   Use __VSCode Source Control__ to show the diff of the response info with a previous successful request.
 
-![](https://raw.githubusercontent.com/friflo/vscode-friflo-post/master/docs/friflo-POST.gif)
+[![Usage - screen recording](https://raw.githubusercontent.com/friflo/vscode-friflo-post/master/docs/friflo-POST.gif)](https://raw.githubusercontent.com/friflo/vscode-friflo-post/master/docs/friflo-POST.gif)
 
 
 ## Tips
