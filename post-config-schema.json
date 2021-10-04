@@ -7,7 +7,8 @@
             "properties": {
                 "endpoints":    { "type": "array", "items": { "$ref": "#/definitions/Endpoint" } },
                 "headers":      { "$ref": "#/definitions/Headers" },
-                "response":     { "$ref": "#/definitions/Response" }
+                "response":     { "$ref": "#/definitions/Response" },
+                "variables":    { "$ref": "#/definitions/Variables" }
             },
             "required": [
                 "headers",
@@ -35,6 +36,10 @@
             },
             "required": [
             ],
+            "additionalProperties": true
+        },
+        "Variables": {
+            "type": "object",
             "additionalProperties": true
         },
         "Headers": {

@@ -29,6 +29,7 @@ export class PostConfig {
     readonly    endpoints:      Endpoint[];
     readonly    headers:        RequestHeaders;
     readonly    response:       ResponseConfig;
+    readonly    variables:      { [variable: string]: any };
 }
 
 
@@ -41,6 +42,9 @@ export const defaultConfigString = `{
   },
   "response": {
     "folder":       "response"
+  },
+  "variables": {
+    "{{var-1}}":    "some value"
   }
 }`;
 

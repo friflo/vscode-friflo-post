@@ -55,10 +55,19 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
 
     const headers       = getHeaders(config, endpoint, fileContent.path);
     const destPathTrunk = getDestPathTrunk(fileContent.path, config.response);
+
+    const variables = config.variables;
+    let content     = fileContent.content;
     
+    if (variables) {
+        for (const variable in variables) {
+            const value = variables[variable];
+            content = content.replace(variable, value);
+        }
+    }
     const requestData: RequestData = {
         url:            endpoint.url,
-        requestBody:    fileContent.content,
+        requestBody:    content,
         requestPath:    fileContent.path,
         destPathTrunk:  destPathTrunk,
         type:           requestType,
