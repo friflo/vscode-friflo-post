@@ -26,8 +26,28 @@ E.g. __JSON Schema validation__ of JSON request & response files, storing result
 *   Enables using other utilities like __node__ processing request & response files as they are __valid__ JSON or XML
 *   Enables using __git__ as a simple regression test to compare response bodies and headers with previous requests.
 *   Enables configuration via the config file `.post-config` for all request files in a folder to:
-    *   set the http `endpoints` and specific http `headers`
-    *   set the `response` folder for response files.
+    *   set the http `"endpoints"` and specific http `"headers"`
+    *   set the `"response"` `"folder"` for response files.
+    *   set `"variables"` used to replace their occurrences in the request body. E.g. `"user":   "{{user}}",`
+
+`.post-config` example    
+```json
+{
+  "endpoints": [
+    { "fileMatch": ["*.json"], "url": "http://localhost:8010/" }
+  ],
+  "headers":   {
+    "Connection":   "Keep-Alive"
+  },
+  "response":  {
+    "folder":       "response"
+  },
+  "variables": {
+    "{{user}}":     "admin",
+    "{{token}}":    "admin-token"
+  }
+}
+```
 
 ## Usage
 
