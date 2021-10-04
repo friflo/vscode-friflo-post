@@ -29,6 +29,8 @@ E.g. __JSON Schema validation__ of JSON request & response files, storing result
     *   set the http `"endpoints"` and specific http `"headers"`
     *   set the `"response"` `"folder"` for response files.
     *   set `"variables"` used to replace their occurrences in the request body. E.g. `"user":   "{{user}}",`
+*   If a request file - e.g. `my-request.json` - is in a folder without a `.post-config` executing
+    __friflo POST: POST Request__ from _View > Command Palette..._ will ask to create an initial `.post-config`.
 
 `.post-config` example    
 ```json
