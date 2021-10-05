@@ -5,9 +5,11 @@
 
 ## Goal
 Main goal of this extension is storing all HTTP request & response data _automatically_ as files in a __VSCode workspace__.  
-This ensures this data is still available in new VSCode sessions.
-It also enables other __VSCode extensions__ utilizing request & response files.
-E.g. __JSON Schema validation__ of JSON request & response files, storing results in __git__ and comparing subsequent response results with previous ones.
+This ensures these files are still available in new VSCode sessions.
+It also enables utilizing __VSCode build-in tools__ for request & response files.  
+E.g. [__JSON Schema validation__](https://code.visualstudio.com/docs/languages/json#_json-schemas-and-settings)
+of JSON request & response files, storing them in __git__ and comparing subsequent response results with previous ones in
+[__VSCode Diff Viewer__](https://code.visualstudio.com/docs/editor/versioncontrol#_viewing-diffs).
 
 [GitHub repository link](https://github.com/friflo/vscode-friflo-post/)
 
