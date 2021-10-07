@@ -21,7 +21,8 @@ of JSON request & response files, storing them in __git__ and comparing subseque
     E.g. `say-hello.test.resp.json`
 *   Store HTTP request / response header _automatically_ as a __markdown__ file in the workspace.  
     E.g. `say-hello.test.resp.md`
-*   Enables using __VSCode language validators__ like __JSON Schema__ for request and response files.  
+*   Enables utilizing __VSCode language validators__ like __JSON Schema__ to provide __Code Completion__ and __validation__
+    for request and response files.  
 *   Show and edit HTTP response directly in a separate workspace editor tab.
 *   Toggle between response body and headers with a single click in the editor tab.  
     E.g. toggle between `say-hello.test.resp.json` & `say-hello.test.resp.md`
@@ -31,6 +32,7 @@ of JSON request & response files, storing them in __git__ and comparing subseque
     *   set the http `"endpoints"` and specific http `"headers"`
     *   set the `"response"` `"folder"` for response files.
     *   set `"variables"` used to replace their occurrences in the request body. E.g. `"user":   "{{user}}",`
+*   __Code Completion__ and __validation__ for config file in VSCode editor.
 *   If a request file - e.g. `my-request.json` - is in a folder without a `.post-config` executing
     __friflo POST: POST Request__ from _View > Command Palette..._ will ask to create an initial `.post-config`.
 
