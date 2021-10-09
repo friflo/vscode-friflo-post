@@ -26,6 +26,8 @@ of JSON request & response files, storing them in __git__ and comparing subseque
 *   Show and edit HTTP response directly in a separate workspace editor tab.
 *   Toggle between response body and headers with a single click in the editor tab.  
     E.g. toggle between `say-hello.test.resp.json` & `say-hello.test.resp.md`
+*   As the response header file is __markdown__ it contains __links__ to its request & response body file.
+    These links are convenient when storing these files in GitHub. See [screenshot](#example-http-response-header) below.
 *   Enables using other utilities like __node__ processing request & response files as they are __valid__ JSON or XML
 *   Enables using __git__ as a simple regression test to compare response bodies and headers with previous requests.
 *   Enables configuration via the config file `.post-config` for all request files in a folder to:
@@ -69,6 +71,12 @@ of JSON request & response files.
 
 [![Usage - screen recording](https://raw.githubusercontent.com/friflo/vscode-friflo-post/master/docs/friflo-POST.gif)](https://raw.githubusercontent.com/friflo/vscode-friflo-post/master/docs/friflo-POST.gif)
 
+
+### Example HTTP response header
+
+The links `response` & `request` point to the related response & request file in the repository.
+
+![logo](docs/images/response-header.png) 
 
 ## Tips
 
