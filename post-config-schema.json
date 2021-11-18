@@ -9,7 +9,7 @@
                 "headers":              { "$ref": "#/definitions/Headers" },
                 "response":             { "$ref": "#/definitions/Response" },
                 "variables":            { "$ref": "#/definitions/Variables" },
-                "additionalProperties": {  }
+                "additionalProperties": { "type": ["object", "null"] }
             },
             "required": [
                 "headers",
