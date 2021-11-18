@@ -66,14 +66,16 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
         }
     }
     const additionalProperties = config.additionalProperties;
-    if (typeof additionalProperties == "object") {
+    if (typeof additionalProperties == "object" && additionalProperties != null) {
         const endBracket  = content.lastIndexOf("}");
         if (endBracket != -1) {
             const before    = content.substring(0, endBracket);
             const after     = content.substring(endBracket);
-            let   props     = JSON.stringify(additionalProperties);
-            props           = props.substring(1, props.length - 1);
-            content         = `${before},${props}${after}`;
+            if (Object.keys(additionalProperties).length > 0) {
+                let   props     = JSON.stringify(additionalProperties);
+                props           = props.substring(1, props.length - 1);
+                content         = `${before},${props}${after}`;
+            }
         }        
     }
     const requestData: RequestData = {
