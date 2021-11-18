@@ -34,6 +34,7 @@ of JSON request & response files, storing them in __git__ and comparing subseque
     *   set the http `"endpoints"` and specific http `"headers"`
     *   set the `"response"` `"folder"` for response files.
     *   set `"variables"` used to replace their occurrences in the request body. E.g. `"user":   "{{user}}",`
+    *   set `"additionalProperties"` used to add its properties to the request body.
 *   __Code Completion__ and __validation__ for config file in VSCode editor.
 *   If a request file - e.g. `my-request.json` - is in a folder without a `.post-config` executing
     __friflo POST: POST Request__ from _View > Command Palette..._ will ask to create an initial `.post-config`.
@@ -51,8 +52,10 @@ of JSON request & response files, storing them in __git__ and comparing subseque
     "folder":       "response"
   },
   "variables": {
-    "{{user}}":     "admin",
-    "{{token}}":    "admin-token"
+    "{{user}}":     "admin"
+  },
+  "additionalProperties": {
+    "token":        "token"
   }
 }
 ```
