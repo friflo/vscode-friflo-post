@@ -65,6 +65,17 @@ export async function executeRequest (requestType: RequestType, ...args: any[]) 
             content = content.replace(variable, value);
         }
     }
+    const additionalProperties = config.additionalProperties;
+    if (typeof additionalProperties == "object") {
+        const endBracket  = content.lastIndexOf("}");
+        if (endBracket != -1) {
+            const before    = content.substring(0, endBracket);
+            const after     = content.substring(endBracket);
+            let   props     = JSON.stringify(additionalProperties);
+            props           = props.substring(1, props.length - 1);
+            content         = `${before},${props}${after}`;
+        }        
+    }
     const requestData: RequestData = {
         url:            endpoint.url,
         requestBody:    content,

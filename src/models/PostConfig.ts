@@ -26,10 +26,12 @@ export class ResponseConfig {
 }
 
 export class PostConfig {
-    readonly    endpoints:      Endpoint[];
-    readonly    headers:        RequestHeaders;
-    readonly    response:       ResponseConfig;
-    readonly    variables:      { [variable: string]: any };
+    readonly    endpoints:              Endpoint[];
+    readonly    headers:                RequestHeaders;
+    readonly    response:               ResponseConfig;
+    readonly    variables:              { [variable: string]: any };
+    readonly    additionalProperties:   any | null;
+
 }
 
 
@@ -45,7 +47,8 @@ export const defaultConfigString = `{
   },
   "variables": {
     "{{var-1}}":    "some value"
-  }
+  },
+  "additionalProperties": { }
 }`;
 
 export const defaultConfig : PostConfig = JSON.parse(defaultConfigString);

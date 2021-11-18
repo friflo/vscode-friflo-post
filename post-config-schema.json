@@ -5,10 +5,11 @@
         "PostConfig": {
             "type": "object",
             "properties": {
-                "endpoints":    { "type": "array", "items": { "$ref": "#/definitions/Endpoint" } },
-                "headers":      { "$ref": "#/definitions/Headers" },
-                "response":     { "$ref": "#/definitions/Response" },
-                "variables":    { "$ref": "#/definitions/Variables" }
+                "endpoints":            { "type": "array", "items": { "$ref": "#/definitions/Endpoint" } },
+                "headers":              { "$ref": "#/definitions/Headers" },
+                "response":             { "$ref": "#/definitions/Response" },
+                "variables":            { "$ref": "#/definitions/Variables" },
+                "additionalProperties": {  }
             },
             "required": [
                 "headers",
