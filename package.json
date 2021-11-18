@@ -23,16 +23,16 @@
         "Programming Languages"
     ],
     "keywords": [
-      "HTTP",
-      "POST",
-      "HTTP Client",
-      "REST Client",
-      "JSON",
-      "JSON Schema",
-      "JSON Validation",
-      "Regression Testing",
-      "XML",
-      "REST"
+        "HTTP",
+        "POST",
+        "HTTP Client",
+        "REST Client",
+        "JSON",
+        "JSON Schema",
+        "JSON Validation",
+        "Regression Testing",
+        "XML",
+        "REST"
     ],
     "activationEvents": [
         "*"
@@ -41,8 +41,8 @@
     "contributes": {
         "jsonValidation": [
             {
-              "fileMatch": "/**/.post-config",
-              "url": "./post-config-schema.json"
+                "fileMatch": "/**/.post-config",
+                "url": "./post-config-schema.json"
             }
         ],
         "commands": [
@@ -52,7 +52,7 @@
                 "category": "friflo POST",
                 "icon": {
                     "light": "./docs/images/post.svg",
-                    "dark":  "./docs/images/post.svg"
+                    "dark": "./docs/images/post.svg"
                 }
             },
             {
@@ -99,13 +99,13 @@
                     "command": "vscode-friflo-post.showInfo",
                     "when": "editorHasReferenceProvider",
                     "group": "navigation@1.31"
-                }                
+                }
             ],
             "editor/title": [
                 {
-                  "when": "resourcePath in vscode-friflo-post.openForPost",
-                  "command": "vscode-friflo-post.codelensPost",
-                  "group": "navigation@1"
+                    "when": "resourcePath in vscode-friflo-post.openForPost",
+                    "command": "vscode-friflo-post.codelensPost",
+                    "group": "navigation@1"
                 }
             ],
             "explorer/context": [
