@@ -13,6 +13,10 @@ of JSON request & response files, storing them in __git__ and comparing subseque
 
 [GitHub repository link](https://github.com/friflo/vscode-friflo-post/)
 
+## Motivation
+This project was created for [friflo/Friflo.Json.Fliox](https://github.com/friflo/Friflo.Json.Fliox) to validate requests send to a Fliox Hub.  
+Meanwhile validation is supported by the Hub Explorer itself. But will keep this project alive.
+
 
 ## Features
 *   Send files in your workspace like JSON or XML via HTTP __POST__, __PUT__ & __PATCH__ with a single click on a __CodeLens__ button.  
